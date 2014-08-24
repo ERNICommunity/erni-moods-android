@@ -1,0 +1,52 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context=".EntryPoint"
+   >
+
+    <TextView
+        android:id="@+id/welcome_textview"
+        android:text="@string/greeting"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="90dp" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="My Mood"
+        android:id="@+id/button_mymood"
+/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Moods near me"
+        android:id="@+id/button_moodsnearme"
+  />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Mood History"
+        android:id="@+id/button_moodhistory"
+ />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Sign up"
+        android:id="@+id/button_signup"
+/>
+
+</LinearLayout>
