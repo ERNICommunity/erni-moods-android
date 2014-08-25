@@ -1,6 +1,8 @@
-package android.community.erni.ernimoods;
+package android.community.erni.ernimoods.controller;
 
 import android.app.Activity;
+import android.community.erni.ernimoods.R;
+import android.community.erni.ernimoods.model.Moods;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -11,6 +13,12 @@ import android.widget.TextView;
 public class EntryPoint extends Activity {
 
     TextView welcomeText;
+
+    /**
+     * a "Moods" object (singleton)
+     * This will be needed to get access to the moods that we fetch from the backend
+     */
+    public Moods moods = Moods.get();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

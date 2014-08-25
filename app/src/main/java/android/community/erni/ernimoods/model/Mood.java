@@ -1,0 +1,59 @@
+package android.community.erni.ernimoods.model;
+
+import android.location.Location;
+
+/**
+ * represents a Mood object
+ * The idea is that we store an arraylist of mood objects in the Moods class
+ * And use this to create the user's current mood
+ */
+public class Mood {
+
+    private String username;
+    private Location location;
+    private String comment;
+    private int mood;
+
+    // TODO a constructor that takes a JSON object and creates a Mood
+
+    // TODO a method that makes a JSON object from a Mood object
+
+
+
+
+    // just getters and setters
+
+    public String getUsername() {
+        return username;
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public int getMood() {
+        return mood;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public void setMood(int mood) {
+        this.mood = mood;
+    }
+
+
+}

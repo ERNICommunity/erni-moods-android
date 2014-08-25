@@ -1,9 +1,10 @@
-package android.community.erni.ernimoods;
+package android.community.erni.ernimoods.controller;
 
 import android.app.Activity;
+import android.community.erni.ernimoods.R;
 import android.os.Bundle;
 
-/**
+/** This activity is used to enter your current mood
  * Created by gus on 24.08.14.
  */
 public class MyMoodActivity  extends Activity {
