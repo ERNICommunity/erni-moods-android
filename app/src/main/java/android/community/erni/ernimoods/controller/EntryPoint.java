@@ -2,36 +2,26 @@ package android.community.erni.ernimoods.controller;
 
 import android.app.Activity;
 import android.community.erni.ernimoods.R;
-import android.community.erni.ernimoods.model.Moods;
+
+import android.community.erni.ernimoods.model.Mood;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 
+/**
+ * This is the starting Activity for the application.
+ */
 public class EntryPoint extends Activity {
-
-    TextView welcomeText;
-
-    /**
-     * a "Moods" object (singleton)
-     * This will be needed to get access to the moods that we fetch from the backend
-     */
-    public Moods moods = Moods.get();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_entry_point);
-
-        // TODO change the welcome message depending on the time of day
-        welcomeText = (TextView) findViewById(R.id.welcome_textview);
-        // get the hour of the day
-        // if 0000 - 1200: good morning
-        // if 1201 - 1700: good afternoon
-        // if 1701 - 2359: good evening
-        // update the text in the welcome_textview
 
     }
 

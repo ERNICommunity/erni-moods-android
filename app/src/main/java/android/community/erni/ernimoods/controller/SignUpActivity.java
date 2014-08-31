@@ -5,7 +5,8 @@ import android.community.erni.ernimoods.R;
 import android.os.Bundle;
 
 /** Use this to sign up to the service...
- * Maybe it should be replaced by a preference, because once you do it you never really need to change that.
+ * Once user has signed up to the service, then login using the Preferences
+ *
  *
  * Created by gus on 24.08.14.
  */

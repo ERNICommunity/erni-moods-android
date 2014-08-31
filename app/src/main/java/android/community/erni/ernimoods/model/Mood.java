@@ -19,8 +19,6 @@ public class Mood {
     // TODO a method that makes a JSON object from a Mood object
 
 
-
-
     // just getters and setters
 
     public String getUsername() {
@@ -55,5 +53,7 @@ public class Mood {
         this.mood = mood;
     }
 
-
+    public String toString() {
+        return "username: " + username + " mood: " + mood;
+    }
 }
