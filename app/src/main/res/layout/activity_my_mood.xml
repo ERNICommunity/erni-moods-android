@@ -13,47 +13,49 @@
         android:textAlignment="center"
         android:gravity="center" />
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
+    <ImageButton
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/VeryGoodLayout"
-        android:gravity="center_horizontal"
-        android:layout_gravity="center_horizontal">
+        android:id="@+id/VeryGood"
+        android:src="@drawable/smiley_very_happy"
+        android:layout_gravity="center_horizontal"
+        android:focusableInTouchMode="false"
+        android:contentDescription="@string/VeryGoodMood" />
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
-            android:id="@+id/imageView"
-            android:src="@drawable/smiley_good"
-            android:layout_gravity="center_vertical" />
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/Good"
+        android:src="@drawable/smiley_good"
+        android:contentDescription="@string/GoodMoodText"
+        android:layout_gravity="center_horizontal"
+        android:focusable="false"
+        android:cropToPadding="true" />
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
-            android:id="@+id/VeryGoodButton"
-            android:text="@string/VeryGoodText"
-            android:gravity="right" />
-    </LinearLayout>
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/SoSoLaLa"
+        android:src="@drawable/smiley_sosolala"
+        android:contentDescription="@string/SoSoLaLa"
+        android:layout_gravity="center_horizontal" />
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"></LinearLayout>
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/NotAmused"
+        android:src="@drawable/smiley_not_amused"
+        android:focusableInTouchMode="false"
+        android:contentDescription="@string/NotAmused"
+        android:layout_gravity="center_horizontal" />
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"></LinearLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"></LinearLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"></LinearLayout>
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/VeryMoody"
+        android:src="@drawable/smiley_very_moody"
+        android:contentDescription="@string/VeryMoody"
+        android:focusable="false"
+        android:layout_gravity="center_horizontal" />
 
 </LinearLayout>

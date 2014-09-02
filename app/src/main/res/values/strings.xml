@@ -10,5 +10,10 @@
     <string name="title_activity_settings">SettingsActivity</string>
     <string name="MyMoodGreeting">Hello! How are you today?</string>
     <string name="VeryGoodText">Very Good</string>
+    <string name="GoodMoodText">GoodMood</string>
+    <string name="VeryGoodMood">VeryGood</string>
+    <string name="SoSoLaLa">SoSoLaLa</string>
+    <string name="NotAmused">NotAmused</string>
+    <string name="VeryMoody">VeryMoody</string>
 
 </resources>
