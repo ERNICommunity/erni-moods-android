@@ -8,5 +8,7 @@
     <string name="service_switch">Web Service</string>
     <string name="service_switch_summary">Turn web service on/off</string>
     <string name="title_activity_settings">SettingsActivity</string>
+    <string name="MyMoodGreeting">Hello! How are you today?</string>
+    <string name="VeryGoodText">Very Good</string>
 
 </resources>
