@@ -1,7 +1,7 @@
 package android.community.erni.ernimoods.model;
 
 import android.location.Location;
-
+ 
 /**
  * represents a Mood object
  * The idea is that we store an arraylist of mood objects in the Moods class
@@ -14,9 +14,12 @@ public class Mood {
     private String comment;
     private int mood;
 
-    // TODO a constructor that takes a JSON object and creates a Mood
-
-    // TODO a method that makes a JSON object from a Mood object
+    public Mood (String username, Location location, String comment, int mood) {
+        this.username = username;
+        this.location = location;
+        this.comment = comment;
+        this.mood = mood;
+    }
 
 
     // just getters and setters
