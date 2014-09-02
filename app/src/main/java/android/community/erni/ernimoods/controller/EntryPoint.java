@@ -3,8 +3,12 @@ package android.community.erni.ernimoods.controller;
 import android.app.Activity;
 import android.community.erni.ernimoods.R;
 
+import android.community.erni.ernimoods.api.IMoodsBackend;
+import android.community.erni.ernimoods.api.MoodsBackend;
 import android.community.erni.ernimoods.model.Mood;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -32,6 +36,14 @@ public class EntryPoint extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_entry_point, menu);
+
+        // make a call to the back end service
+        if(isConnected()){
+            IMoodsBackend moodsBackend = new MoodsBackend();
+            moodsBackend.getAllMoods();
+        }
+
+
         return true;
     }
 
@@ -54,5 +66,15 @@ public class EntryPoint extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    // check network connection
+    public boolean isConnected(){
+        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(this.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isConnected())
+            return true;
+        else
+            return false;
     }
 }
