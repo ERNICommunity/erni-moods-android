@@ -1,7 +1,7 @@
 package android.community.erni.ernimoods.model;
 
 import android.location.Location;
- 
+
 /**
  * represents a Mood object
  * The idea is that we store an arraylist of mood objects in the Moods class

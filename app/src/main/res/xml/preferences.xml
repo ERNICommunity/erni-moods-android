@@ -7,7 +7,7 @@
     android:summary="@string/service_switch_summary"
     android:defaultValue="true"     />
 
-<EditTextPreference
+
     <!-- TO DO: preferences for username and password  -->
 
 </PreferenceScreen>
