@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -54,5 +55,10 @@ public class EntryPoint extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void showMyMood(View v) {
+        Intent i = new Intent(this,MyMoodActivity.class);
+        startActivity(i);
     }
 }

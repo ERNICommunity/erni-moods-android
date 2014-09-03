@@ -8,54 +8,59 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="@string/MyMoodGreeting"
+        android:text="@string/text_MyMoodGreeting"
         android:id="@+id/textView"
         android:textAlignment="center"
         android:gravity="center" />
 
     <ImageButton
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/VeryGood"
+        android:id="@+id/button_VeryHappy"
         android:src="@drawable/smiley_very_happy"
         android:layout_gravity="center_horizontal"
         android:focusableInTouchMode="false"
-        android:contentDescription="@string/VeryGoodMood" />
+        android:contentDescription="@string/text_mood_VeryHappy"
+        android:onClick="setMood" />
 
     <ImageButton
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/Good"
+        android:id="@+id/button_Good"
         android:src="@drawable/smiley_good"
-        android:contentDescription="@string/GoodMoodText"
+        android:contentDescription="@string/text_mood_Good"
         android:layout_gravity="center_horizontal"
         android:focusable="false"
-        android:cropToPadding="true" />
+        android:cropToPadding="true"
+        android:onClick="setMood" />
 
     <ImageButton
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/SoSoLaLa"
+        android:id="@+id/button_SoSoLaLa"
         android:src="@drawable/smiley_sosolala"
-        android:contentDescription="@string/SoSoLaLa"
-        android:layout_gravity="center_horizontal" />
+        android:contentDescription="@string/text_mood_SosoLala"
+        android:layout_gravity="center_horizontal"
+        android:onClick="setMood" />
 
     <ImageButton
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/NotAmused"
+        android:id="@+id/button_NotAmused"
         android:src="@drawable/smiley_not_amused"
         android:focusableInTouchMode="false"
-        android:contentDescription="@string/NotAmused"
-        android:layout_gravity="center_horizontal" />
+        android:contentDescription="@string/text_mood_NotAmused"
+        android:layout_gravity="center_horizontal"
+        android:onClick="setMood" />
 
     <ImageButton
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/VeryMoody"
+        android:id="@+id/button_VeryMoody"
         android:src="@drawable/smiley_very_moody"
-        android:contentDescription="@string/VeryMoody"
+        android:contentDescription="@string/text_mood_VeryMoody"
         android:focusable="false"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center_horizontal"
+        android:onClick="setMood" />
 
 </LinearLayout>

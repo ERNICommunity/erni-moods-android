@@ -26,6 +26,7 @@
         android:layout_height="wrap_content"
         android:text="My Mood"
         android:id="@+id/button_mymood"
+        android:onClick="showMyMood"
 />
 
     <Button
