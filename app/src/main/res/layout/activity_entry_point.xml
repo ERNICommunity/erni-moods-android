@@ -10,44 +10,6 @@
     tools:context=".EntryPoint"
    >
 
-    <TextView
-        android:id="@+id/welcome_textview"
-        android:text="@string/greeting"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        />
 
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="90dp" />
-
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="My Mood"
-        android:id="@+id/button_mymood"
-        android:onClick="showMyMood"
-/>
-
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Moods near me"
-        android:id="@+id/button_moodsnearme"
-  />
-
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Mood History"
-        android:id="@+id/button_moodhistory"
- />
-
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Sign up"
-        android:id="@+id/button_signup"
-/>
 
 </LinearLayout>

@@ -1,11 +1,8 @@
 package android.community.erni.ernimoods.controller;
 
 import android.app.Activity;
-import android.community.erni.ernimoods.R;
 
-import android.community.erni.ernimoods.api.IMoodsBackend;
-import android.community.erni.ernimoods.api.MoodsBackend;
-import android.community.erni.ernimoods.model.Mood;
+import android.community.erni.ernimoods.R;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -23,11 +20,32 @@ import java.util.ArrayList;
  */
 public class EntryPoint extends Activity {
 
+    TextView welcomeText;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_entry_point);
 
+        // call this method to redirect the user depending on if they are already signed up or not
+        redirect(welcomeText);
+
+    }
+
+    private void redirect (View view) {
+        //Add check whether user is registered here
+        boolean userRegistered = false;
+
+        Intent intent = null;
+
+        //forward either to signup-form or set mood
+        if(userRegistered){
+            intent = new Intent(this, MyMoodActivity.class);
+        }else{
+            intent = new Intent(this, SignUpActivity.class);
+        }
+
+        startActivity(intent);
     }
 
     /*
@@ -38,11 +56,6 @@ public class EntryPoint extends Activity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_entry_point, menu);
 
-        // make a call to the back end service
-        if(isConnected()){
-            IMoodsBackend moodsBackend = new MoodsBackend();
-            moodsBackend.getAllMoods();
-        }
 
 
         return true;

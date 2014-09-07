@@ -8,7 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="@string/text_MyMoodGreeting"
+        android:text="@string/greeting"
         android:id="@+id/textView"
         android:textAlignment="center"
         android:gravity="center" />
@@ -20,7 +20,7 @@
         android:src="@drawable/smiley_very_happy"
         android:layout_gravity="center_horizontal"
         android:focusableInTouchMode="false"
-        android:contentDescription="@string/text_mood_VeryHappy"
+        android:contentDescription="@string/text_moodVeryHappy"
         android:onClick="setMood" />
 
     <ImageButton
@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/button_Good"
         android:src="@drawable/smiley_good"
-        android:contentDescription="@string/text_mood_Good"
+        android:contentDescription="@string/text_moodGood"
         android:layout_gravity="center_horizontal"
         android:focusable="false"
         android:cropToPadding="true"
@@ -39,7 +39,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/button_SoSoLaLa"
         android:src="@drawable/smiley_sosolala"
-        android:contentDescription="@string/text_mood_SosoLala"
+        android:contentDescription="@string/text_moodSoSoLaLa"
         android:layout_gravity="center_horizontal"
         android:onClick="setMood" />
 
@@ -49,7 +49,7 @@
         android:id="@+id/button_NotAmused"
         android:src="@drawable/smiley_not_amused"
         android:focusableInTouchMode="false"
-        android:contentDescription="@string/text_mood_NotAmused"
+        android:contentDescription="@string/text_moodNotAmused"
         android:layout_gravity="center_horizontal"
         android:onClick="setMood" />
 
@@ -58,7 +58,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/button_VeryMoody"
         android:src="@drawable/smiley_very_moody"
-        android:contentDescription="@string/text_mood_VeryMoody"
+        android:contentDescription="@string/text_moodVeryMoody"
         android:focusable="false"
         android:layout_gravity="center_horizontal"
         android:onClick="setMood" />

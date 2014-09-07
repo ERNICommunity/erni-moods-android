@@ -44,23 +44,23 @@ public class MyMoodActivity  extends Activity {
         //Depending on clicked Button create different mood
         switch (v.getId()) {
             case R.id.button_VeryHappy:
-                text = getString(R.string.text_mood_VeryHappy);
+                text = getString(R.string.text_moodVeryHappy);
                 myCurrentMood = new Mood(user, location, comment, res.getInteger(R.integer.int_VeryHappy));
                 break;
             case R.id.button_Good:
-                text = getString(R.string.text_mood_Good);
+                text = getString(R.string.text_moodGood);
                 myCurrentMood = new Mood(user, location, comment, res.getInteger(R.integer.int_Good));
                 break;
             case R.id.button_SoSoLaLa:
-                text = getString(R.string.text_mood_SosoLala);
+                text = getString(R.string.text_moodSoSoLaLa);
                 myCurrentMood = new Mood(user, location, comment, res.getInteger(R.integer.int_SosoLala));
                 break;
             case R.id.button_NotAmused:
-                text = getString(R.string.text_mood_NotAmused);
+                text = getString(R.string.text_moodNotAmused);
                 myCurrentMood = new Mood(user, location, comment, res.getInteger(R.integer.int_NotAmused));
                 break;
             case R.id.button_VeryMoody:
-                text = getString(R.string.text_mood_VeryMoody);
+                text = getString(R.string.text_moodVeryMoody);
                 myCurrentMood = new Mood(user, location, comment, res.getInteger(R.integer.int_VeryMoody));
                 break;
             default:
