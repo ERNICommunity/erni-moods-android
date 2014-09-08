@@ -2,6 +2,7 @@ package android.community.erni.ernimoods.controller;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.community.erni.ernimoods.R;
 import android.community.erni.ernimoods.service.FormValidator;
 import android.content.Intent;
@@ -186,14 +187,19 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
             inputValid = false;
         }
 
+        // if the user input is valid, sign him up and then go to the MyMoods screen
         if (inputValid) {
 
             Log.d(TAG, "Input valid. Signing up user...");
             // call to API handler to sign up user TODO
+
+            // redirect to the MyMood by replacing the Signup fragment with MyMoodFragment
+            FragmentManager fragmentManager = getFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.fragmentContainer, new MyMoodFragment()).commit();
+            Log.d(TAG, "Replaced fragment with MyMood");
         }
 
-        Log.d(TAG, "Replace fragment with MyMood");
-        // redirect to the MyMood by replacing the Signup fragment with MyMoodFragment
-        // figure out how to do this from within the fragment rather than the containing activity
+
+
     }
 }
