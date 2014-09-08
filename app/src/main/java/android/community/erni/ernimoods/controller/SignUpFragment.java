@@ -19,10 +19,19 @@ import android.widget.TextView;
  */
 public class SignUpFragment extends Fragment {
 
+    EditText user;
+    EditText pwd;
+    EditText email;
+    EditText phone;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_signup, container, false);
 
+        user = (EditText) view.findViewById(R.id.signUpUserInput);
+        pwd = (EditText) view.findViewById(R.id.signUpPasswordInput);
+        email = (EditText) view.findViewById(R.id.signUpEmailInput);
+        phone = (EditText) view.findViewById(R.id.signUpPhoneInput);
 
         //Attach validators for eMail
         EditText email= (EditText) view.findViewById(R.id.signUpEmailInput);
@@ -150,16 +159,10 @@ public class SignUpFragment extends Fragment {
     /** TODO this is going to need refactoring
      * throws  java.lang.IllegalStateException: Could not find a method createUser(View)
      *
-     *
-     *
      * Handle form submission
      * @param view
      */
     public void createUser(View view){
-        EditText user = (EditText) view.findViewById(R.id.signUpUserInput);
-        EditText pwd = (EditText) view.findViewById(R.id.signUpPasswordInput);
-        EditText email = (EditText) view.findViewById(R.id.signUpEmailInput);
-        EditText phone = (EditText) view.findViewById(R.id.signUpPhoneInput);
 
         boolean inputValid = true;
 

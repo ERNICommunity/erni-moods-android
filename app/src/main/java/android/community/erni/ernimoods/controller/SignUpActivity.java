@@ -17,10 +17,7 @@ import java.text.Normalizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/** Use this to sign up to the service...
- * Maybe it should be replaced by a preference, because once you do it you never really need to change that.
- *
- * Created by gus on 24.08.14.
+/** Remove TODO
  */
 public class SignUpActivity  extends Activity {
 

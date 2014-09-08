@@ -13,8 +13,7 @@ import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Toast;
 
-/** This activity is used to enter your current mood
- * Created by gus on 24.08.14.
+/** TODO remove
  */
 public class MyMoodActivity  extends Activity {
     @Override
