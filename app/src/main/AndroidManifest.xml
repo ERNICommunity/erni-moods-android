@@ -23,14 +23,7 @@
             android:name=".controller.SettingsActivity"
             android:label="@string/title_activity_settings" >
         </activity>
-        <activity
-            android:name=".controller.MyMoodActivity"
-            android:label="@string/title_activity_settings" >
-        </activity>
-        <activity
-            android:name=".controller.SignUpActivity"
-            android:label="@string/title_activity_settings" >
-        </activity>
+ 
     </application>
 
 </manifest>
