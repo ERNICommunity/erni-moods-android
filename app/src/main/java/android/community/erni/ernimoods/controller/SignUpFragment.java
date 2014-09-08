@@ -6,23 +6,28 @@ import android.community.erni.ernimoods.R;
 import android.community.erni.ernimoods.service.FormValidator;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 /** Fragment to handle user registration
  * Created by gus on 24.08.14.
  */
-public class SignUpFragment extends Fragment {
+public class SignUpFragment extends Fragment implements View.OnClickListener {
+
+    public static final String TAG = "SignUpFragment";
 
     EditText user;
     EditText pwd;
     EditText email;
     EditText phone;
+    Button submit;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -33,17 +38,21 @@ public class SignUpFragment extends Fragment {
         email = (EditText) view.findViewById(R.id.signUpEmailInput);
         phone = (EditText) view.findViewById(R.id.signUpPhoneInput);
 
+        // attach on click listener to submit button
+        submit = (Button) view.findViewById(R.id.signUpButton);
+        submit.setOnClickListener(this);
+
         //Attach validators for eMail
-        EditText email= (EditText) view.findViewById(R.id.signUpEmailInput);
+        EditText email = (EditText) view.findViewById(R.id.signUpEmailInput);
         //This listener fires, when user pressed a finished input button
         email.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    if(FormValidator.validateEmail((EditText)v)){
+                    if (FormValidator.validateEmail((EditText) v)) {
                         //Add code to hide keyboard here
                         return true;
-                    }else{
+                    } else {
                         v.setError(getString(R.string.signUpEmailErrorMessage));
                         return false;
                     }
@@ -52,14 +61,11 @@ public class SignUpFragment extends Fragment {
             }
         });
         //This listener fires, when the input lost focus
-        email.setOnFocusChangeListener(new View.OnFocusChangeListener()
-        {
+        email.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
-            public void onFocusChange(View v, boolean hasFocus)
-            {
-                if(!hasFocus)
-                {
-                    if(!FormValidator.validateEmail((EditText) v)){
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    if (!FormValidator.validateEmail((EditText) v)) {
                         ((EditText) v).setError(getString(R.string.signUpEmailErrorMessage));
                     }
                 }
@@ -67,14 +73,14 @@ public class SignUpFragment extends Fragment {
         });
 
         //Attach validators for Username
-        EditText user= (EditText) view.findViewById(R.id.signUpUserInput);
+        EditText user = (EditText) view.findViewById(R.id.signUpUserInput);
         user.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    if(FormValidator.validateUsername((EditText) v)){
+                    if (FormValidator.validateUsername((EditText) v)) {
                         return true;
-                    }else{
+                    } else {
                         v.setError(getString(R.string.signUpUsernameErrorMessage));
                         return false;
                     }
@@ -83,14 +89,11 @@ public class SignUpFragment extends Fragment {
             }
         });
 
-        user.setOnFocusChangeListener(new View.OnFocusChangeListener()
-        {
+        user.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
-            public void onFocusChange(View v, boolean hasFocus)
-            {
-                if(!hasFocus)
-                {
-                    if(!FormValidator.validateUsername((EditText) v)){
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    if (!FormValidator.validateUsername((EditText) v)) {
                         ((EditText) v).setError(getString(R.string.signUpUsernameErrorMessage));
                     }
                 }
@@ -98,7 +101,7 @@ public class SignUpFragment extends Fragment {
         });
 
         //Attach validators for password
-        EditText password= (EditText) view.findViewById(R.id.signUpPasswordInput);
+        EditText password = (EditText) view.findViewById(R.id.signUpPasswordInput);
         password.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -126,7 +129,7 @@ public class SignUpFragment extends Fragment {
         });
 
         //Attach validators for phone number
-        EditText phone= (EditText) view.findViewById(R.id.signUpPhoneInput);
+        EditText phone = (EditText) view.findViewById(R.id.signUpPhoneInput);
         phone.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -156,44 +159,41 @@ public class SignUpFragment extends Fragment {
     }
 
 
-    /** TODO this is going to need refactoring
-     * throws  java.lang.IllegalStateException: Could not find a method createUser(View)
-     *
+    /**
+     * *
      * Handle form submission
+     *
      * @param view
      */
-    public void createUser(View view){
-
+    public void onClick(View view) {
         boolean inputValid = true;
 
         //ultimately check user inputs
-        if(!FormValidator.validateUsername(user)){
+        if (!FormValidator.validateUsername(user)) {
             user.setError(getString(R.string.signUpUsernameErrorMessage));
             inputValid = false;
         }
-        if(!FormValidator.validatePassword(pwd)){
+        if (!FormValidator.validatePassword(pwd)) {
             pwd.setError(getString(R.string.signUpPasswordErrorMessage));
             inputValid = false;
         }
-        if(!FormValidator.validateEmail(email)){
+        if (!FormValidator.validateEmail(email)) {
             email.setError(getString(R.string.signUpEmailErrorMessage));
             inputValid = false;
         }
-        if(!FormValidator.validatePhone(phone)){
+        if (!FormValidator.validatePhone(phone)) {
             phone.setError(getString(R.string.signUpPhoneErrorMessage));
             inputValid = false;
         }
 
-        //make sure, that no error messages are set
-        if(inputValid){
-            /*
-            Add code to create user here
-             */
+        if (inputValid) {
 
-            // TODO replace wit mymoods fragment
-
+            Log.d(TAG, "Input valid. Signing up user...");
+            // call to API handler to sign up user TODO
         }
 
+        Log.d(TAG, "Replace fragment with MyMood");
+        // redirect to the MyMood by replacing the Signup fragment with MyMoodFragment
+        // figure out how to do this from within the fragment rather than the containing activity
     }
-
 }
