@@ -12,6 +12,6 @@
         android:text="@string/greeting"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/textView" />
+        android:id="@+id/textViewGreeting" />
 
 </RelativeLayout>

@@ -19,6 +19,11 @@ public class MoodsApp extends Application {
      */
     public ArrayList<Mood> moodsList;
 
+    /**
+     * true if the user is registered
+     */
+    public boolean userRegistered;
+
     @Override
     public void onCreate() {
         // this is called when the application is started
@@ -26,6 +31,9 @@ public class MoodsApp extends Application {
 
         moodsList = new ArrayList<Mood>();
         Log.d("MoodsApp", "Initialised an empty moodsList"); // log a debug message to the logcat
+
+        // initialise the user registered flag to false at app start
+        userRegistered = false;
     }
 
 

@@ -2,6 +2,8 @@ package android.community.erni.ernimoods.controller;
 
 import android.app.Activity;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.community.erni.ernimoods.R;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -27,25 +29,22 @@ public class EntryPoint extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_entry_point);
 
-        // call this method to redirect the user depending on if they are already signed up or not
-        redirect(welcomeText);
+        // depending on whether the user is registered, inflate the relevant fragment
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-    }
+        boolean userRegistered = ((MoodsApp)getApplication()).userRegistered;
+        if (userRegistered) {
 
-    private void redirect (View view) {
-        //Add check whether user is registered here
-        boolean userRegistered = false;
-
-        Intent intent = null;
-
-        //forward either to signup-form or set mood
-        if(userRegistered){
-            intent = new Intent(this, MyMoodActivity.class);
-        }else{
-            intent = new Intent(this, SignUpActivity.class);
+            fragmentTransaction
+                    .replace(R.id.fragmentContainer, new MyMoodFragment())
+                    .commit();
+        } else {
+            fragmentTransaction
+                    .replace(R.id.fragmentContainer, new SignUpFragment())
+                    .commit();
         }
 
-        startActivity(intent);
     }
 
     /*
@@ -82,10 +81,7 @@ public class EntryPoint extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void showMyMood(View v) {
-        Intent i = new Intent(this,MyMoodActivity.class);
-        startActivity(i);
-    }
+
 
     // check network connection
     public boolean isConnected(){
