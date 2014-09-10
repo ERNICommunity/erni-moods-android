@@ -2,6 +2,7 @@ package android.community.erni.ernimoods.api;
 
 import android.community.erni.ernimoods.model.Mood;
 import android.community.erni.ernimoods.service.MoodsJSONParser;
+import android.net.Uri;
 
 /**
  * Implementation of the abstract class to query mood data from the backend
@@ -12,6 +13,13 @@ public class MoodsBackend implements IMoodsBackend {
     private InternetAccess task = new InternetAccess(); //class variable to store an Internet-Access object
     //event handler for an error message handler
     private OnJSONResponseError errorListener;
+    private Uri.Builder baseUri = new Uri.Builder();
+
+    public MoodsBackend() {
+        baseUri.scheme("http");
+        baseUri.authority("moodyrest.azurewebsites.net");
+        baseUri.appendPath("moods");
+    }
 
     /**
      * Method to set a listener to handle the converted data
@@ -44,8 +52,9 @@ public class MoodsBackend implements IMoodsBackend {
         task.setListener(postMoodListener);
         //create a json-object as a string from a mood object
         String jsonString = MoodsJSONParser.createJSONMood(mood);
+
         //start the asynchronous background task to post a mood
-        task.execute("http://moodyrest.azurewebsites.net/moods", jsonString);
+        task.execute(baseUri.toString(), jsonString);
     }
 
 
@@ -57,7 +66,7 @@ public class MoodsBackend implements IMoodsBackend {
 
         task.setListener(getMoodsListener);
         //start async task
-        task.execute("http://moodyrest.azurewebsites.net/moods");
+        task.execute(baseUri.toString());
     }
 
     /**
@@ -68,8 +77,8 @@ public class MoodsBackend implements IMoodsBackend {
         // call AsyncTask to perform network operation on separate thread
         task.setListener(getMoodsListener);
         //call background task
-        //TODO proper url encoding
-        task.execute("http://moodyrest.azurewebsites.net/moods" + "?username=" + username);
+        baseUri.appendQueryParameter("username", username);
+        task.execute(baseUri.toString());
     }
 
     /**
@@ -82,8 +91,10 @@ public class MoodsBackend implements IMoodsBackend {
         // call AsyncTask to perform network operation on separate thread
         task.setListener(getMoodsListener);
         //call background task
-        //TODO proper url encoding
-        task.execute("http://moodyrest.azurewebsites.net/moods" + "?lat=" + latitude.toString() + "&lon=" + longitude.toString() + "&dist=" + distance.toString());
+        baseUri.appendQueryParameter("lat", latitude.toString());
+        baseUri.appendQueryParameter("lon", longitude.toString());
+        baseUri.appendQueryParameter("dist", distance.toString());
+        task.execute(baseUri.toString());
     }
 
     /**

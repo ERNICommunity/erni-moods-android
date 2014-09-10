@@ -2,16 +2,27 @@ package android.community.erni.ernimoods.api;
 
 import android.community.erni.ernimoods.model.User;
 import android.community.erni.ernimoods.service.MoodsJSONParser;
+import android.net.Uri;
 
 /**
  * Implementation of the abstract class to query user data from the moods-backend
  */
+
+//TODO sending an uncrypted password hurts
+
 public class UserBackend implements IUserBackend {
 
     private OnConversionCompleted listener = null; //stores the event listener for completed http-response parsing
     private InternetAccess task = new InternetAccess(); //class variable to store an Internet-Access object
     //event handler for an error message handler
     private OnJSONResponseError errorListener;
+    private Uri.Builder baseUri = new Uri.Builder();
+
+    public UserBackend() {
+        baseUri.scheme("http");
+        baseUri.authority("moodyrest.azurewebsites.net");
+        baseUri.appendPath("users");
+    }
 
     /**
      * Method to set a listener to handle the converted data
@@ -43,23 +54,23 @@ public class UserBackend implements IUserBackend {
         //create a json string from the user update
         String jsonString = MoodsJSONParser.createJSONUser(user);
         //make a post-request to the user base-url
-        task.execute("http://moodyrest.azurewebsites.net/users", jsonString);
+        task.execute(baseUri.toString(), jsonString);
     }
 
     public void getUserByPassword(String username, String password) {
         //attach a listener to handle the queried response-string
         task.setListener(getUserListener);
         //make a post-request to the user base-url
-        //TODO proper url encoding
-        task.execute("http://moodyrest.azurewebsites.net/users/" + username + "/" + password);
+        baseUri.appendPath(username).appendPath(password);
+        task.execute(baseUri.toString());
     }
 
     public void getUserByPhone(String username, String phone) {
         //attach a listener to handle the queried response-string
         task.setListener(getUserListener);
         //make a post-request to the user base-url
-        //TODO proper url encoding
-        task.execute("http://moodyrest.azurewebsites.net/users/" + username + "/" + phone);
+        baseUri.appendPath(username).appendPath(phone);
+        task.execute(baseUri.toString());
     }
 
     /**

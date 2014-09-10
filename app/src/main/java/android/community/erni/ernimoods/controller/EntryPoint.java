@@ -96,7 +96,7 @@ public class EntryPoint extends Activity {
         //set event handler for the errors
         getMoods.setErrorListener(errorHandler);
         //start async-task
-        getMoods.getAllMoods();
+        getMoods.getMoodsByLocation(0.0, 0.0, 1000.0);
 
         //again, create an object to call the user-backend
         UserBackend getUser = new UserBackend();
