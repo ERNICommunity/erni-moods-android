@@ -20,7 +20,7 @@ import java.io.InputStreamReader;
  * This class allows to get a string through a REST http request
  */
 
-//TODO check connectivity befor starting any activity
+//TODO check connectivity before starting any activity
 public class InternetAccess extends AsyncTask<String, Void, String> {
 
     //Default method for a request is get

@@ -7,7 +7,10 @@ import android.community.erni.ernimoods.api.JSONResponseException;
 import android.community.erni.ernimoods.api.UserBackend;
 import android.community.erni.ernimoods.model.User;
 import android.community.erni.ernimoods.service.FormValidator;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -46,8 +49,14 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
             public void onConversionCompleted(String result) {
                 //log the user id
                 Log.d("User successfully create with id", result);
+                //store username and password in the preferences for further usage
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putString("pref_username",user.getText().toString());
+                editor.commit();
+                editor.putString("pref_password",pwd.getText().toString());
+                editor.commit();
                 // redirect to the MyMood by replacing the Signup fragment with MyMoodFragment
-                //TODO store user credentials and set userRegistered to true
                 FragmentManager fragmentManager = getFragmentManager();
                 fragmentManager.beginTransaction().replace(R.id.fragmentContainer, new MyMoodFragment()).commit();
                 Log.d(TAG, "Replaced fragment with MyMood");

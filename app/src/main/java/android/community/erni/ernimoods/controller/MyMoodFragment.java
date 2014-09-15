@@ -28,7 +28,7 @@ public class MyMoodFragment extends Fragment {
 
     }
 
-    public void setMood(View v) {
+    public void setMood(View view) {
 
         //Initialize Mood values
         String user = "None";
@@ -47,7 +47,7 @@ public class MyMoodFragment extends Fragment {
         user = myPreferences.getString("pref_username","nothing");
 
         //Depending on clicked Button create different mood
-        switch (v.getId()) {
+        switch (view.getId()) {
             case R.id.button_VeryHappy:
                 text = getString(R.string.text_moodVeryHappy);
                 myCurrentMood = new Mood(user, location, comment, res.getInteger(R.integer.int_VeryHappy));

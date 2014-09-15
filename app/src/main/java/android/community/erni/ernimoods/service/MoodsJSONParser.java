@@ -139,7 +139,7 @@ public class MoodsJSONParser {
             //add password
             JSONObject JSONUser = new JSONObject(jsonString);
             User user = new User(JSONUser.getString("username"), JSONUser.getString("phone"), JSONUser.getString("email"), "");
-            user.setId(JSONUser.getString("_id"));
+            user.setId(JSONUser.getString("id"));
             return user;
         } catch (JSONException e) {
             Log.d("JSON Exception", e.toString());

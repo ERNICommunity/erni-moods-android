@@ -9,10 +9,13 @@ import android.community.erni.ernimoods.api.MoodsBackend;
 import android.community.erni.ernimoods.api.UserBackend;
 import android.community.erni.ernimoods.model.Mood;
 import android.community.erni.ernimoods.model.User;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -86,11 +89,12 @@ public class EntryPoint extends Activity {
             public void onConversionCompleted(User user) {
                 //display username
                 Log.d("User successfully loaded", user.getUsername());
-                //TODO if the user could be retrieved, it exists and redirect to the mymood page
-                //set userRegistered = true
-                ((MoodsApp) getApplication()).userRegistered = true;
-                //change the fragment
-                changeFragment();
+                //change the fragment to mymood
+                FragmentManager fragmentManager = getFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction
+                        .replace(R.id.fragmentContainer, new MyMoodFragment())
+                        .commit();
             }
         };
 
@@ -109,8 +113,12 @@ public class EntryPoint extends Activity {
             public void onJSONResponseError(JSONResponseException e) {
                 //user does not exist or something else went wrong
                 Log.d("Something went wrong", e.getErrorCode() + ": " + e.getErrorMessage());
-                //don't set userRegistered and call function to redirect
-                changeFragment();
+                //redirect to the signup activity
+                FragmentManager fragmentManager = getFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction
+                        .replace(R.id.fragmentContainer, new SignUpFragment())
+                        .commit();
             }
         };
 
@@ -128,12 +136,15 @@ public class EntryPoint extends Activity {
         //attached the specified handlers
         getUser.setListener(callHandlerGetUser);
         getUser.setErrorListener(errorHandlerUser);
-        //TODO load user data from the settings
-        //non existing user to demonstrate the error-code handler
-        getUser.getUserByPassword("notexisting", "samplepassword");
 
-        //if you want to check, what happens if a user exists use this code
-        //getUser.getUserByPassword("dani.erni","password");
+        //load username and password from preferences
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String username = prefs.getString("pref_username", null);
+        String pwd = prefs.getString("pref_password", null);
+
+        //get user by username and password. the handlers will redirect to either the signup
+        //or the mymood, depending on whether the user exists or not
+        getUser.getUserByPassword(username, pwd);
 
     }
 
@@ -175,12 +186,11 @@ public class EntryPoint extends Activity {
             return false;
     }
 
-    public void changeFragment() {
+    public void changeFragment(Boolean userFound) {
         // depending on whether the user is registered, inflate the relevant fragment
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        boolean userRegistered = ((MoodsApp) getApplication()).userRegistered;
-        if (userRegistered) {
+        if (userFound) {
             fragmentTransaction
                     .replace(R.id.fragmentContainer, new MyMoodFragment())
                     .commit();
