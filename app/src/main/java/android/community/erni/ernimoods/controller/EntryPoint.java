@@ -35,8 +35,6 @@ public class EntryPoint extends Activity {
     //error handler to handle errors from the user retrieval
     private UserBackend.OnJSONResponseError errorHandlerUser;
     //storage variable to handle the mood-request
-    private MoodsBackend.OnConversionCompleted callHandlerPostMood;
-    //storage variable to handle the mood-request
     private MoodsBackend.OnConversionCompleted callHandlerDeleteMood;
 
 
@@ -57,26 +55,32 @@ public class EntryPoint extends Activity {
                         "; Mood: " + String.valueOf(moods.get(0).getMood()) + "; Comment: " + moods.get(0).getComment());
                 Log.d("Status", "Moods successfully loaded");
 
+                //this is to demonstrate the delete functionality
+                //the latest mood object retrieved is deleted
+                //however, we don't want to delete a mood each time we start the app, huh? :)
+
+                /*
                 MoodsBackend deleteMood = new MoodsBackend();
                 deleteMood.setListener(callHandlerDeleteMood);
                 deleteMood.setErrorListener(errorHandler);
-                deleteMood.deleteMood("abc");
+                deleteMood.deleteMood(moods.get(0).getId());
+                */
             }
         };
 
-        //attach call handler. this method is called as soon as the moods-list is loaded
+        //attach call handler. this method is called as soon as a moods object has been deleted
         callHandlerDeleteMood = new MoodsBackend.OnConversionCompleted<Boolean>() {
             @Override
-            //what to do on successful conversion?
+            //what to do on successful deletion?
             public void onConversionCompleted(Boolean status) {
-                //Log some data from the retrieved objects
+                //Write a log message if delete was successful
                 if (status == true) {
                     Log.d("Deleted", "Mood object deleted");
                 }
             }
         };
 
-        //event handler when user could be loaded
+        //event handler when user could not be loaded
         callHandlerGetUser = new UserBackend.OnConversionCompleted<User>() {
             @Override
             public void onConversionCompleted(User user) {

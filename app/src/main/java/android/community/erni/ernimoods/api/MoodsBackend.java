@@ -107,7 +107,9 @@ public class MoodsBackend implements IMoodsBackend {
     public void deleteMood(String id) {
         task.setMethod("DELETE");
         task.setListener(deleteMoodListener);
+        //append id to the base url
         baseUri.appendPath(id);
+        //start background task to delete a user
         task.execute(baseUri.toString());
     }
 
@@ -180,10 +182,9 @@ public class MoodsBackend implements IMoodsBackend {
         /**
          * Implementation of the interface's method
          *
-         * @param result Response data as a string
+         * @param result return true if the user has successfully been deleted
          */
         public void onTaskCompleted(String result) {
-            //cut off error marker
             if (result.indexOf("Error") != -1) {
                 //if there is an error, create an error message
                 if (errorListener != null) {
@@ -192,9 +193,7 @@ public class MoodsBackend implements IMoodsBackend {
                 //if there is no error message
             } else {
                 if (listener != null) {
-                    //parse the retrieved json-string and send id of the created mood object to the listener
-                    //return type is String
-                    //the mood object in the backend is created, even if there is no event attached
+                    //return true if the user has been deleted
                     listener.onConversionCompleted(true);
                 }
             }

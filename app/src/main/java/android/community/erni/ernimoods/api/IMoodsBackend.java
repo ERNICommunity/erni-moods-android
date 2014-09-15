@@ -35,8 +35,17 @@ public interface IMoodsBackend extends IBackendEventHandler {
      */
     public void getMoodsByLocation(Double latitude, Double longitude, Double distance);
 
+    /**
+     * Get a mood object from the backend by providing a specific id
+     *
+     * @param id mood object id
+     */
     public void getMoodById(String id);
 
+    /**
+     * Delete a mood object
+     * @param id id of the mood object
+     */
     public void deleteMood(String id);
 }
 

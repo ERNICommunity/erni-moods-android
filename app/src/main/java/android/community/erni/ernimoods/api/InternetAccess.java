@@ -108,10 +108,10 @@ public class InternetAccess extends AsyncTask<String, Void, String> {
     }
 
     /**
-     * Method to actually query get data
+     * Method to perform a delete request
      *
      * @param url REST url
-     * @return queried url
+     * @return status message if the request wasn't successful
      */
     private static String DELETE(String url) {
         InputStream inputStream = null;
@@ -119,9 +119,8 @@ public class InternetAccess extends AsyncTask<String, Void, String> {
         try {
             // create HttpClient
             HttpClient httpclient = new DefaultHttpClient();
-            // make GET request to the given URL
+            // make DELETE request to the given URL
             HttpResponse httpResponse = httpclient.execute(new HttpDelete(url));
-            // receive response as inputStream
             result = "";
             //check whether the status-code in the header indicates an erroneous processing
             if (httpResponse.getStatusLine().getStatusCode() == 404 || httpResponse.getStatusLine().getStatusCode() == 500) {
@@ -131,6 +130,7 @@ public class InternetAccess extends AsyncTask<String, Void, String> {
         } catch (Exception e) {
             Log.d("InputStream", e.getLocalizedMessage());
         }
+        //return string Error if there was an error, empty string if everything went fine
         return result;
     }
 

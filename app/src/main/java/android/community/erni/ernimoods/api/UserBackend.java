@@ -76,7 +76,10 @@ public class UserBackend implements IUserBackend {
 
     public void deleteUser(String id) {
         task.setListener(deleteUserListener);
+        task.setMethod("DELETE");
+        //append the id of the user to the base url
         baseUri.appendPath(id);
+        //start background task
         task.execute(baseUri.toString());
     }
 
@@ -143,10 +146,9 @@ public class UserBackend implements IUserBackend {
         /**
          * Implementation of the interface's method
          *
-         * @param result Response data as a string
+         * @param result return true if the user has been delete
          */
         public void onTaskCompleted(String result) {
-            //cut off error marker
             if (result.indexOf("Error") != -1) {
                 //if there is an error, create an error message
                 if (errorListener != null) {
@@ -155,9 +157,7 @@ public class UserBackend implements IUserBackend {
                 //if there is no error message
             } else {
                 if (listener != null) {
-                    //parse the retrieved json-string and send id of the created mood object to the listener
-                    //return type is String
-                    //the mood object in the backend is created, even if there is no event attached
+                    //return true to indicate that the user has been deleted
                     listener.onConversionCompleted(true);
                 }
             }
