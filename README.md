@@ -40,4 +40,9 @@ This inflates SettingsFragment which contains the user preferences.
 #ToDo List
 Here is a list of things that the app would need:
 
+* myMoodActiviy: acquire location after the user has selected the mood. post the mood object to the database.
+* display the moodsNearMe on a google map
+* improve the navigation
+* ...
+
 
