@@ -12,6 +12,7 @@ public class Mood {
     private String username;
     private Location location;
     private String comment;
+    private String id = "";
     private int mood;
 
     public Mood (String username, Location location, String comment, int mood) {
@@ -19,6 +20,14 @@ public class Mood {
         this.location = location;
         this.comment = comment;
         this.mood = mood;
+    }
+
+    public Mood(String username, Location location, String comment, int mood, String id) {
+        this.username = username;
+        this.location = location;
+        this.comment = comment;
+        this.mood = mood;
+        this.id = id;
     }
 
 
@@ -40,6 +49,10 @@ public class Mood {
         return mood;
     }
 
+    public String getId() {
+        return id;
+    }
+
     public void setUsername(String username) {
         this.username = username;
     }
@@ -58,5 +71,9 @@ public class Mood {
 
     public String toString() {
         return "username: " + username + " mood: " + mood;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

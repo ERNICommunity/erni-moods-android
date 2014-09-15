@@ -34,6 +34,10 @@ public class EntryPoint extends Activity {
     private MoodsBackend.OnJSONResponseError errorHandler;
     //error handler to handle errors from the user retrieval
     private UserBackend.OnJSONResponseError errorHandlerUser;
+    //storage variable to handle the mood-request
+    private MoodsBackend.OnConversionCompleted callHandlerPostMood;
+    //storage variable to handle the mood-request
+    private MoodsBackend.OnConversionCompleted callHandlerDeleteMood;
 
 
     @Override
@@ -52,6 +56,23 @@ public class EntryPoint extends Activity {
                 Log.d("Latest moods object", "Username: " + moods.get(0).getUsername() +
                         "; Mood: " + String.valueOf(moods.get(0).getMood()) + "; Comment: " + moods.get(0).getComment());
                 Log.d("Status", "Moods successfully loaded");
+
+                MoodsBackend deleteMood = new MoodsBackend();
+                deleteMood.setListener(callHandlerDeleteMood);
+                deleteMood.setErrorListener(errorHandler);
+                deleteMood.deleteMood("abc");
+            }
+        };
+
+        //attach call handler. this method is called as soon as the moods-list is loaded
+        callHandlerDeleteMood = new MoodsBackend.OnConversionCompleted<Boolean>() {
+            @Override
+            //what to do on successful conversion?
+            public void onConversionCompleted(Boolean status) {
+                //Log some data from the retrieved objects
+                if (status == true) {
+                    Log.d("Deleted", "Mood object deleted");
+                }
             }
         };
 

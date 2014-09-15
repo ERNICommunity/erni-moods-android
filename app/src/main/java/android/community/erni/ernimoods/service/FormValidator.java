@@ -16,7 +16,7 @@ public class FormValidator {
                     + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 
     //very simple regex for phone numbers
-    private static final String PHONE_PATTERN ="^\\+?[\\d() -]{4,}$";
+    private static final String PHONE_PATTERN = "^\\+?[\\d() -]{10,}$";
 
     /**
      * Checks whether a username isn't empty
@@ -24,7 +24,7 @@ public class FormValidator {
      * @return true if length is larger than zero, false if empty inout
      */
     public static boolean validateUsername(EditText v){
-        if(v.getText().length() == 0){
+        if (v.getText().length() < 5) {
             return false;
         }else{
             return true;
@@ -37,7 +37,7 @@ public class FormValidator {
      * @return True if valid, False if not valid
      */
     public static boolean validatePassword(EditText v){
-        if(v.getText().length() < 4){
+        if (v.getText().length() < 5) {
             return false;
         }else{
             return true;

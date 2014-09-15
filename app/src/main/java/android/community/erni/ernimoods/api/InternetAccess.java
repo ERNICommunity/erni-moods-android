@@ -5,6 +5,7 @@ import android.util.Log;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -107,6 +108,33 @@ public class InternetAccess extends AsyncTask<String, Void, String> {
     }
 
     /**
+     * Method to actually query get data
+     *
+     * @param url REST url
+     * @return queried url
+     */
+    private static String DELETE(String url) {
+        InputStream inputStream = null;
+        String result = "";
+        try {
+            // create HttpClient
+            HttpClient httpclient = new DefaultHttpClient();
+            // make GET request to the given URL
+            HttpResponse httpResponse = httpclient.execute(new HttpDelete(url));
+            // receive response as inputStream
+            result = "";
+            //check whether the status-code in the header indicates an erroneous processing
+            if (httpResponse.getStatusLine().getStatusCode() == 404 || httpResponse.getStatusLine().getStatusCode() == 500) {
+                //add the Prefix "Error"
+                result = "Error";
+            }
+        } catch (Exception e) {
+            Log.d("InputStream", e.getLocalizedMessage());
+        }
+        return result;
+    }
+
+    /**
      * Method to perform a post request
      *
      * @param url REST url
@@ -176,6 +204,9 @@ public class InternetAccess extends AsyncTask<String, Void, String> {
             return GET(urls[0]);
         } else if (method == "POST") {
             return POST(urls[0], urls[1]);
+        } else if (method == "DELETE") {
+            return DELETE(urls[0]);
+
         } else {
             return "";
         }

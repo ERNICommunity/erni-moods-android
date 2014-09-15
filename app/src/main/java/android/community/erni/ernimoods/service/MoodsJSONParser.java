@@ -96,6 +96,7 @@ public class MoodsJSONParser {
                 moodObject.setUsername(JSONmood.getString("username"));
                 moodObject.setComment(JSONmood.getString("comment"));
                 moodObject.setMood(JSONmood.getInt("mood"));
+                moodObject.setId(JSONmood.getString("id"));
                 //add the object to the list
                 myMoods.add(moodObject);
             }
@@ -138,6 +139,7 @@ public class MoodsJSONParser {
             //add password
             JSONObject JSONUser = new JSONObject(jsonString);
             User user = new User(JSONUser.getString("username"), JSONUser.getString("phone"), JSONUser.getString("email"), "");
+            user.setId(JSONUser.getString("_id"));
             return user;
         } catch (JSONException e) {
             Log.d("JSON Exception", e.toString());

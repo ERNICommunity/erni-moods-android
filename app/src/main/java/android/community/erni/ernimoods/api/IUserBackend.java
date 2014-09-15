@@ -30,4 +30,6 @@ public interface IUserBackend extends IBackendEventHandler {
      */
     public void getUserByPhone(String username, String phone);
 
+    public void deleteUser(String id);
+
 }

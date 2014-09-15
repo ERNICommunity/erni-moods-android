@@ -34,5 +34,9 @@ public interface IMoodsBackend extends IBackendEventHandler {
      * @param distance  distance from the origin in meters
      */
     public void getMoodsByLocation(Double latitude, Double longitude, Double distance);
+
+    public void getMoodById(String id);
+
+    public void deleteMood(String id);
 }
 

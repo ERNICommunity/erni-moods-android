@@ -73,6 +73,13 @@ public class UserBackend implements IUserBackend {
         task.execute(baseUri.toString());
     }
 
+
+    public void deleteUser(String id) {
+        task.setListener(deleteUserListener);
+        baseUri.appendPath(id);
+        task.execute(baseUri.toString());
+    }
+
     /**
      * Event handler to process an async http call to the moods-backend to create a user
      */
@@ -128,4 +135,33 @@ public class UserBackend implements IUserBackend {
             }
         }
     };
+
+    /**
+     * Event handler to process an async http call to the moods-backend to delete a mood
+     */
+    private InternetAccess.OnTaskCompleted deleteUserListener = new InternetAccess.OnTaskCompleted() {
+        /**
+         * Implementation of the interface's method
+         *
+         * @param result Response data as a string
+         */
+        public void onTaskCompleted(String result) {
+            //cut off error marker
+            if (result.indexOf("Error") != -1) {
+                //if there is an error, create an error message
+                if (errorListener != null) {
+                    errorListener.onJSONResponseError(new JSONResponseException("The moods object could not be deleted. The object with the specified id was not found", "Ressource not found"));
+                }
+                //if there is no error message
+            } else {
+                if (listener != null) {
+                    //parse the retrieved json-string and send id of the created mood object to the listener
+                    //return type is String
+                    //the mood object in the backend is created, even if there is no event attached
+                    listener.onConversionCompleted(true);
+                }
+            }
+        }
+    };
+
 }
