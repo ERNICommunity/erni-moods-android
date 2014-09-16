@@ -10,7 +10,6 @@ import android.community.erni.ernimoods.api.MoodsBackend;
 import android.community.erni.ernimoods.api.UserBackend;
 import android.community.erni.ernimoods.model.Mood;
 import android.community.erni.ernimoods.model.User;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
@@ -106,7 +105,7 @@ public class EntryPoint extends Activity implements ActionBar.TabListener {
                 FragmentManager fragmentManager = getFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                 fragmentTransaction
-                        .replace(R.id.fragmentContainer, new MyMoodFragment())
+                        .replace(R.id.fragmentContainer, new MoodsNearMe())
                         .commit();
             }
         };
