@@ -1,5 +1,6 @@
 package android.community.erni.ernimoods.controller;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -26,8 +27,9 @@ import java.util.ArrayList;
 /**
  * This is the starting Activity for the application.
  */
-public class EntryPoint extends Activity {
+public class EntryPoint extends Activity implements ActionBar.TabListener {
     TextView welcomeText;
+    public static final String TAG = "EntryPoint";
 
     //storage variable to handle the mood-request
     private MoodsBackend.OnConversionCompleted callHandlerGetMoods;
@@ -45,6 +47,17 @@ public class EntryPoint extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_entry_point);
+
+        //setup the action bar to show tabs
+
+       final ActionBar actionBar = getActionBar();
+       actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+
+        // hard code the tabs
+       actionBar.addTab(actionBar.newTab().setText("Near Me").setTabListener(this));
+       actionBar.addTab(actionBar.newTab().setText("My Mood").setTabListener(this));
+        // etc for mood history in future
+
 
 
         //attach call handler. this method is called as soon as the moods-list is loaded
@@ -148,6 +161,8 @@ public class EntryPoint extends Activity {
 
     }
 
+
+
     /*
     this creates the 'menu' which at the moment is only a preferences button rather than menu items
     */
@@ -199,5 +214,30 @@ public class EntryPoint extends Activity {
                     .replace(R.id.fragmentContainer, new SignUpFragment())
                     .commit();
         }
+    }
+
+    @Override
+    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
+        switch (tab.getPosition()) {
+            case 0:
+                // ft.replace(R.id.fragmentContainer, new MoodsNearMeFragment());
+                Log.d(TAG, "Created MOodsNearMeFragment");
+            break;
+            case 1:
+                ft.replace(R.id.fragmentContainer, new MyMoodFragment());
+                Log.d(TAG, "Created MyMoodFragment");
+                break;
+        }
+
+    }
+
+    @Override
+    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction ft) {
+
+    }
+
+    @Override
+    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
+
     }
 }
