@@ -66,10 +66,11 @@ public class EntryPoint extends Activity implements ActionBar.TabListener {
             public void onConversionCompleted(ArrayList<Mood> moods) {
                 //Log some data from the retrieved objects
                 Log.d("Number of moods in database", String.valueOf(moods.size()));
-                Log.d("Latest moods object", "Username: " + moods.get(0).getUsername() +
+                if (moods.size() > 0) {
+                    Log.d("Latest moods object", "Username: " + moods.get(0).getUsername() +
                         "; Mood: " + String.valueOf(moods.get(0).getMood()) + "; Comment: " + moods.get(0).getComment());
-                Log.d("Status", "Moods successfully loaded");
-
+                    Log.d("Status", "Moods successfully loaded");
+                }
                 //this is to demonstrate the delete functionality
                 //the latest mood object retrieved is deleted
                 //however, we don't want to delete a mood each time we start the app, huh? :)
