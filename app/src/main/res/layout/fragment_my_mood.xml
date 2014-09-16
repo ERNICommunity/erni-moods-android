@@ -20,8 +20,7 @@
         android:src="@drawable/smiley_very_happy"
         android:layout_gravity="center_horizontal"
         android:focusableInTouchMode="false"
-        android:contentDescription="@string/text_moodVeryHappy"
-        android:onClick="setMood" />
+        android:contentDescription="@string/text_moodVeryHappy" />
 
     <ImageButton
         android:layout_width="fill_parent"
