@@ -10,7 +10,7 @@
     <string name="title_activity_settings">SettingsActivity</string>
     <string name="title_activity_signUp_message">Sign Up to Moods App</string>
     <string name="title_activity_myMood">Tell me your mood!</string>
-    <!--String resources for SignUp-Acitvity-->
+    <!-- String resources for SignUp-Acitvity -->
     <string name="signUpTitle">Sign up to ERNI Moods now!</string>
     <string name="signUpUsernameHint">Username</string>
     <string name="signUpUsernameHint1">Username</string>
@@ -22,9 +22,11 @@
     <string name="signUpEmailErrorMessage">Please enter a correct e-mail address</string>
     <string name="signUpPasswordErrorMessage">Passwort needs to have at least 4 characters</string>
     <string name="signUpPhoneErrorMessage">A phone number may only contain +,(), space and numbers</string>
-<string name="text_moodVeryHappy">Very happy</string>
+    <string name="text_moodVeryHappy">Very happy</string>
     <string name="text_moodGood">Good</string>
     <string name="text_moodSoSoLaLa">SoSoLaLa</string>
     <string name="text_moodNotAmused">Not amused</string>
     <string name="text_moodVeryMoody">Very moody</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>
