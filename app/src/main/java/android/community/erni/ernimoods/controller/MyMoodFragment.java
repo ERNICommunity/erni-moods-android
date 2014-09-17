@@ -43,11 +43,12 @@ public class MyMoodFragment extends Fragment {
             }
         };
 
-        registerClickListener(view, R.id.button_VeryHappy, R.integer.int_VeryHappy);
-        registerClickListener(view, R.id.button_Good, R.integer.int_Good);
-        registerClickListener(view, R.id.button_SoSoLaLa, R.integer.int_SosoLala);
-        registerClickListener(view, R.id.button_NotAmused, R.integer.int_NotAmused);
-        registerClickListener(view, R.id.button_VeryMoody, R.integer.int_VeryMoody);
+        Context context = getActivity().getApplicationContext();
+        registerClickListener(view, R.id.button_VeryHappy, context.getResources().getInteger(R.integer.int_VeryHappy));
+        registerClickListener(view, R.id.button_Good, context.getResources().getInteger(R.integer.int_Good));
+        registerClickListener(view, R.id.button_SoSoLaLa, context.getResources().getInteger(R.integer.int_SosoLala));
+        registerClickListener(view, R.id.button_NotAmused, context.getResources().getInteger(R.integer.int_NotAmused));
+        registerClickListener(view, R.id.button_VeryMoody, context.getResources().getInteger(R.integer.int_VeryMoody));
 
         return view;
     }
