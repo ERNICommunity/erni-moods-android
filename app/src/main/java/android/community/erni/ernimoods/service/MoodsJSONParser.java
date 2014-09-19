@@ -1,6 +1,7 @@
 package android.community.erni.ernimoods.service;
 
 import android.community.erni.ernimoods.api.JSONResponseException;
+import android.community.erni.ernimoods.model.GooglePlace;
 import android.community.erni.ernimoods.model.Mood;
 import android.community.erni.ernimoods.model.User;
 import android.location.Location;
@@ -175,5 +176,31 @@ public class MoodsJSONParser {
         }
         //return the created json-object as a string
         return JSONMood.toString();
+    }
+
+    public static ArrayList<GooglePlace> parsePlacesJSON(String jsonString, int max) {
+        ArrayList<GooglePlace> places = new ArrayList<GooglePlace>();
+        try {
+            JSONObject placesJSON = new JSONObject(jsonString);
+            JSONArray placesArray = placesJSON.getJSONArray("results");
+            for (int i = 0; i < placesArray.length() && i < max; i++) {
+                JSONObject currentPlaceJSON = placesArray.getJSONObject(i);
+                GooglePlace currentPlace = new GooglePlace();
+                currentPlace.setName(currentPlaceJSON.getString("name"));
+                currentPlace.setIcon(currentPlaceJSON.getString("icon"));
+                currentPlace.setRating(currentPlaceJSON.getDouble("rating"));
+                currentPlace.setAddress(currentPlaceJSON.getString("vicinity"));
+                Location currentPlaceLocation = new Location(currentPlace.getName());
+                JSONObject geometry = currentPlaceJSON.getJSONObject("geometry");
+                JSONObject coordinates = geometry.getJSONObject("location");
+                currentPlaceLocation.setLatitude(coordinates.getDouble("lat"));
+                currentPlaceLocation.setLongitude(coordinates.getDouble("lng"));
+                currentPlace.setLocation(currentPlaceLocation);
+                places.add(currentPlace);
+            }
+        } catch (JSONException e) {
+            Log.d("Place parsing", "Something went wrong");
+        }
+        return places;
     }
 }
