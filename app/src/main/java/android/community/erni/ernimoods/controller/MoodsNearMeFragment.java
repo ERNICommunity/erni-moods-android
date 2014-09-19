@@ -15,7 +15,8 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -32,6 +33,9 @@ public class MoodsNearMeFragment extends Fragment {
 
     /** Local variables **/
     GoogleMap googleMap;
+    private MapView mMapView;
+    private Bundle mBundle;
+    private BitmapDescriptorFactory bitmapFactory;
     //storage variable to handle the mood-request
     private MoodsBackend.OnConversionCompleted callHandlerGetMoods;
     //error handler to handle errors from the request
@@ -43,6 +47,7 @@ public class MoodsNearMeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_moods_near_me, container, false);
+
 
         //attach call handler. this method is called as soon as the moods-list is loaded
         callHandlerGetMoods = new MoodsBackend.OnConversionCompleted<ArrayList<Mood>>() {
@@ -60,13 +65,16 @@ public class MoodsNearMeFragment extends Fragment {
 
         //create a map between image and mood
         Context context = getActivity().getApplicationContext();
+        MapsInitializer.initialize(context);
         iconMap.put(5, R.drawable.smiley_very_happy);
         iconMap.put(4, R.drawable.smiley_good);
         iconMap.put(3, R.drawable.smiley_sosolala);
         iconMap.put(2, R.drawable.smiley_not_amused);
         iconMap.put(1, R.drawable.smiley_very_moody);
 
-        createMapView();
+        mMapView = (MapView) view.findViewById(R.id.map);
+        mMapView.onCreate(mBundle);
+        createMapView(view);
 
         //create a moods backend object
         MoodsBackend getMoods = new MoodsBackend();
@@ -83,15 +91,14 @@ public class MoodsNearMeFragment extends Fragment {
     /**
      * Initialises the mapview
      */
-    private void createMapView(){
+    private void createMapView(View v) {
         /**
          * Catch the null pointer exception that
          * may be thrown when initialising the map
          */
         try {
             if(null == googleMap){
-                googleMap = ((MapFragment) getFragmentManager().findFragmentById(
-                        R.id.mapView)).getMap();
+                googleMap = ((MapView) v.findViewById(R.id.map)).getMap();
 
                 /**
                  * If the map is still null after attempted initialisation,
@@ -114,10 +121,12 @@ public class MoodsNearMeFragment extends Fragment {
 
         /** Make sure that the map has been initialised **/
         if(null != googleMap){
+            Log.d("resid", Integer.toString(R.drawable.smiley_sosolala));
             googleMap.addMarker(new MarkerOptions()
                             .position(new LatLng(mood.getLocation().getLongitude(), mood.getLocation().getLatitude()))
                             .title(mood.getUsername())
                             .snippet(mood.getComment())
+                                    //.icon(BitmapDescriptorFactory.fromResource(iconMap.get(mood.getMood())))
                             .icon(BitmapDescriptorFactory.fromResource(iconMap.get(mood.getMood())))
 
             );
@@ -133,6 +142,30 @@ public class MoodsNearMeFragment extends Fragment {
             location.setLongitude(8.552031d);
         }
         return location;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mBundle = savedInstanceState;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mMapView.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mMapView.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        mMapView.onDestroy();
+        super.onDestroy();
     }
 
 }
