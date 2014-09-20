@@ -105,7 +105,7 @@ public class EntryPoint extends Activity implements ActionBar.TabListener {
                 FragmentManager fragmentManager = getFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                 fragmentTransaction
-                        .replace(R.id.fragmentContainer, new MoodsNearMeFragment())
+                        .replace(R.id.fragmentContainer, new MyMoodFragment())
                         .commit();
             }
         };

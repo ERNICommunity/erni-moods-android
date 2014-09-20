@@ -182,13 +182,15 @@ public class MoodsJSONParser {
         ArrayList<GooglePlace> places = new ArrayList<GooglePlace>();
         try {
             JSONObject placesJSON = new JSONObject(jsonString);
+            Log.d("huhuuu", "huhuuu");
             JSONArray placesArray = placesJSON.getJSONArray("results");
             for (int i = 0; i < placesArray.length() && i < max; i++) {
                 JSONObject currentPlaceJSON = placesArray.getJSONObject(i);
                 GooglePlace currentPlace = new GooglePlace();
                 currentPlace.setName(currentPlaceJSON.getString("name"));
                 currentPlace.setIcon(currentPlaceJSON.getString("icon"));
-                currentPlace.setRating(currentPlaceJSON.getDouble("rating"));
+                if (currentPlaceJSON.has("rating"))
+                    currentPlace.setRating(currentPlaceJSON.getDouble("rating"));
                 currentPlace.setAddress(currentPlaceJSON.getString("vicinity"));
                 Location currentPlaceLocation = new Location(currentPlace.getName());
                 JSONObject geometry = currentPlaceJSON.getJSONObject("geometry");

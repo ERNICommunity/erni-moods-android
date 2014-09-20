@@ -25,6 +25,24 @@ public class PlacesBackend implements IPlacesBackend {
         baseUri.appendPath("json");
     }
 
+    /**
+     * Method to set a listener to handle the converted data
+     *
+     * @param listener Setter method to set the listener
+     */
+    public void setListener(OnConversionCompleted listener) {
+        this.listener = listener;
+    }
+
+    /**
+     * Setter for the event handler of backend-error messages
+     *
+     * @param listener
+     */
+    public void setErrorListener(IBackendEventHandler.OnJSONResponseError listener) {
+        this.errorListener = listener;
+    }
+
     public void getBars(Double lat, Double lng, Integer radius, Integer maxResults) {
         this.maxResults = maxResults;
         //attach a listener to handle the queried response-string
@@ -34,6 +52,7 @@ public class PlacesBackend implements IPlacesBackend {
         baseUri.appendQueryParameter("location", Double.toString(lat) + "," + Double.toString(lng));
         baseUri.appendQueryParameter("types", "bar");
         baseUri.appendQueryParameter("radius", Integer.toString(radius));
+        baseUri.appendQueryParameter("rankBy", "distance");
         task.execute(baseUri.toString());
     }
 

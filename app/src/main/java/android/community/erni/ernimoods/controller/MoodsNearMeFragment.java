@@ -3,6 +3,8 @@ package android.community.erni.ernimoods.controller;
 import android.app.Fragment;
 import android.community.erni.ernimoods.R;
 import android.community.erni.ernimoods.api.MoodsBackend;
+import android.community.erni.ernimoods.api.PlacesBackend;
+import android.community.erni.ernimoods.model.GooglePlace;
 import android.community.erni.ernimoods.model.Mood;
 import android.content.Context;
 import android.location.Location;
@@ -14,15 +16,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 
@@ -35,13 +40,15 @@ public class MoodsNearMeFragment extends Fragment {
     GoogleMap googleMap;
     private MapView mMapView;
     private Bundle mBundle;
-    private BitmapDescriptorFactory bitmapFactory;
     //storage variable to handle the mood-request
     private MoodsBackend.OnConversionCompleted callHandlerGetMoods;
     //error handler to handle errors from the request
     private MoodsBackend.OnJSONResponseError errorHandler;
+    private PlacesBackend.OnConversionCompleted callHandlerGetPlaces;
 
     private Map<Integer, Integer> iconMap = new HashMap();
+    private Map<GooglePlace, Marker> barMap = new HashMap();
+    private Map<Mood, Marker> moodMap = new HashMap();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -64,18 +71,62 @@ public class MoodsNearMeFragment extends Fragment {
             }
         };
 
+        //attach call handler. this method is called as soon as the moods-list is loaded
+        callHandlerGetPlaces = new PlacesBackend.OnConversionCompleted<ArrayList<GooglePlace>>() {
+            @Override
+            //what to do on successful conversion?
+            public void onConversionCompleted(ArrayList<GooglePlace> place) {
+                for (int i = 0; i < place.size(); i++) {
+                    addMarker(place.get(i));
+                }
+
+            }
+        };
+
+
+        mMapView = (MapView) view.findViewById(R.id.map);
+        mMapView.onCreate(mBundle);
+        createMapView(view);
+
+        googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+
+            public boolean onMarkerClick(Marker marker) {
+                if (!barMap.containsValue(marker)) {
+                    Iterator barIt = barMap.entrySet().iterator();
+                    while (barIt.hasNext()) {
+                        Map.Entry pair = (Map.Entry) barIt.next();
+                        ((Marker) pair.getValue()).remove();
+                        barIt.remove();
+                    }
+                    if (googleMap.getCameraPosition().zoom <= 12.0f) {
+                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), 12.0f));
+                    }
+                    marker.showInfoWindow();
+                    PlacesBackend places = new PlacesBackend();
+                    places.setListener(callHandlerGetPlaces);
+                    places.getBars(marker.getPosition().latitude, marker.getPosition().longitude, 10000, 10);
+                    return true;
+                } else {
+                    marker.showInfoWindow();
+                    return true;
+                }
+            }
+
+
+        });
+
         //create a map between image and mood
         Context context = getActivity().getApplicationContext();
         MapsInitializer.initialize(context);
+
+        Location currentLoc = getCurrentLocation();
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLoc.getLatitude(), currentLoc.getLongitude()), 12.0f));
+
         iconMap.put(5, R.drawable.smiley_very_happy);
         iconMap.put(4, R.drawable.smiley_good);
         iconMap.put(3, R.drawable.smiley_sosolala);
         iconMap.put(2, R.drawable.smiley_not_amused);
         iconMap.put(1, R.drawable.smiley_very_moody);
-
-        mMapView = (MapView) view.findViewById(R.id.map);
-        mMapView.onCreate(mBundle);
-        createMapView(view);
 
         //create a moods backend object
         MoodsBackend getMoods = new MoodsBackend();
@@ -122,15 +173,30 @@ public class MoodsNearMeFragment extends Fragment {
 
         /** Make sure that the map has been initialised **/
         if(null != googleMap){
-            Log.d("resid", Integer.toString(R.drawable.smiley_sosolala));
-            googleMap.addMarker(new MarkerOptions()
-                            .position(new LatLng(mood.getLocation().getLongitude(), mood.getLocation().getLatitude()))
+            Marker marker = googleMap.addMarker(new MarkerOptions()
+                    .position(new LatLng(mood.getLocation().getLatitude(), mood.getLocation().getLongitude()))
                             .title(mood.getUsername())
                             .snippet(mood.getComment())
                                     //.icon(BitmapDescriptorFactory.fromResource(iconMap.get(mood.getMood())))
                             .icon(BitmapDescriptorFactory.fromResource(iconMap.get(mood.getMood())))
+                    .draggable(true));
+            moodMap.put(mood, marker);
+        }
+    }
 
-            );
+    /**
+     * Adds a marker to the map
+     */
+    private void addMarker(GooglePlace place) {
+
+        /** Make sure that the map has been initialised **/
+        if (null != googleMap) {
+            Marker marker = googleMap.addMarker(new MarkerOptions()
+                    .position(new LatLng(place.getLocation().getLatitude(), place.getLocation().getLongitude()))
+                    .title(place.getName())
+                    .snippet(place.getAddress())
+                    .draggable(true));
+            barMap.put(place, marker);
         }
     }
 

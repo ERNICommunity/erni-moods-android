@@ -8,18 +8,14 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-
-import java.util.ArrayList;
 
 /**
  * This fragment is used to enter your current mood
@@ -92,9 +88,10 @@ public class MyMoodFragment extends Fragment {
         Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
         if (location == null) {
-            location = new Location("ERNI ZH");
-            location.setLatitude(47.414892d);
-            location.setLongitude(8.552031d);
+            location = new Location("Dummy Location");
+            //Stray the corrdinates +/- 1 degree around Zurich, in order not to have all dummy locs at the same place
+            location.setLatitude(47.414892d + (Math.random() * 2 - 1));
+            location.setLongitude(8.552031d + (Math.random() * 2 - 1));
         }
 
         return location;
