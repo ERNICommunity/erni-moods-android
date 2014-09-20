@@ -1,6 +1,8 @@
 package android.community.erni.ernimoods.controller;
 
 import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.community.erni.ernimoods.R;
 import android.community.erni.ernimoods.api.MoodsBackend;
 import android.community.erni.ernimoods.model.Mood;
@@ -36,7 +38,11 @@ public class MyMoodFragment extends Fragment {
             public void onConversionCompleted(String id) {
                 //Log some data from the retrieved objects
                 Log.d("Mood create with id", id);
-//
+                FragmentManager fragmentManager = getFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction
+                        .replace(R.id.fragmentContainer, new MoodsNearMeFragment())
+                        .commit();
             }
         };
 
