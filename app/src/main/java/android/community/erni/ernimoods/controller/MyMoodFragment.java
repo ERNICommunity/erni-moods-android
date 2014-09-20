@@ -32,7 +32,8 @@ public class MyMoodFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_my_mood, container, false);
-
+        // show the action bar when this fragment is displayed
+        getActivity().getActionBar().show();
         callHandlerPostMood = new MoodsBackend.OnConversionCompleted<String>() {
             @Override
             //what to do on successful conversion?

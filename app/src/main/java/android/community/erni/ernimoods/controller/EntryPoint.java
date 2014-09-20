@@ -29,7 +29,7 @@ import java.util.ArrayList;
 public class EntryPoint extends Activity implements ActionBar.TabListener {
     TextView welcomeText;
     public static final String TAG = "EntryPoint";
-    public static FragmentManager fragmentManager;
+
 
     //storage variable to handle the mood-request
     private MoodsBackend.OnConversionCompleted callHandlerGetMoods;
@@ -49,7 +49,6 @@ public class EntryPoint extends Activity implements ActionBar.TabListener {
         setContentView(R.layout.activity_entry_point);
 
         //setup the action bar to show tabs
-
        final ActionBar actionBar = getActionBar();
        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
@@ -57,8 +56,6 @@ public class EntryPoint extends Activity implements ActionBar.TabListener {
        actionBar.addTab(actionBar.newTab().setText("Near Me").setTabListener(this));
        actionBar.addTab(actionBar.newTab().setText("My Mood").setTabListener(this));
         // etc for mood history in future
-
-        fragmentManager = getFragmentManager();
 
 
         //attach call handler. this method is called as soon as the moods-list is loaded
@@ -222,8 +219,9 @@ public class EntryPoint extends Activity implements ActionBar.TabListener {
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
         switch (tab.getPosition()) {
             case 0:
-                // ft.replace(R.id.fragmentContainer, new MoodsNearMeFragment());
+                ft.replace(R.id.fragmentContainer, new MoodsNearMeFragment());
                 Log.d(TAG, "Created MOodsNearMeFragment");
+
             break;
             case 1:
                 ft.replace(R.id.fragmentContainer, new MyMoodFragment());

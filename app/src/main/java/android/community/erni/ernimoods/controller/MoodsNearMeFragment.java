@@ -47,7 +47,8 @@ public class MoodsNearMeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_moods_near_me, container, false);
-
+        // show the action bar when this fragment is displayed
+        getActivity().getActionBar().show();
 
         //attach call handler. this method is called as soon as the moods-list is loaded
         callHandlerGetMoods = new MoodsBackend.OnConversionCompleted<ArrayList<Mood>>() {

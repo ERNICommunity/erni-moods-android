@@ -42,6 +42,9 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_signup, container, false);
 
+        // hide the action bar entirely as it is not required on signup and navigation is prohibited
+        getActivity().getActionBar().hide();
+
         // handler that handles the event if a user is successfully created
         //the method yields the userid as a string
         callHandlerPost = new UserBackend.OnConversionCompleted<String>() {
@@ -234,4 +237,6 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
 
         }
     }
+
+
 }
