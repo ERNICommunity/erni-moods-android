@@ -161,7 +161,6 @@ public class EntryPoint extends Activity implements ActionBar.TabListener {
     }
 
 
-
     /*
     this creates the 'menu' which at the moment is only a preferences button rather than menu items
     */
@@ -200,20 +199,6 @@ public class EntryPoint extends Activity implements ActionBar.TabListener {
             return false;
     }
 
-    public void changeFragment(Boolean userFound) {
-        // depending on whether the user is registered, inflate the relevant fragment
-        FragmentManager fragmentManager = getFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        if (userFound) {
-            fragmentTransaction
-                    .replace(R.id.fragmentContainer, new MyMoodFragment())
-                    .commit();
-        } else {
-            fragmentTransaction
-                    .replace(R.id.fragmentContainer, new SignUpFragment())
-                    .commit();
-        }
-    }
 
     @Override
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
