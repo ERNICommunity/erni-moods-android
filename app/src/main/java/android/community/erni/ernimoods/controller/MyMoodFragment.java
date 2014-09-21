@@ -18,7 +18,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * This fragment is used to enter your current mood
@@ -29,16 +34,28 @@ public class MyMoodFragment extends Fragment {
     private static final String TAG = "MyMoodFragment";
     //storage variable to handle the mood-request
     private MoodsBackend.OnConversionCompleted callHandlerPostMood;
+    // the greeting message, will be programmatically altered depending on the time of day
+    private TextView greeting;
+    private EditText comment;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_my_mood, container, false);
+
+        // references to the UI objects we need
+        greeting = (TextView)view.findViewById(R.id.textViewGreeting);
+        comment = (EditText)view.findViewById(R.id.commentText);
+
 
         // show the action bar when this fragment is displayed
         getActivity().getActionBar().show();
 
         //make sure the MyMood Tab is highlighted
         getActivity().getActionBar().setSelectedNavigationItem(1);
+
+        // set the greeting depending on the time of day
+        createGreeting();
+
 
         callHandlerPostMood = new MoodsBackend.OnConversionCompleted<String>() {
             @Override
@@ -72,10 +89,11 @@ public class MyMoodFragment extends Fragment {
                 Resources res = getResources();
                 SharedPreferences myPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getBaseContext());
 
-                String comment = "These are test entries for test purpose";
                 String user = myPreferences.getString("pref_username", "nothing");
+                String commentText = comment.getText().toString();
 
-                Mood myCurrentMood = new Mood(user, getCurrentLocation(), comment, moodId);
+                // create a mood object
+                Mood myCurrentMood = new Mood(user, getCurrentLocation(), commentText, moodId);
 
                 Log.d(TAG, "Created mood: " + myCurrentMood.toString());
 
@@ -106,4 +124,22 @@ public class MyMoodFragment extends Fragment {
         return location;
     }
 
+    /**
+     * changes the greeting depending on the time of day
+     */
+    private void createGreeting() {
+        Calendar calendar = Calendar.getInstance();
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        String timeOfDay;
+        if (hour > 0 && hour < 12) {
+            timeOfDay = "morning";
+        } else if (hour > 12 && hour < 17) {
+            timeOfDay = "afternoon";
+        } else {
+            timeOfDay = "evening";
+        }
+        greeting.setText("Good " + timeOfDay + ". How are you today?");
+
+
+    }
 }

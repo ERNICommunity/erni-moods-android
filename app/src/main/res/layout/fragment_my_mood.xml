@@ -4,6 +4,14 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView"
+        android:src="@drawable/erni"
+        android:paddingLeft="12dp"
+        android:paddingTop="12dp" />
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -11,7 +19,9 @@
         android:text="@string/greeting"
         android:id="@+id/textViewGreeting"
         android:textAlignment="center"
-        android:gravity="center" />
+        android:gravity="center"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="30sp" />
 
     <ImageButton
         android:layout_width="fill_parent"
@@ -23,15 +33,14 @@
         android:contentDescription="@string/text_moodVeryHappy" />
 
     <ImageButton
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/button_Good"
         android:src="@drawable/smiley_good"
         android:contentDescription="@string/text_moodGood"
         android:layout_gravity="center_horizontal"
-        android:focusable="false"
-        android:cropToPadding="true"
-        android:onClick="setMood" />
+        android:focusableInTouchMode="false"
+        android:cropToPadding="true" />
 
     <ImageButton
         android:layout_width="fill_parent"
@@ -40,7 +49,7 @@
         android:src="@drawable/smiley_sosolala"
         android:contentDescription="@string/text_moodSoSoLaLa"
         android:layout_gravity="center_horizontal"
-        android:onClick="setMood" />
+        android:focusableInTouchMode="false" />
 
     <ImageButton
         android:layout_width="fill_parent"
@@ -49,8 +58,7 @@
         android:src="@drawable/smiley_not_amused"
         android:focusableInTouchMode="false"
         android:contentDescription="@string/text_moodNotAmused"
-        android:layout_gravity="center_horizontal"
-        android:onClick="setMood" />
+        android:layout_gravity="center_horizontal" />
 
     <ImageButton
         android:layout_width="fill_parent"
@@ -60,6 +68,22 @@
         android:contentDescription="@string/text_moodVeryMoody"
         android:focusable="false"
         android:layout_gravity="center_horizontal"
-        android:onClick="setMood" />
+        android:focusableInTouchMode="false" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="@string/lbl_enterYourComment"
+        android:id="@+id/textView"
+        android:layout_marginTop="30dp" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/commentText"
+        android:maxLines="2"
+        android:minLines="2"
+        android:focusable="true"/>
 
 </LinearLayout>

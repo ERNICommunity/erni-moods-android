@@ -70,7 +70,7 @@ public class Mood {
     }
 
     public String toString() {
-        return "username: " + username + " mood: " + mood;
+        return "username: " + username + ", mood: " + mood + ", comment: " + comment;
     }
 
     public void setId(String id) {
