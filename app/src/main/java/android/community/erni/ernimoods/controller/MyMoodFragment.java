@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.location.Location;
 import android.location.LocationManager;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -24,14 +25,21 @@ import android.widget.Toast;
  */
 public class MyMoodFragment extends Fragment {
 
+    //debug tag
+    private static final String TAG = "MyMoodFragment";
     //storage variable to handle the mood-request
     private MoodsBackend.OnConversionCompleted callHandlerPostMood;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_my_mood, container, false);
+
         // show the action bar when this fragment is displayed
         getActivity().getActionBar().show();
+
+        //make sure the MyMood Tab is highlighted
+        getActivity().getActionBar().setSelectedNavigationItem(1);
+
         callHandlerPostMood = new MoodsBackend.OnConversionCompleted<String>() {
             @Override
             //what to do on successful conversion?
@@ -69,12 +77,7 @@ public class MyMoodFragment extends Fragment {
 
                 Mood myCurrentMood = new Mood(user, getCurrentLocation(), comment, moodId);
 
-                // Show Mood with toast
-                Context context = getActivity().getApplicationContext();
-                String toastText = myCurrentMood.toString() + " - " + "You pressed a mood button!";
-                int duration = Toast.LENGTH_SHORT;
-                Toast toast = Toast.makeText(context, toastText, duration);
-                toast.show();
+                Log.d(TAG, "Created mood: " + myCurrentMood.toString());
 
                 //create a moods backend object
                 MoodsBackend getMoods = new MoodsBackend();

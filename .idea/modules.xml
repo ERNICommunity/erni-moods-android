@@ -5,7 +5,6 @@
       <module fileurl="file://$PROJECT_DIR$/ERNIMoods.iml" filepath="$PROJECT_DIR$/ERNIMoods.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/erni-moods-android.iml" filepath="$PROJECT_DIR$/erni-moods-android.iml" />
-      <module fileurl="file://$PROJECT_DIR$/erni-moods-android-hackday.iml" filepath="$PROJECT_DIR$/erni-moods-android-hackday.iml" />
       <module fileurl="file://$PROJECT_DIR$/erni-moods-android-master-fixed.iml" filepath="$PROJECT_DIR$/erni-moods-android-master-fixed.iml" />
       <module fileurl="file://$PROJECT_DIR$/google-play-services/google-play-services.iml" filepath="$PROJECT_DIR$/google-play-services/google-play-services.iml" />
     </modules>

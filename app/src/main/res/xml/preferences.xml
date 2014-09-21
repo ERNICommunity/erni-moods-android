@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- whether the update Service should be on  -->
-    <SwitchPreference
-        android:defaultValue="true"
-        android:key="pref_serviceSwitch"
-        android:summary="@string/service_switch_summary"
-        android:title="@string/service_switch" />
 
     <!-- username preference  -->
     <EditTextPreference
