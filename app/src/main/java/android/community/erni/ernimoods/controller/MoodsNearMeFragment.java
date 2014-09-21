@@ -37,16 +37,20 @@ import java.util.Map;
 public class MoodsNearMeFragment extends Fragment {
 
     /** Local variables **/
-    GoogleMap googleMap;
+    GoogleMap googleMap; //store the map
+    //variables for map view
     private MapView mMapView;
     private Bundle mBundle;
     //storage variable to handle the mood-request
     private MoodsBackend.OnConversionCompleted callHandlerGetMoods;
     //error handler to handle errors from the request
     private MoodsBackend.OnJSONResponseError errorHandler;
+    //event handler for request to places-api
     private PlacesBackend.OnConversionCompleted callHandlerGetPlaces;
 
+    //map moods to their icon-ressources
     private Map<Integer, Integer> iconMap = new HashMap();
+    //keep the relation between map-markers and the objects providing data for the markers
     private Map<GooglePlace, Marker> barMap = new HashMap();
     private Map<Mood, Marker> moodMap = new HashMap();
 
@@ -59,6 +63,9 @@ public class MoodsNearMeFragment extends Fragment {
         getActivity().getActionBar().show();
         //make sure the NearMe Tab is highlighted
         getActivity().getActionBar().setSelectedNavigationItem(0);
+
+        //get application context
+        Context context = getActivity().getApplicationContext();
 
         //attach call handler. this method is called as soon as the moods-list is loaded
         callHandlerGetMoods = new MoodsBackend.OnConversionCompleted<ArrayList<Mood>>() {
@@ -74,7 +81,7 @@ public class MoodsNearMeFragment extends Fragment {
             }
         };
 
-        //attach call handler. this method is called as soon as the moods-list is loaded
+        //attach call handler. this method is called as soon as the places (bars) hav been fetched
         callHandlerGetPlaces = new PlacesBackend.OnConversionCompleted<ArrayList<GooglePlace>>() {
             @Override
             //what to do on successful conversion?
@@ -86,30 +93,42 @@ public class MoodsNearMeFragment extends Fragment {
             }
         };
 
-
+        /* create google map*/
         mMapView = (MapView) view.findViewById(R.id.map);
         mMapView.onCreate(mBundle);
         createMapView(view);
+        MapsInitializer.initialize(context);
+        //zoom into the map, reflecting the current location
+        Location currentLoc = getCurrentLocation();
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLoc.getLatitude(), currentLoc.getLongitude()), 12.0f));
 
+        //this methods is called when a marker has been clicked
         googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-
+            //implement click handler
             public boolean onMarkerClick(Marker marker) {
+                //check whether the marker corresponds to a mood or to a bar
                 if (!barMap.containsValue(marker)) {
+                    //if a mood-marker has been clicked iterate through all bar-markers and remove them
                     Iterator barIt = barMap.entrySet().iterator();
                     while (barIt.hasNext()) {
                         Map.Entry pair = (Map.Entry) barIt.next();
                         ((Marker) pair.getValue()).remove();
                         barIt.remove();
                     }
+                    //if the zoom factor is smaller than 12, zoom in and focus the mood
                     if (googleMap.getCameraPosition().zoom <= 12.0f) {
                         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), 12.0f));
                     }
+                    //show marker info windows
                     marker.showInfoWindow();
+                    //call the places backend to fetch nearby bars
                     PlacesBackend places = new PlacesBackend();
                     places.setListener(callHandlerGetPlaces);
+                    //get the 10 closest bars within 10km around the clicked mood
                     places.getBars(marker.getPosition().latitude, marker.getPosition().longitude, 10000, 10);
                     return true;
                 } else {
+                    //if a bar-marker has been clicked, only display its info window
                     marker.showInfoWindow();
                     return true;
                 }
@@ -119,12 +138,6 @@ public class MoodsNearMeFragment extends Fragment {
         });
 
         //create a map between image and mood
-        Context context = getActivity().getApplicationContext();
-        MapsInitializer.initialize(context);
-
-        Location currentLoc = getCurrentLocation();
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLoc.getLatitude(), currentLoc.getLongitude()), 12.0f));
-
         iconMap.put(5, R.drawable.smiley_very_happy);
         iconMap.put(4, R.drawable.smiley_good);
         iconMap.put(3, R.drawable.smiley_sosolala);
@@ -139,7 +152,6 @@ public class MoodsNearMeFragment extends Fragment {
         getMoods.setErrorListener(errorHandler);
         //start async-task
         getMoods.getAllMoods();
-
         return view;
     }
 
@@ -170,25 +182,33 @@ public class MoodsNearMeFragment extends Fragment {
     }
 
     /**
-     * Adds a marker to the map
+     * Adds a marker for a mood object to the map
      */
     private void addMarker(Mood mood) {
 
         /** Make sure that the map has been initialised **/
         if(null != googleMap){
+            String snippet;
+            if (mood.getDate() != null) {
+                String time = mood.getDate().toString();
+                snippet = time + ": " + mood.getComment();
+            } else {
+                snippet = mood.getComment();
+            }
             Marker marker = googleMap.addMarker(new MarkerOptions()
                     .position(new LatLng(mood.getLocation().getLatitude(), mood.getLocation().getLongitude()))
                             .title(mood.getUsername())
-                            .snippet(mood.getComment())
+                    .snippet(snippet)
                                     //.icon(BitmapDescriptorFactory.fromResource(iconMap.get(mood.getMood())))
                             .icon(BitmapDescriptorFactory.fromResource(iconMap.get(mood.getMood())))
                     .draggable(true));
+            //add the relationship between mood-object and marker to the map
             moodMap.put(mood, marker);
         }
     }
 
     /**
-     * Adds a marker to the map
+     * Adds a marker for a google-place object to the map
      */
     private void addMarker(GooglePlace place) {
 
@@ -199,13 +219,20 @@ public class MoodsNearMeFragment extends Fragment {
                     .title(place.getName())
                     .snippet(place.getAddress())
                     .draggable(true));
+            //add the relationship between places-object and marker to the map
             barMap.put(place, marker);
         }
     }
 
+    /**
+     * Acquire current location
+     *
+     * @return Location object with current location
+     */
     private Location getCurrentLocation() {
         LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        //if it doesn't work, zoom in to zurich
         if (location == null) {
             location = new Location("ERNI ZH");
             location.setLatitude(47.414892d);
@@ -214,6 +241,10 @@ public class MoodsNearMeFragment extends Fragment {
         return location;
     }
 
+
+    /*
+    The following methods ar mandatory in order for the MapView to work. No functionality here.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -237,5 +268,4 @@ public class MoodsNearMeFragment extends Fragment {
         mMapView.onDestroy();
         super.onDestroy();
     }
-
 }

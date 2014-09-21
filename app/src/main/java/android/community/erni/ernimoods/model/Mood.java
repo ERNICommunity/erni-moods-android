@@ -2,6 +2,8 @@ package android.community.erni.ernimoods.model;
 
 import android.location.Location;
 
+import java.util.Date;
+
 /**
  * represents a Mood object
  * The idea is that we store an arraylist of mood objects in the Moods class
@@ -13,6 +15,7 @@ public class Mood {
     private Location location;
     private String comment;
     private String id = "";
+    private Date date = null;
     private int mood;
 
     public Mood (String username, Location location, String comment, int mood) {
@@ -53,6 +56,10 @@ public class Mood {
         return id;
     }
 
+    public Date getDate() {
+        return date;
+    }
+
     public void setUsername(String username) {
         this.username = username;
     }
@@ -75,5 +82,9 @@ public class Mood {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 }

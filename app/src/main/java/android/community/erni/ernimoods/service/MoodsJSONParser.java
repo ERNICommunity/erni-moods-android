@@ -11,7 +11,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * This class provides a set of static methods to parse json-messages from the moods-backend and to
@@ -93,6 +97,16 @@ public class MoodsJSONParser {
                 moodLoc.setLongitude(JSONLocArray.getDouble(1));
                 //create a new mood object
                 Mood moodObject = new Mood("", moodLoc, "", 1);
+                if (JSONmood.has("time")) {
+                    String time = JSONmood.getString("time");
+                    DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+                    try {
+                        Date date = format.parse(time);
+                        moodObject.setDate(date);
+                    } catch (ParseException e) {
+                        Log.d("Parse exception", e.toString());
+                    }
+                }
                 //extract and set username, comment and mood
                 moodObject.setUsername(JSONmood.getString("username"));
                 moodObject.setComment(JSONmood.getString("comment"));
@@ -182,7 +196,6 @@ public class MoodsJSONParser {
         ArrayList<GooglePlace> places = new ArrayList<GooglePlace>();
         try {
             JSONObject placesJSON = new JSONObject(jsonString);
-            Log.d("huhuuu", "huhuuu");
             JSONArray placesArray = placesJSON.getJSONArray("results");
             for (int i = 0; i < placesArray.length() && i < max; i++) {
                 JSONObject currentPlaceJSON = placesArray.getJSONObject(i);
