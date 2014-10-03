@@ -26,6 +26,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -73,9 +74,12 @@ public class MoodsNearMeFragment extends Fragment {
             //what to do on successful conversion?
             public void onConversionCompleted(ArrayList<Mood> moods) {
                 //Add markers for all moods
-                Log.d("Number of moods in database", String.valueOf(moods.size()));
-                for (int i = 0; i < moods.size(); i++) {
-                    addMarker(moods.get(i));
+
+                ArrayList<Mood> cleanMoods = sortAndCleanMoods(moods);
+
+                Log.d("Number of moods in database", String.valueOf(cleanMoods.size()));
+                for (int i = 0; i < cleanMoods.size(); i++) {
+                    addMarker(cleanMoods.get(i));
                 }
 
             }
@@ -241,7 +245,20 @@ public class MoodsNearMeFragment extends Fragment {
         return location;
     }
 
-
+    private ArrayList<Mood> sortAndCleanMoods(ArrayList<Mood> moods) {
+        Collections.sort(moods, Mood.sortMoods);
+        Iterator<Mood> it = moods.iterator();
+        String username = "";
+        Mood currentMood = null;
+        while (it.hasNext()) {
+            currentMood = it.next();
+            if (username.equals(currentMood.getUsername())) {
+                it.remove();
+            }
+            username = currentMood.getUsername();
+        }
+        return moods;
+    }
     /*
     The following methods ar mandatory in order for the MapView to work. No functionality here.
      */

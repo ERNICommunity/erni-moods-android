@@ -181,7 +181,7 @@ public class EntryPoint extends Activity implements ActionBar.TabListener {
 // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_preferences) {
-// launch the SettingsActivity (preferences screen)
+            // launch the SettingsActivity (preferences screen)
             Intent i = new Intent(this, SettingsActivity.class);
             startActivity(i);
             return true;

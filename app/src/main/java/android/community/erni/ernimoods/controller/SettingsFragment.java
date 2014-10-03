@@ -4,7 +4,8 @@ import android.community.erni.ernimoods.R;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 
-/** Shows the preferences screen. Gets its info from /xml/preferences.xml
+/**
+ * Shows the preferences screen. Gets its info from /xml/preferences.xml
  * Created by gus on 24.08.14.
  */
 public class SettingsFragment extends PreferenceFragment {
@@ -15,5 +16,4 @@ public class SettingsFragment extends PreferenceFragment {
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.preferences);
     }
-
 }

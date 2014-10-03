@@ -2,6 +2,7 @@ package android.community.erni.ernimoods.model;
 
 import android.location.Location;
 
+import java.util.Comparator;
 import java.util.Date;
 
 /**
@@ -87,4 +88,13 @@ public class Mood {
     public void setDate(Date date) {
         this.date = date;
     }
+
+    public static Comparator<Mood> sortMoods = new Comparator<Mood>() {
+        @Override
+        public int compare(Mood mood1, Mood mood2) {
+            int flag = mood1.getUsername().compareTo(mood2.getUsername());
+            if (flag == 0) flag = mood2.getDate().compareTo(mood1.getDate());
+            return flag;
+        }
+    };
 }
