@@ -8,7 +8,6 @@ import android.community.erni.ernimoods.model.GooglePlace;
 import android.community.erni.ernimoods.model.Mood;
 import android.content.Context;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -103,7 +102,7 @@ public class MoodsNearMeFragment extends Fragment {
         createMapView(view);
         MapsInitializer.initialize(context);
         //zoom into the map, reflecting the current location
-        Location currentLoc = getCurrentLocation();
+        Location currentLoc = ((EntryPoint) getActivity()).getCurrentLocation();
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLoc.getLatitude(), currentLoc.getLongitude()), 12.0f));
 
         //this methods is called when a marker has been clicked
@@ -226,23 +225,6 @@ public class MoodsNearMeFragment extends Fragment {
             //add the relationship between places-object and marker to the map
             barMap.put(place, marker);
         }
-    }
-
-    /**
-     * Acquire current location
-     *
-     * @return Location object with current location
-     */
-    private Location getCurrentLocation() {
-        LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-        Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        //if it doesn't work, zoom in to zurich
-        if (location == null) {
-            location = new Location("ERNI ZH");
-            location.setLatitude(47.414892d);
-            location.setLongitude(8.552031d);
-        }
-        return location;
     }
 
     private ArrayList<Mood> sortAndCleanMoods(ArrayList<Mood> moods) {

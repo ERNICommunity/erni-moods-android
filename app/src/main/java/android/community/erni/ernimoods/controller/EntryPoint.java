@@ -6,12 +6,15 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.community.erni.ernimoods.R;
 import android.community.erni.ernimoods.api.JSONResponseException;
-import android.community.erni.ernimoods.api.MoodsBackend;
 import android.community.erni.ernimoods.api.UserBackend;
-import android.community.erni.ernimoods.model.Mood;
 import android.community.erni.ernimoods.model.User;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -21,27 +24,21 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-
 /**
  * This is the starting Activity for the application.
  */
-public class EntryPoint extends Activity implements ActionBar.TabListener {
+public class EntryPoint extends Activity implements ActionBar.TabListener, LocationListener {
     TextView welcomeText;
     public static final String TAG = "EntryPoint";
 
+    private Location currentLocation = null;
+    private LocationManager locationManager;
+    private String provider;
 
-    //storage variable to handle the mood-request
-    private MoodsBackend.OnConversionCompleted callHandlerGetMoods;
     //storage variable to handle the user-request
     private UserBackend.OnConversionCompleted callHandlerGetUser;
-    //error handler to handle errors from the request
-    private MoodsBackend.OnJSONResponseError errorHandler;
     //error handler to handle errors from the user retrieval
     private UserBackend.OnJSONResponseError errorHandlerUser;
-    //storage variable to handle the mood-request
-    private MoodsBackend.OnConversionCompleted callHandlerDeleteMood;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,42 +55,16 @@ public class EntryPoint extends Activity implements ActionBar.TabListener {
         // etc for mood history in future
 
 
-        //attach call handler. this method is called as soon as the moods-list is loaded
-        callHandlerGetMoods = new MoodsBackend.OnConversionCompleted<ArrayList<Mood>>() {
-            @Override
-            //what to do on successful conversion?
-            public void onConversionCompleted(ArrayList<Mood> moods) {
-                //Log some data from the retrieved objects
-                Log.d("Number of moods in database", String.valueOf(moods.size()));
-                if (moods.size() > 0) {
-                    Log.d("Latest moods object", "Username: " + moods.get(0).getUsername() +
-                        "; Mood: " + String.valueOf(moods.get(0).getMood()) + "; Comment: " + moods.get(0).getComment());
-                    Log.d("Status", "Moods successfully loaded");
-                }
-                //this is to demonstrate the delete functionality
-                //the latest mood object retrieved is deleted
-                //however, we don't want to delete a mood each time we start the app, huh? :)
-
-                /*
-                MoodsBackend deleteMood = new MoodsBackend();
-                deleteMood.setListener(callHandlerDeleteMood);
-                deleteMood.setErrorListener(errorHandler);
-                deleteMood.deleteMood(moods.get(0).getId());
-                */
-            }
-        };
-
-        //attach call handler. this method is called as soon as a moods object has been deleted
-        callHandlerDeleteMood = new MoodsBackend.OnConversionCompleted<Boolean>() {
-            @Override
-            //what to do on successful deletion?
-            public void onConversionCompleted(Boolean status) {
-                //Write a log message if delete was successful
-                if (status == true) {
-                    Log.d("Deleted", "Mood object deleted");
-                }
-            }
-        };
+        // Get the location manager
+        currentLocation = new Location("Dummy location");
+        currentLocation.setLongitude(0.0);
+        currentLocation.setLatitude(0.0);
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        Criteria criteria = new Criteria();
+        //provider = locationManager.getBestProvider(criteria, false);
+        provider = LocationManager.NETWORK_PROVIDER;
+        locationManager.requestSingleUpdate(provider, this, null);
+        currentLocation = locationManager.getLastKnownLocation(provider);
 
         //event handler when user could not be loaded
         callHandlerGetUser = new UserBackend.OnConversionCompleted<User>() {
@@ -107,14 +78,6 @@ public class EntryPoint extends Activity implements ActionBar.TabListener {
                 fragmentTransaction
                         .replace(R.id.fragmentContainer, new MyMoodFragment())
                         .commit();
-            }
-        };
-
-        //what happens if there is an error loading the moods
-        errorHandler = new MoodsBackend.OnJSONResponseError() {
-            @Override
-            public void onJSONResponseError(JSONResponseException e) {
-                Log.d("Something went wrong", e.getErrorCode() + ": " + e.getErrorMessage());
             }
         };
 
@@ -133,15 +96,6 @@ public class EntryPoint extends Activity implements ActionBar.TabListener {
                         .commit();
             }
         };
-
-        //create a moods backend object
-        MoodsBackend getMoods = new MoodsBackend();
-        //set listener to handle successful retrieval
-        getMoods.setListener(callHandlerGetMoods);
-        //set event handler for the errors
-        getMoods.setErrorListener(errorHandler);
-        //start async-task
-        getMoods.getMoodsByLocation(0.0, 0.0, 1000.0);
 
         //again, create an object to call the user-backend
         UserBackend getUser = new UserBackend();
@@ -199,6 +153,18 @@ public class EntryPoint extends Activity implements ActionBar.TabListener {
             return false;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        locationManager.requestLocationUpdates(provider, 500, 50, this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        locationManager.removeUpdates(this);
+    }
+
 
     @Override
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
@@ -224,5 +190,32 @@ public class EntryPoint extends Activity implements ActionBar.TabListener {
     @Override
     public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
 
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        this.currentLocation = location;
+        if (location.getAccuracy() < 50) {
+            locationManager.removeUpdates(this);
+        }
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
+    }
+
+    public Location getCurrentLocation() {
+        return this.currentLocation;
     }
 }

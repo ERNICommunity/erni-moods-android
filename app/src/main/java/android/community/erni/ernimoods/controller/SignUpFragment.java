@@ -7,7 +7,6 @@ import android.community.erni.ernimoods.api.JSONResponseException;
 import android.community.erni.ernimoods.api.UserBackend;
 import android.community.erni.ernimoods.model.User;
 import android.community.erni.ernimoods.service.FormValidator;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -236,6 +235,17 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
             createUser.createUser(newUser);
 
         }
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
     }
 
 

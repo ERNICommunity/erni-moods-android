@@ -9,9 +9,6 @@ import android.community.erni.ernimoods.model.Mood;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.location.Location;
-import android.location.LocationManager;
-import android.nfc.Tag;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -20,10 +17,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.Calendar;
-import java.util.Date;
 
 /**
  * This fragment is used to enter your current mood
@@ -56,7 +51,6 @@ public class MyMoodFragment extends Fragment {
         // set the greeting depending on the time of day
         createGreeting();
 
-
         callHandlerPostMood = new MoodsBackend.OnConversionCompleted<String>() {
             @Override
             //what to do on successful conversion?
@@ -81,6 +75,16 @@ public class MyMoodFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
     private void registerClickListener(View view, int buttonId, final int moodId) {
         view.findViewById(buttonId).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -93,7 +97,7 @@ public class MyMoodFragment extends Fragment {
                 String commentText = comment.getText().toString();
 
                 // create a mood object
-                Mood myCurrentMood = new Mood(user, getCurrentLocation(), commentText, moodId);
+                Mood myCurrentMood = new Mood(user, ((EntryPoint) getActivity()).getCurrentLocation(), commentText, moodId);
 
                 Log.d(TAG, "Created mood: " + myCurrentMood.toString());
 
@@ -108,20 +112,6 @@ public class MyMoodFragment extends Fragment {
 
             }
         });
-    }
-
-    private Location getCurrentLocation() {
-        LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-        Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-
-        if (location == null) {
-            location = new Location("Dummy Location");
-            //Stray the corrdinates +/- 1 degree around Zurich, in order not to have all dummy locs at the same place
-            location.setLatitude(47.414892d + (Math.random() * 2 - 1));
-            location.setLongitude(8.552031d + (Math.random() * 2 - 1));
-        }
-
-        return location;
     }
 
     /**
