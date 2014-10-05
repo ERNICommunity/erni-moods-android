@@ -11,28 +11,27 @@ import android.community.erni.ernimoods.model.User;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
 
 /**
  * This is the starting Activity for the application.
  */
 public class EntryPoint extends Activity implements ActionBar.TabListener, LocationListener {
-    TextView welcomeText;
     public static final String TAG = "EntryPoint";
 
+    //always stores the current location
     private Location currentLocation = null;
+    //location manager is used to get the location
     private LocationManager locationManager;
+    //location provider, this implementation always uses network-provider since it works
+    //better in closed rooms
     private String provider;
 
     //storage variable to handle the user-request
@@ -56,15 +55,19 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
         // etc for mood history in future
 
 
-        // Get the location manager
+        /*
+        to avoid problems if no location is accessible, we create a dummy-location first
+         */
         currentLocation = new Location("Dummy location");
         currentLocation.setLongitude(0.0);
         currentLocation.setLatitude(0.0);
+        //get a handle to the location manager
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        Criteria criteria = new Criteria();
-        //provider = locationManager.getBestProvider(criteria, false);
+        //select network_provider for location services; accurate enough for our purposes
         provider = LocationManager.NETWORK_PROVIDER;
+        //request a single update to begin with
         locationManager.requestSingleUpdate(provider, this, null);
+        //store the last known location
         currentLocation = locationManager.getLastKnownLocation(provider);
 
         //event handler when user could not be loaded
@@ -144,25 +147,18 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
         return super.onOptionsItemSelected(item);
     }
 
-    // check network connection
-    public boolean isConnected() {
-        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(this.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        if (networkInfo != null && networkInfo.isConnected())
-            return true;
-        else
-            return false;
-    }
-
     @Override
     public void onResume() {
         super.onResume();
+        //when the app is resumed, the location might have changed
+        //we get updates not more often than every 500 ms and if the change is smaller than 50m
         locationManager.requestLocationUpdates(provider, 500, 50, this);
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        //as soon as the application pauses, we stop getting location updates (if we still receive)
         locationManager.removeUpdates(this);
     }
 
@@ -197,6 +193,10 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
 
     }
 
+    /*
+    When the location has changed, we store the new location to be accessible for the fragments.
+    As soon as the accuracy is within 50m, we stop requesting updates
+     */
     @Override
     public void onLocationChanged(Location location) {
         this.currentLocation = location;
@@ -220,6 +220,11 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
 
     }
 
+    /**
+     * This method can be called by the fragments to access the current location
+     *
+     * @return Last measured location
+     */
     public Location getCurrentLocation() {
         return this.currentLocation;
     }

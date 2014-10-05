@@ -74,13 +74,12 @@ public class MoodsNearMeFragment extends Fragment {
             public void onConversionCompleted(ArrayList<Mood> moods) {
                 //Add markers for all moods
 
+                //Sort moods by username and keep only the most recent post
                 ArrayList<Mood> cleanMoods = sortAndCleanMoods(moods);
-
                 Log.d("Number of moods in database", String.valueOf(cleanMoods.size()));
                 for (int i = 0; i < cleanMoods.size(); i++) {
                     addMarker(cleanMoods.get(i));
                 }
-
             }
         };
 
@@ -227,8 +226,16 @@ public class MoodsNearMeFragment extends Fragment {
         }
     }
 
+    /**
+     * This methods can be used to keep only the most recent post from each user
+     *
+     * @param moods array list of moods
+     * @return clean array list of moods
+     */
     private ArrayList<Mood> sortAndCleanMoods(ArrayList<Mood> moods) {
+        //use the comparator of the mood class to sort the moods by username and then date
         Collections.sort(moods, Mood.sortMoods);
+        //iterate through all moods. keep the first mood belonging to the same user
         Iterator<Mood> it = moods.iterator();
         String username = "";
         Mood currentMood = null;

@@ -89,10 +89,15 @@ public class Mood {
         this.date = date;
     }
 
+    /**
+     * Comparator class to sort moods by username first and then date
+     */
     public static Comparator<Mood> sortMoods = new Comparator<Mood>() {
         @Override
         public int compare(Mood mood1, Mood mood2) {
+            //check whether the usernames are equal
             int flag = mood1.getUsername().compareTo(mood2.getUsername());
+            //if yes, sort the objects by the date posted
             if (flag == 0) flag = mood2.getDate().compareTo(mood1.getDate());
             return flag;
         }
