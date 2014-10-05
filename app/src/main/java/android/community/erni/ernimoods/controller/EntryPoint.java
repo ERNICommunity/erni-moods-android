@@ -52,6 +52,7 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
         // hard code the tabs
        actionBar.addTab(actionBar.newTab().setText("Near Me").setTabListener(this));
        actionBar.addTab(actionBar.newTab().setText("My Mood").setTabListener(this));
+        actionBar.addTab(actionBar.newTab().setText("Mood History").setTabListener(this));
         // etc for mood history in future
 
 
@@ -177,6 +178,10 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
             case 1:
                 ft.replace(R.id.fragmentContainer, new MyMoodFragment());
                 Log.d(TAG, "Created MyMoodFragment");
+                break;
+            case 2:
+                ft.replace(R.id.fragmentContainer, new MoodHistoryFragment());
+                Log.d(TAG, "Created MoodHistoryFragment");
                 break;
         }
 

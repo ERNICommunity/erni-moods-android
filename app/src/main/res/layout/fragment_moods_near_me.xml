@@ -1,11 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="76dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/selectedUserTextView"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/selectedUserLabelTextView"
+            android:layout_toEndOf="@+id/selectedUserLabelTextView"
+            android:paddingLeft="20dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Selected Bar:"
+            android:id="@+id/selectedBarLabelTextView"
+            android:layout_below="@+id/selectedUserLabelTextView"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:paddingRight="30dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Selected User: "
+            android:id="@+id/selectedUserLabelTextView"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:paddingRight="20dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/selectedBarTextView"
+            android:layout_alignBottom="@+id/selectedBarLabelTextView"
+            android:layout_toRightOf="@+id/selectedBarLabelTextView"
+            android:layout_toEndOf="@+id/selectedBarLabelTextView"
+            android:paddingLeft="20dp" />
+    </RelativeLayout>
 
     <com.google.android.gms.maps.MapView
         android:id="@+id/map"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
 </LinearLayout>
