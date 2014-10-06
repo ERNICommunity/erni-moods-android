@@ -130,7 +130,7 @@ public class MoodHistoryFragment extends Fragment {
         mRenderer.setMargins(new int[]{100, 100, 100, 100}); //add a nice margin around the chart
         //enable the chart to be clickable. clicks on datapoints will show the respective comments
         mRenderer.setClickEnabled(true);
-        mRenderer.setSelectableBuffer(10);
+        mRenderer.setSelectableBuffer(50);
 
         this.view = view;
 
