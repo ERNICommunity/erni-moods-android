@@ -190,12 +190,14 @@ public class MoodHistoryFragment extends Fragment {
         mySeries.clear();
         //iterate through all moods belonging to a user and add the data to the plot and
         //to the hashmap
-        Iterator<Mood> it = currentMoods.iterator();
-        Mood currentMood = null;
-        while (it.hasNext()) {
-            currentMood = it.next();
-            mySeries.add((Date) currentMood.getDate(), currentMood.getMood());
-            dateCommentMap.put(currentMood.getDate().getTime(), currentMood.getComment());
+        if (currentMoods != null) {
+            Iterator<Mood> it = currentMoods.iterator();
+            Mood currentMood = null;
+            while (it.hasNext()) {
+                currentMood = it.next();
+                mySeries.add((Date) currentMood.getDate(), currentMood.getMood());
+                dateCommentMap.put(currentMood.getDate().getTime(), currentMood.getComment());
+            }
         }
         //add the new series to the renderer and repaint the chart
         mDataset.addSeries(mySeries);

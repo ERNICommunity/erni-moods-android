@@ -101,11 +101,13 @@ public class MoodsNearMeFragment extends Fragment {
                     }
                     //show marker info windows
                     marker.showInfoWindow();
-                    //call the places backend to fetch nearby bars
-                    PlacesBackend places = new PlacesBackend();
-                    places.setListener(callHandlerGetPlaces);
-                    //get the 10 closest bars within 10km around the clicked mood
-                    places.getBars(marker.getPosition().latitude, marker.getPosition().longitude, 10000, 10);
+                    if (((EntryPoint) getActivity()).isOnline()) {
+                        //call the places backend to fetch nearby bars
+                        PlacesBackend places = new PlacesBackend();
+                        places.setListener(callHandlerGetPlaces);
+                        //get the 10 closest bars within 10km around the clicked mood
+                        places.getBars(marker.getPosition().latitude, marker.getPosition().longitude, 10000, 10);
+                    }
                     return true;
                 } else {
                     //if a bar-marker has been clicked, only display its info window

@@ -16,11 +16,14 @@ import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -135,6 +138,11 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
 
                 //Sort moods by username and keep only the most recent post
                 cleanMoodsList = sortAndCleanMoods(moods);
+                FragmentManager fragmentManager = getFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction
+                        .replace(R.id.fragmentContainer, new MoodsNearMeFragment())
+                        .commit();
             }
         };
 
@@ -209,7 +217,13 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
 
         //get user by username and password. the handlers will redirect to either the signup
         //or the mymood, depending on whether the user exists or not
-        getUser.getUserByPassword(username, pwd);
+        if (isOnline()) {
+            getUser.getUserByPassword(username, pwd);
+        } else {
+            Toast.makeText(
+                    getBaseContext(), "No network service!",
+                    Toast.LENGTH_SHORT).show();
+        }
 
         //when the app is resumed, the location might have changed
         //we get updates not more often than every 500 ms and if the change is smaller than 50m
@@ -302,25 +316,42 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
         return this.myMoods;
     }
 
+    public boolean isOnline() {
+        ConnectivityManager cm =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        if (netInfo != null && netInfo.isConnectedOrConnecting()) {
+            return true;
+        }
+        return false;
+    }
+
     public void updateMoodList() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         String username = prefs.getString("pref_username", null);
 
-        //create a moods backend object
-        MoodsBackend getMoods = new MoodsBackend();
-        //set listener to handle successful retrieval
-        getMoods.setListener(callHandlerGetMoods);
-        //set event handler for the errors
-        getMoods.setErrorListener(errorHandlerGetMoods);
-        //start async-task
-        getMoods.getAllMoods();
+        if (isOnline()) {
+            //create a moods backend object
+            MoodsBackend getMoods = new MoodsBackend();
+            //set listener to handle successful retrieval
+            getMoods.setListener(callHandlerGetMoods);
+            //set event handler for the errors
+            getMoods.setErrorListener(errorHandlerGetMoods);
+            //start async-task
+            getMoods.getAllMoods();
 
-        //create a moods backend object
-        MoodsBackend getMyMoods = new MoodsBackend();
-        //set listener to handle successful retrieval
-        getMyMoods.setListener(callHandlerGetMyMoods);
-        getMyMoods.setErrorListener(errorHandlerGetMoods);
-        getMyMoods.getMoodsByUsername(username);
+            //create a moods backend object
+            MoodsBackend getMyMoods = new MoodsBackend();
+            //set listener to handle successful retrieval
+            getMyMoods.setListener(callHandlerGetMyMoods);
+            getMyMoods.setErrorListener(errorHandlerGetMoods);
+            getMyMoods.getMoodsByUsername(username);
+        } else {
+            Toast.makeText(
+                    getBaseContext(),
+                    "No network service. Moods not updated.",
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 
 

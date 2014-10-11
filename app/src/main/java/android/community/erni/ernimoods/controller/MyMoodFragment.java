@@ -1,8 +1,6 @@
 package android.community.erni.ernimoods.controller;
 
 import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.community.erni.ernimoods.R;
 import android.community.erni.ernimoods.api.MoodsBackend;
 import android.community.erni.ernimoods.model.Mood;
@@ -17,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Calendar;
 
@@ -58,11 +57,6 @@ public class MyMoodFragment extends Fragment {
                 //Log some data from the retrieved objects
                 Log.d("Mood create with id", id);
                 ((EntryPoint) getActivity()).updateMoodList();
-                FragmentManager fragmentManager = getFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction
-                        .replace(R.id.fragmentContainer, new MoodsNearMeFragment())
-                        .commit();
             }
         };
 
@@ -97,19 +91,27 @@ public class MyMoodFragment extends Fragment {
                 String user = myPreferences.getString("pref_username", "nothing");
                 String commentText = comment.getText().toString();
 
-                // create a mood object
-                Mood myCurrentMood = new Mood(user, ((EntryPoint) getActivity()).getCurrentLocation(), commentText, moodId);
 
-                Log.d(TAG, "Created mood: " + myCurrentMood.toString());
+                if (((EntryPoint) getActivity()).isOnline()) {
+                    // create a mood object
+                    Mood myCurrentMood = new Mood(user, ((EntryPoint) getActivity()).getCurrentLocation(), commentText, moodId);
 
-                //create a moods backend object
-                MoodsBackend getMoods = new MoodsBackend();
-                //set listener to handle successful retrieval
-                getMoods.setListener(callHandlerPostMood);
-                //set event handler for the errors
-                // getMoods.setErrorListener(errorHandler);
-                //start async-task
-                getMoods.postMood(myCurrentMood);
+                    Log.d(TAG, "Created mood: " + myCurrentMood.toString());
+
+                    //create a moods backend object
+                    MoodsBackend getMoods = new MoodsBackend();
+                    //set listener to handle successful retrieval
+                    getMoods.setListener(callHandlerPostMood);
+                    //set event handler for the errors
+                    // getMoods.setErrorListener(errorHandler);
+                    //start async-task
+                    getMoods.postMood(myCurrentMood);
+                } else {
+                    Toast.makeText(
+                            getActivity().getBaseContext(),
+                            "No network servide. Enable service and try again.",
+                            Toast.LENGTH_SHORT).show();
+                }
 
             }
         });
