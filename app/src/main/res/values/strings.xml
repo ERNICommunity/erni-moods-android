@@ -18,10 +18,11 @@
     <string name="signUpEmailHint">E-Mail</string>
     <string name="signUpPhoneHint">Phone number</string>
     <string name="signUpSendButton">Sign Up</string>
-    <string name="signUpUsernameErrorMessage">Username may not be empty</string>
+    <string name="signUpUsernameErrorMessage">Username must be at least 5 characters</string>
     <string name="signUpEmailErrorMessage">Please enter a correct e-mail address</string>
-    <string name="signUpPasswordErrorMessage">Passwort needs to have at least 4 characters</string>
+    <string name="signUpPasswordErrorMessage">Password must be at least 4 characters</string>
     <string name="signUpPhoneErrorMessage">A phone number may only contain +,(), space and numbers</string>
+    <!-- String resources for Mood -->
     <string name="text_moodVeryHappy">Very happy</string>
     <string name="text_moodGood">Good</string>
     <string name="text_moodSoSoLaLa">SoSoLaLa</string>
