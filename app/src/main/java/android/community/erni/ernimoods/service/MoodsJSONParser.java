@@ -157,7 +157,9 @@ public class MoodsJSONParser {
             if (JSONUser.has("email")) {
                 user.setEmail(JSONUser.getString("email"));
             }
-            user.setId(JSONUser.getString("id"));
+            if (JSONUser.has("id")) {
+                user.setId(JSONUser.getString("id"));
+            }
             return user;
         } catch (JSONException e) {
             Log.d("JSON Exception", e.toString());

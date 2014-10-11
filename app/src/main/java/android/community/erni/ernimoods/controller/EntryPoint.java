@@ -53,16 +53,14 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
 
     //storage variable to handle the mood-request
     private MoodsBackend.OnConversionCompleted callHandlerGetMoods;
-    //error handler to handle errors from the request
-    private MoodsBackend.OnJSONResponseError errorHandler;
-
-    //storage variable to handle the mood-request
+    //storage variable to handle the mood-request to get the users mood
     private MoodsBackend.OnConversionCompleted callHandlerGetMyMoods;
     //error handler to handle errors from the request
     private MoodsBackend.OnJSONResponseError errorHandlerGetMoods;
 
-
+    //stores the most current moods
     private ArrayList<Mood> cleanMoodsList = null;
+    //stores the current user's moods
     private ArrayList<Mood> myMoods = null;
 
     @Override
@@ -102,14 +100,10 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
             public void onConversionCompleted(User user) {
                 //display username
                 Log.d("User successfully loaded", user.getUsername());
+                //after authentication of the user, update the mood list
                 updateMoodList();
+                //store userID
                 userID = user.getID();
-                //change the fragment to mymood
-                FragmentManager fragmentManager = getFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction
-                        .replace(R.id.fragmentContainer, new MyMoodFragment())
-                        .commit();
             }
         };
 
@@ -138,6 +132,7 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
 
                 //Sort moods by username and keep only the most recent post
                 cleanMoodsList = sortAndCleanMoods(moods);
+                //redirect to the moods near me
                 FragmentManager fragmentManager = getFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                 fragmentTransaction
@@ -147,9 +142,7 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
         };
 
         /**
-         * Each time when the fragment resumes, the moods from the current user are loaded.
-         * The handler adds the datapoints to the chart and creates a hashmap to map from
-         * timestamp to comment.
+         * Each time when the activity resumes, the moods from the current user are loaded.
          */
         callHandlerGetMyMoods = new MoodsBackend.OnConversionCompleted<ArrayList<Mood>>() {
             @Override
@@ -200,6 +193,10 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * On application resume, start listening for the location and check whether the user is registered
+     * If yes, the mood-lists are updated
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -243,7 +240,7 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
         switch (tab.getPosition()) {
             case 0:
                 ft.replace(R.id.fragmentContainer, new MoodsNearMeFragment());
-                Log.d(TAG, "Created MOodsNearMeFragment");
+                Log.d(TAG, "Created MoodsNearMeFragment");
 
             break;
             case 1:
@@ -308,14 +305,29 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
         return this.userID;
     }
 
+    /**
+     * This method can be called by the fragments to access the mood-list
+     *
+     * @return Mood-list
+     */
     public ArrayList<Mood> getMoodsList() {
         return cleanMoodsList;
     }
 
+    /**
+     * This method can be called by the fragments to access the current user's moods
+     *
+     * @return Mood-list
+     */
     public ArrayList<Mood> getMyMoods() {
         return this.myMoods;
     }
 
+    /**
+     * Check, whether the network connection is available
+     *
+     * @return True if yes, False if no
+     */
     public boolean isOnline() {
         ConnectivityManager cm =
                 (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -326,10 +338,15 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
         return false;
     }
 
+    /**
+     * This method can be called to reload the mood lists from the moods-backend. This is helpful
+     * on application start or if a mood has been posted
+     */
     public void updateMoodList() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         String username = prefs.getString("pref_username", null);
 
+        //if connection is available
         if (isOnline()) {
             //create a moods backend object
             MoodsBackend getMoods = new MoodsBackend();
@@ -337,7 +354,7 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
             getMoods.setListener(callHandlerGetMoods);
             //set event handler for the errors
             getMoods.setErrorListener(errorHandlerGetMoods);
-            //start async-task
+            //start async-task to update the moods
             getMoods.getAllMoods();
 
             //create a moods backend object

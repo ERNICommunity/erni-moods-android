@@ -46,6 +46,24 @@
             android:layout_toRightOf="@+id/selectedBarLabelTextView"
             android:layout_toEndOf="@+id/selectedBarLabelTextView"
             android:paddingLeft="20dp" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Send Email"
+            android:id="@+id/sendEmailButton"
+            android:layout_toStartOf="@+id/sendMessageButton"
+            android:layout_alignParentBottom="true"
+            android:layout_toLeftOf="@+id/sendMessageButton" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Send Textmessage"
+            android:id="@+id/sendMessageButton"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
     </RelativeLayout>
 
     <com.google.android.gms.maps.MapView

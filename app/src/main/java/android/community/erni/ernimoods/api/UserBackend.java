@@ -73,6 +73,14 @@ public class UserBackend implements IUserBackend {
         task.execute(baseUri.toString());
     }
 
+    public void getUserByKey(String username, String key) {
+        //attach a listener to handle the queried response-string
+        task.setListener(getUserListener);
+        //make a post-request to the user base-url
+        baseUri.appendQueryParameter("key", key).appendQueryParameter("username", username);
+        task.execute(baseUri.toString());
+    }
+
 
     public void deleteUser(String id) {
         task.setListener(deleteUserListener);

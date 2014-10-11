@@ -2,16 +2,22 @@ package android.community.erni.ernimoods.controller;
 
 import android.app.Fragment;
 import android.community.erni.ernimoods.R;
+import android.community.erni.ernimoods.api.JSONResponseException;
 import android.community.erni.ernimoods.api.PlacesBackend;
+import android.community.erni.ernimoods.api.UserBackend;
 import android.community.erni.ernimoods.model.GooglePlace;
 import android.community.erni.ernimoods.model.Mood;
+import android.community.erni.ernimoods.model.User;
 import android.content.Context;
+import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -45,8 +51,17 @@ public class MoodsNearMeFragment extends Fragment {
     //map moods to their icon-ressources
     private Map<Integer, Integer> iconMap = new HashMap();
     //keep the relation between map-markers and the objects providing data for the markers
-    private Map<GooglePlace, Marker> barMap = new HashMap();
-    private Map<Mood, Marker> moodMap = new HashMap();
+    private Map<Marker, GooglePlace> barMap = new HashMap();
+    private Map<Marker, Mood> moodMap = new HashMap();
+
+    private View thisView;
+
+    //storage variable to handle the user-request
+    private UserBackend.OnConversionCompleted callHandlerGetUser;
+    //error handler to handle errors from the user retrieval
+    private UserBackend.OnJSONResponseError errorHandlerUser;
+
+    private User clickedUser = null;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -73,6 +88,26 @@ public class MoodsNearMeFragment extends Fragment {
             }
         };
 
+        //event handler when user could not be loaded
+        callHandlerGetUser = new UserBackend.OnConversionCompleted<User>() {
+            @Override
+            public void onConversionCompleted(User user) {
+                //display username
+                Log.d("User successfully loaded", user.getUsername());
+                clickedUser = user;
+            }
+        };
+
+        //event handler for loading the user. log that something went wrong
+        //call the change fragment method, which redirects to the sign-up page
+        errorHandlerUser = new UserBackend.OnJSONResponseError() {
+            @Override
+            public void onJSONResponseError(JSONResponseException e) {
+                //user does not exist or something else went wrong
+                Log.d("Something went wrong", e.getErrorCode() + ": " + e.getErrorMessage());
+            }
+        };
+
         /* create google map*/
         mMapView = (MapView) view.findViewById(R.id.map);
         mMapView.onCreate(mBundle);
@@ -87,12 +122,12 @@ public class MoodsNearMeFragment extends Fragment {
             //implement click handler
             public boolean onMarkerClick(Marker marker) {
                 //check whether the marker corresponds to a mood or to a bar
-                if (!barMap.containsValue(marker)) {
+                if (!barMap.containsKey(marker)) {
                     //if a mood-marker has been clicked iterate through all bar-markers and remove them
                     Iterator barIt = barMap.entrySet().iterator();
                     while (barIt.hasNext()) {
                         Map.Entry pair = (Map.Entry) barIt.next();
-                        ((Marker) pair.getValue()).remove();
+                        ((Marker) pair.getKey()).remove();
                         barIt.remove();
                     }
                     //if the zoom factor is smaller than 12, zoom in and focus the mood
@@ -108,15 +143,49 @@ public class MoodsNearMeFragment extends Fragment {
                         //get the 10 closest bars within 10km around the clicked mood
                         places.getBars(marker.getPosition().latitude, marker.getPosition().longitude, 10000, 10);
                     }
+
+                    ((TextView) thisView.findViewById(R.id.selectedUserTextView)).setText(moodMap.get(marker).getUsername());
+
+                    //again, create an object to call the user-backend
+                    UserBackend getUser = new UserBackend();
+                    //attached the specified handlers
+                    getUser.setListener(callHandlerGetUser);
+                    getUser.setErrorListener(errorHandlerUser);
+
+                    getUser.getUserByKey(moodMap.get(marker).getUsername(), ((EntryPoint) getActivity()).getUserID());
+
                     return true;
                 } else {
                     //if a bar-marker has been clicked, only display its info window
                     marker.showInfoWindow();
+                    ((TextView) thisView.findViewById(R.id.selectedBarTextView)).setText(barMap.get(marker).getName());
                     return true;
                 }
             }
 
 
+        });
+
+        ((Button) view.findViewById(R.id.sendEmailButton)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (clickedUser != null && clickedUser.getEmail() != "") {
+                    Intent intent = new Intent(Intent.ACTION_SEND);
+                    intent.setType("text/html");
+                    intent.putExtra(Intent.EXTRA_EMAIL, clickedUser.getEmail());
+                    intent.putExtra(Intent.EXTRA_SUBJECT, "Subject");
+                    intent.putExtra(Intent.EXTRA_TEXT, "I'm email body.");
+
+                    startActivity(Intent.createChooser(intent, "Send Email"));
+                }
+            }
+        });
+
+        ((Button) view.findViewById(R.id.sendMessageButton)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
         });
 
         //create a map between image and mood
@@ -125,6 +194,8 @@ public class MoodsNearMeFragment extends Fragment {
         iconMap.put(3, R.drawable.smiley_sosolala);
         iconMap.put(2, R.drawable.smiley_not_amused);
         iconMap.put(1, R.drawable.smiley_very_moody);
+
+        thisView = view;
 
         return view;
     }
@@ -177,7 +248,7 @@ public class MoodsNearMeFragment extends Fragment {
                             .icon(BitmapDescriptorFactory.fromResource(iconMap.get(mood.getMood())))
                     .draggable(true));
             //add the relationship between mood-object and marker to the map
-            moodMap.put(mood, marker);
+            moodMap.put(marker, mood);
         }
     }
 
@@ -194,7 +265,7 @@ public class MoodsNearMeFragment extends Fragment {
                     .snippet(place.getAddress())
                     .draggable(true));
             //add the relationship between places-object and marker to the map
-            barMap.put(place, marker);
+            barMap.put(marker, place);
         }
     }
 
@@ -211,7 +282,17 @@ public class MoodsNearMeFragment extends Fragment {
     public void onResume() {
         super.onResume();
         mMapView.onResume();
+        //get list with moods
         ArrayList<Mood> cleanMoods = ((EntryPoint) getActivity()).getMoodsList();
+
+        if (moodMap != null) {
+            Iterator moodIt = moodMap.entrySet().iterator();
+            while (moodIt.hasNext()) {
+                Map.Entry pair = (Map.Entry) moodIt.next();
+                ((Marker) pair.getKey()).remove();
+                moodIt.remove();
+            }
+        }
 
         if (cleanMoods != null) {
             Log.d("Number of moods in database", String.valueOf(cleanMoods.size()));

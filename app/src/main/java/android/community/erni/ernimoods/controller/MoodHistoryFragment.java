@@ -180,7 +180,7 @@ public class MoodHistoryFragment extends Fragment {
             myChart.repaint();
         }
 
-        //Add markers for all moods
+        //get current user's moods
         currentMoods = ((EntryPoint) getActivity()).getMyMoods();
         //clear previous hashmap
         dateCommentMap.clear();

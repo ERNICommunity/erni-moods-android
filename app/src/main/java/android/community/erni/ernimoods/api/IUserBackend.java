@@ -31,6 +31,14 @@ public interface IUserBackend extends IBackendEventHandler {
     public void getUserByPhone(String username, String phone);
 
     /**
+     * Method to get user date by username and id of your own user record
+     *
+     * @param username Username
+     * @param key      User record key
+     */
+    public void getUserByKey(String username, String key);
+
+    /**
      * Delete a user by providing its id
      *
      * @param id user object-id
