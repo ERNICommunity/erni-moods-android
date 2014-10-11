@@ -2,15 +2,11 @@ package android.community.erni.ernimoods.controller;
 
 import android.app.Fragment;
 import android.community.erni.ernimoods.R;
-import android.community.erni.ernimoods.api.JSONResponseException;
-import android.community.erni.ernimoods.api.MoodsBackend;
-import android.community.erni.ernimoods.api.UserBackend;
 import android.community.erni.ernimoods.model.Mood;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,13 +48,6 @@ public class MoodHistoryFragment extends Fragment {
     private XYMultipleSeriesRenderer mRenderer = null;
     //this is the view element to store the chart and add to the layout
     private GraphicalView myChart = null;
-
-    //storage variable to handle the mood-request
-    private MoodsBackend.OnConversionCompleted callHandlerGetMoods;
-    //error handler to handle errors from the request
-    private MoodsBackend.OnJSONResponseError errorHandlerGetMoods;
-    //member to access the moods backend
-    private MoodsBackend getMoods = null;
 
     /**
      * To be able to map between dates and comments, we need to create a hashmap with an element
@@ -134,56 +123,6 @@ public class MoodHistoryFragment extends Fragment {
 
         this.view = view;
 
-        /**
-         * Each time when the fragment resumes, the moods from the current user are loaded.
-         * The handler adds the datapoints to the chart and creates a hashmap to map from
-         * timestamp to comment.
-         */
-        callHandlerGetMoods = new MoodsBackend.OnConversionCompleted<ArrayList<Mood>>() {
-            @Override
-            //what to do on successful conversion?
-            public void onConversionCompleted(ArrayList<Mood> moods) {
-                //Add markers for all moods
-                currentMoods = moods;
-                //clear previous hashmap
-                dateCommentMap.clear();
-                //clear plot data from previous plots
-                mDataset.removeSeries(mySeries);
-                mRenderer.removeAllRenderers();
-                mySeries.clear();
-                //iterate through all moods belonging to a user and add the data to the plot and
-                //to the hashmap
-                Iterator<Mood> it = moods.iterator();
-                Mood currentMood = null;
-                while (it.hasNext()) {
-                    currentMood = it.next();
-                    mySeries.add((Date) currentMood.getDate(), currentMood.getMood());
-                    dateCommentMap.put(currentMood.getDate().getTime(), currentMood.getComment());
-                }
-                //add the new series to the renderer and repaint the chart
-                mDataset.addSeries(mySeries);
-                mRenderer.addSeriesRenderer(renderer);
-                myChart.repaint();
-            }
-        };
-
-        /**
-         * Well, we want to be informed if the moods could not be loaded
-         */
-        errorHandlerGetMoods = new UserBackend.OnJSONResponseError() {
-            @Override
-            public void onJSONResponseError(JSONResponseException e) {
-                //user does not exist or something else went wrong
-                Log.d("Something went wrong", e.getErrorCode() + ": " + e.getErrorMessage());
-            }
-        };
-
-        //create a moods backend object
-        getMoods = new MoodsBackend();
-        //set listener to handle successful retrieval
-        getMoods.setListener(callHandlerGetMoods);
-        getMoods.setErrorListener(errorHandlerGetMoods);
-
         return view;
     }
 
@@ -241,8 +180,27 @@ public class MoodHistoryFragment extends Fragment {
             myChart.repaint();
         }
 
-        //each time the app is resumed, we gather the moods belonging to the current user
-        getMoods.getMoodsByUsername(username);
+        //Add markers for all moods
+        currentMoods = ((EntryPoint) getActivity()).getMyMoods();
+        //clear previous hashmap
+        dateCommentMap.clear();
+        //clear plot data from previous plots
+        mDataset.removeSeries(mySeries);
+        mRenderer.removeAllRenderers();
+        mySeries.clear();
+        //iterate through all moods belonging to a user and add the data to the plot and
+        //to the hashmap
+        Iterator<Mood> it = currentMoods.iterator();
+        Mood currentMood = null;
+        while (it.hasNext()) {
+            currentMood = it.next();
+            mySeries.add((Date) currentMood.getDate(), currentMood.getMood());
+            dateCommentMap.put(currentMood.getDate().getTime(), currentMood.getComment());
+        }
+        //add the new series to the renderer and repaint the chart
+        mDataset.addSeries(mySeries);
+        mRenderer.addSeriesRenderer(renderer);
+        myChart.repaint();
 
     }
 

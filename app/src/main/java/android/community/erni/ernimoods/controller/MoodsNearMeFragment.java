@@ -2,7 +2,6 @@ package android.community.erni.ernimoods.controller;
 
 import android.app.Fragment;
 import android.community.erni.ernimoods.R;
-import android.community.erni.ernimoods.api.MoodsBackend;
 import android.community.erni.ernimoods.api.PlacesBackend;
 import android.community.erni.ernimoods.model.GooglePlace;
 import android.community.erni.ernimoods.model.Mood;
@@ -25,7 +24,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -41,11 +39,7 @@ public class MoodsNearMeFragment extends Fragment {
     //variables for map view
     private MapView mMapView;
     private Bundle mBundle;
-    //storage variable to handle the mood-request
-    private MoodsBackend.OnConversionCompleted callHandlerGetMoods;
-    //error handler to handle errors from the request
-    private MoodsBackend.OnJSONResponseError errorHandler;
-    //event handler for request to places-api
+
     private PlacesBackend.OnConversionCompleted callHandlerGetPlaces;
 
     //map moods to their icon-ressources
@@ -66,22 +60,6 @@ public class MoodsNearMeFragment extends Fragment {
 
         //get application context
         Context context = getActivity().getApplicationContext();
-
-        //attach call handler. this method is called as soon as the moods-list is loaded
-        callHandlerGetMoods = new MoodsBackend.OnConversionCompleted<ArrayList<Mood>>() {
-            @Override
-            //what to do on successful conversion?
-            public void onConversionCompleted(ArrayList<Mood> moods) {
-                //Add markers for all moods
-
-                //Sort moods by username and keep only the most recent post
-                ArrayList<Mood> cleanMoods = sortAndCleanMoods(moods);
-                Log.d("Number of moods in database", String.valueOf(cleanMoods.size()));
-                for (int i = 0; i < cleanMoods.size(); i++) {
-                    addMarker(cleanMoods.get(i));
-                }
-            }
-        };
 
         //attach call handler. this method is called as soon as the places (bars) hav been fetched
         callHandlerGetPlaces = new PlacesBackend.OnConversionCompleted<ArrayList<GooglePlace>>() {
@@ -146,14 +124,6 @@ public class MoodsNearMeFragment extends Fragment {
         iconMap.put(2, R.drawable.smiley_not_amused);
         iconMap.put(1, R.drawable.smiley_very_moody);
 
-        //create a moods backend object
-        MoodsBackend getMoods = new MoodsBackend();
-        //set listener to handle successful retrieval
-        getMoods.setListener(callHandlerGetMoods);
-        //set event handler for the errors
-        getMoods.setErrorListener(errorHandler);
-        //start async-task
-        getMoods.getAllMoods();
         return view;
     }
 
@@ -226,28 +196,6 @@ public class MoodsNearMeFragment extends Fragment {
         }
     }
 
-    /**
-     * This methods can be used to keep only the most recent post from each user
-     *
-     * @param moods array list of moods
-     * @return clean array list of moods
-     */
-    private ArrayList<Mood> sortAndCleanMoods(ArrayList<Mood> moods) {
-        //use the comparator of the mood class to sort the moods by username and then date
-        Collections.sort(moods, Mood.sortMoods);
-        //iterate through all moods. keep the first mood belonging to the same user
-        Iterator<Mood> it = moods.iterator();
-        String username = "";
-        Mood currentMood = null;
-        while (it.hasNext()) {
-            currentMood = it.next();
-            if (username.equals(currentMood.getUsername())) {
-                it.remove();
-            }
-            username = currentMood.getUsername();
-        }
-        return moods;
-    }
     /*
     The following methods ar mandatory in order for the MapView to work. No functionality here.
      */
@@ -261,6 +209,15 @@ public class MoodsNearMeFragment extends Fragment {
     public void onResume() {
         super.onResume();
         mMapView.onResume();
+        ArrayList<Mood> cleanMoods = ((EntryPoint) getActivity()).getMoodsList();
+
+        if (cleanMoods != null) {
+            Log.d("Number of moods in database", String.valueOf(cleanMoods.size()));
+            for (int i = 0; i < cleanMoods.size(); i++) {
+                addMarker(cleanMoods.get(i));
+            }
+        }
+
     }
 
     @Override

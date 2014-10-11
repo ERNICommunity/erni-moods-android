@@ -57,6 +57,7 @@ public class MyMoodFragment extends Fragment {
             public void onConversionCompleted(String id) {
                 //Log some data from the retrieved objects
                 Log.d("Mood create with id", id);
+                ((EntryPoint) getActivity()).updateMoodList();
                 FragmentManager fragmentManager = getFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                 fragmentTransaction

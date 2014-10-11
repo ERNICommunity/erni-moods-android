@@ -6,7 +6,9 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.community.erni.ernimoods.R;
 import android.community.erni.ernimoods.api.JSONResponseException;
+import android.community.erni.ernimoods.api.MoodsBackend;
 import android.community.erni.ernimoods.api.UserBackend;
+import android.community.erni.ernimoods.model.Mood;
 import android.community.erni.ernimoods.model.User;
 import android.content.Context;
 import android.content.Intent;
@@ -19,6 +21,10 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 
 /**
  * This is the starting Activity for the application.
@@ -38,6 +44,23 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
     private UserBackend.OnConversionCompleted callHandlerGetUser;
     //error handler to handle errors from the user retrieval
     private UserBackend.OnJSONResponseError errorHandlerUser;
+
+    //used to query the backend for a user providing e-mail and phone-number
+    private String userID = "";
+
+    //storage variable to handle the mood-request
+    private MoodsBackend.OnConversionCompleted callHandlerGetMoods;
+    //error handler to handle errors from the request
+    private MoodsBackend.OnJSONResponseError errorHandler;
+
+    //storage variable to handle the mood-request
+    private MoodsBackend.OnConversionCompleted callHandlerGetMyMoods;
+    //error handler to handle errors from the request
+    private MoodsBackend.OnJSONResponseError errorHandlerGetMoods;
+
+
+    private ArrayList<Mood> cleanMoodsList = null;
+    private ArrayList<Mood> myMoods = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +99,8 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
             public void onConversionCompleted(User user) {
                 //display username
                 Log.d("User successfully loaded", user.getUsername());
+                updateMoodList();
+                userID = user.getID();
                 //change the fragment to mymood
                 FragmentManager fragmentManager = getFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -101,21 +126,41 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
             }
         };
 
-        //again, create an object to call the user-backend
-        UserBackend getUser = new UserBackend();
-        //attached the specified handlers
-        getUser.setListener(callHandlerGetUser);
-        getUser.setErrorListener(errorHandlerUser);
+        //attach call handler. this method is called as soon as the moods-list is loaded
+        callHandlerGetMoods = new MoodsBackend.OnConversionCompleted<ArrayList<Mood>>() {
+            @Override
+            //what to do on successful conversion?
+            public void onConversionCompleted(ArrayList<Mood> moods) {
+                //Add markers for all moods
 
-        //load username and password from preferences
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        String username = prefs.getString("pref_username", null);
-        String pwd = prefs.getString("pref_password", null);
+                //Sort moods by username and keep only the most recent post
+                cleanMoodsList = sortAndCleanMoods(moods);
+            }
+        };
 
-        //get user by username and password. the handlers will redirect to either the signup
-        //or the mymood, depending on whether the user exists or not
-        getUser.getUserByPassword(username, pwd);
+        /**
+         * Each time when the fragment resumes, the moods from the current user are loaded.
+         * The handler adds the datapoints to the chart and creates a hashmap to map from
+         * timestamp to comment.
+         */
+        callHandlerGetMyMoods = new MoodsBackend.OnConversionCompleted<ArrayList<Mood>>() {
+            @Override
+            //what to do on successful conversion?
+            public void onConversionCompleted(ArrayList<Mood> moods) {
+                myMoods = moods;
+            }
+        };
 
+        /**
+         * Well, we want to be informed if the moods could not be loaded
+         */
+        errorHandlerGetMoods = new MoodsBackend.OnJSONResponseError() {
+            @Override
+            public void onJSONResponseError(JSONResponseException e) {
+                //user does not exist or something else went wrong
+                Log.d("Something went wrong", e.getErrorCode() + ": " + e.getErrorMessage());
+            }
+        };
     }
 
 
@@ -150,6 +195,22 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
     @Override
     public void onResume() {
         super.onResume();
+
+        //again, create an object to call the user-backend
+        UserBackend getUser = new UserBackend();
+        //attached the specified handlers
+        getUser.setListener(callHandlerGetUser);
+        getUser.setErrorListener(errorHandlerUser);
+
+        //load username and password from preferences
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String username = prefs.getString("pref_username", null);
+        String pwd = prefs.getString("pref_password", null);
+
+        //get user by username and password. the handlers will redirect to either the signup
+        //or the mymood, depending on whether the user exists or not
+        getUser.getUserByPassword(username, pwd);
+
         //when the app is resumed, the location might have changed
         //we get updates not more often than every 500 ms and if the change is smaller than 50m
         locationManager.requestLocationUpdates(provider, 500, 50, this);
@@ -227,5 +288,62 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
      */
     public Location getCurrentLocation() {
         return this.currentLocation;
+    }
+
+    public String getUserID() {
+        return this.userID;
+    }
+
+    public ArrayList<Mood> getMoodsList() {
+        return cleanMoodsList;
+    }
+
+    public ArrayList<Mood> getMyMoods() {
+        return this.myMoods;
+    }
+
+    public void updateMoodList() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String username = prefs.getString("pref_username", null);
+
+        //create a moods backend object
+        MoodsBackend getMoods = new MoodsBackend();
+        //set listener to handle successful retrieval
+        getMoods.setListener(callHandlerGetMoods);
+        //set event handler for the errors
+        getMoods.setErrorListener(errorHandlerGetMoods);
+        //start async-task
+        getMoods.getAllMoods();
+
+        //create a moods backend object
+        MoodsBackend getMyMoods = new MoodsBackend();
+        //set listener to handle successful retrieval
+        getMyMoods.setListener(callHandlerGetMyMoods);
+        getMyMoods.setErrorListener(errorHandlerGetMoods);
+        getMyMoods.getMoodsByUsername(username);
+    }
+
+
+    /**
+     * This methods can be used to keep only the most recent post from each user
+     *
+     * @param moods array list of moods
+     * @return clean array list of moods
+     */
+    private ArrayList<Mood> sortAndCleanMoods(ArrayList<Mood> moods) {
+        //use the comparator of the mood class to sort the moods by username and then date
+        Collections.sort(moods, Mood.sortMoods);
+        //iterate through all moods. keep the first mood belonging to the same user
+        Iterator<Mood> it = moods.iterator();
+        String username = "";
+        Mood currentMood = null;
+        while (it.hasNext()) {
+            currentMood = it.next();
+            if (username.equals(currentMood.getUsername())) {
+                it.remove();
+            }
+            username = currentMood.getUsername();
+        }
+        return moods;
     }
 }
