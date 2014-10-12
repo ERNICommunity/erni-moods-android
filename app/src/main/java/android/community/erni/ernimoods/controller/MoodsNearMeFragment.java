@@ -66,7 +66,7 @@ public class MoodsNearMeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        View view = inflater.inflate(R.layout.fragment_moods_near_me, container, false);
+        final View view = inflater.inflate(R.layout.fragment_moods_near_me, container, false);
 
         // show the action bar when this fragment is displayed
         getActivity().getActionBar().show();
@@ -145,6 +145,7 @@ public class MoodsNearMeFragment extends Fragment {
                     }
 
                     ((TextView) thisView.findViewById(R.id.selectedUserTextView)).setText(moodMap.get(marker).getUsername());
+                    ((TextView) thisView.findViewById(R.id.selectedBarTextView)).setText("");
 
                     //again, create an object to call the user-backend
                     UserBackend getUser = new UserBackend();
@@ -170,13 +171,26 @@ public class MoodsNearMeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (clickedUser != null && clickedUser.getEmail() != "") {
+                    String user = ((EntryPoint) getActivity()).getUserName();
+                    String bar = ((TextView) thisView.findViewById(R.id.selectedBarTextView)).getText().toString();
+                    String subject = "";
+                    String body = "";
+                    if (bar != "") {
+                        subject = "ERNI Moods: " + user + " contacts you";
+                        body = "Hello " + clickedUser.getUsername() + "! Would you like to meet at " + bar + "?";
+                    } else {
+                        subject = "ERNI Moods: " + user + " contacts you";
+                    }
                     Intent intent = new Intent(Intent.ACTION_SEND);
-                    intent.setType("text/html");
-                    intent.putExtra(Intent.EXTRA_EMAIL, clickedUser.getEmail());
-                    intent.putExtra(Intent.EXTRA_SUBJECT, "Subject");
-                    intent.putExtra(Intent.EXTRA_TEXT, "I'm email body.");
-
+                    intent.setType("message/rfc822");
+                    intent.putExtra(Intent.EXTRA_EMAIL, new String[]{clickedUser.getEmail()});
+                    intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+                    intent.putExtra(Intent.EXTRA_TEXT, body);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(Intent.createChooser(intent, "Send Email"));
+                } else {
+                    Toast.makeText(getActivity().getApplicationContext(),
+                            "No user selected or no e-mail available.", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -184,7 +198,21 @@ public class MoodsNearMeFragment extends Fragment {
         ((Button) view.findViewById(R.id.sendMessageButton)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                if (clickedUser != null && clickedUser.getPhone() != "") {
+                    String bar = ((TextView) thisView.findViewById(R.id.selectedBarTextView)).getText().toString();
+                    String body = "";
+                    if (bar != "") {
+                        body = "Hello " + clickedUser.getUsername() + "! Would you like to meet at " + bar + "?";
+                    }
+                    Intent smsIntent = new Intent(Intent.ACTION_VIEW);
+                    smsIntent.setType("vnd.android-dir/mms-sms");
+                    smsIntent.putExtra("address", clickedUser.getPhone());
+                    smsIntent.putExtra("sms_body", body);
+                    startActivity(Intent.createChooser(smsIntent, "Send text message"));
+                } else {
+                    Toast.makeText(getActivity().getApplicationContext(),
+                            "No user selected or no phone available.", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 

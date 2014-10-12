@@ -130,14 +130,23 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
             public void onConversionCompleted(ArrayList<Mood> moods) {
                 //Add markers for all moods
 
+                int currentTab = getActionBar().getSelectedTab().getPosition();
+
                 //Sort moods by username and keep only the most recent post
                 cleanMoodsList = sortAndCleanMoods(moods);
                 //redirect to the moods near me
                 FragmentManager fragmentManager = getFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction
-                        .replace(R.id.fragmentContainer, new MoodsNearMeFragment())
-                        .commit();
+                if (currentTab == 1) {
+                    fragmentTransaction
+                            .replace(R.id.fragmentContainer, new MoodsNearMeFragment())
+                            .commit();
+                } else {
+                    fragmentTransaction
+                            .replace(R.id.fragmentContainer, new MyMoodFragment())
+                            .commit();
+                }
+
             }
         };
 
@@ -321,6 +330,11 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
      */
     public ArrayList<Mood> getMyMoods() {
         return this.myMoods;
+    }
+
+    public String getUserName() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        return prefs.getString("pref_username", null);
     }
 
     /**

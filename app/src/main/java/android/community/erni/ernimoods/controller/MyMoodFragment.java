@@ -109,7 +109,7 @@ public class MyMoodFragment extends Fragment {
                 } else {
                     Toast.makeText(
                             getActivity().getBaseContext(),
-                            "No network servide. Enable service and try again.",
+                            "No network service. Enable service and try again.",
                             Toast.LENGTH_SHORT).show();
                 }
 
