@@ -4,6 +4,7 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.app.ProgressDialog;
 import android.community.erni.ernimoods.R;
 import android.community.erni.ernimoods.api.JSONResponseException;
 import android.community.erni.ernimoods.api.MoodsBackend;
@@ -62,6 +63,8 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
     private ArrayList<Mood> cleanMoodsList = null;
     //stores the current user's moods
     private ArrayList<Mood> myMoods = null;
+
+    private ProgressDialog progress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -158,6 +161,7 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
             //what to do on successful conversion?
             public void onConversionCompleted(ArrayList<Mood> moods) {
                 myMoods = moods;
+                progress.dismiss();
             }
         };
 
@@ -171,6 +175,11 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
                 Log.d("Something went wrong", e.getErrorCode() + ": " + e.getErrorMessage());
             }
         };
+
+        progress = new ProgressDialog(this);
+        progress.setTitle("Loading moods");
+        progress.setCancelable(false);
+        progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
     }
 
 
@@ -357,6 +366,8 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
      * on application start or if a mood has been posted
      */
     public void updateMoodList() {
+        progress.show();
+
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         String username = prefs.getString("pref_username", null);
 
