@@ -33,5 +33,8 @@
     <string name="comment_alert_title">Comment</string>
     <string name="comment_alert_message">Comment or no comment? That is the question.</string>
     <string name="tab_near_me">Near Me</string>
+    <string name="already_registered">Already registered? </string>
 
+    <string name="tologin">  to login.</string>
+    <string name="link"> Click here</string>
 </resources>

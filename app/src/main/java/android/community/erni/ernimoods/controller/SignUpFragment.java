@@ -8,6 +8,7 @@ import android.community.erni.ernimoods.api.UserBackend;
 import android.community.erni.ernimoods.model.User;
 import android.community.erni.ernimoods.service.FormValidator;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -34,6 +35,7 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
     EditText email;
     EditText phone;
     Button submit;
+    TextView clickHere;
 
     //storage variable to handle the create-user request
     private UserBackend.OnConversionCompleted callHandlerPost;
@@ -89,10 +91,17 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
         pwd = (EditText) view.findViewById(R.id.signUpPasswordInput);
         email = (EditText) view.findViewById(R.id.signUpEmailInput);
         phone = (EditText) view.findViewById(R.id.signUpPhoneInput);
+        clickHere = (TextView) view.findViewById(R.id.textView2);
+
 // attach on click listener to submit button
         submit = (Button) view.findViewById(R.id.signUpButton);
         submit.setClickable(true);
         submit.setOnClickListener(this);
+
+        // attach on click listener to the clickHere button
+        clickHere.setClickable(true);
+        clickHere.setOnClickListener(this);
+
 //Attach validators for eMail
         EditText email = (EditText) view.findViewById(R.id.signUpEmailInput);
 //This listener fires, when user pressed a finished input button
@@ -216,39 +225,51 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
      */
     public void onClick(View view) {
         boolean inputValid = true;
+
+        // check source and if it was the login text that was clicked on then go to the special login page
+        if (view.getId() == R.id.textView2) {
+            // replace the current fragment with the login fragment
+                // todo
+            // for now just start the settings activity (temp fix)
+            Intent i = new Intent(getActivity(), SettingsActivity.class);
+            startActivity(i);
+
+        }
+        else {
 //ultimately check user inputs
-        if (!FormValidator.validateUsername(user)) {
-            user.setError(getString(R.string.signUpUsernameErrorMessage));
-            inputValid = false;
-        }
-        if (!FormValidator.validatePassword(pwd)) {
-            pwd.setError(getString(R.string.signUpPasswordErrorMessage));
-            inputValid = false;
-        }
-        if (!FormValidator.validateEmail(email)) {
-            email.setError(getString(R.string.signUpEmailErrorMessage));
-            inputValid = false;
-        }
-        if (!FormValidator.validatePhone(phone)) {
-            phone.setError(getString(R.string.signUpPhoneErrorMessage));
-            inputValid = false;
-        }
+            if (!FormValidator.validateUsername(user)) {
+                user.setError(getString(R.string.signUpUsernameErrorMessage));
+                inputValid = false;
+            }
+            if (!FormValidator.validatePassword(pwd)) {
+                pwd.setError(getString(R.string.signUpPasswordErrorMessage));
+                inputValid = false;
+            }
+            if (!FormValidator.validateEmail(email)) {
+                email.setError(getString(R.string.signUpEmailErrorMessage));
+                inputValid = false;
+            }
+            if (!FormValidator.validatePhone(phone)) {
+                phone.setError(getString(R.string.signUpPhoneErrorMessage));
+                inputValid = false;
+            }
 // if the user input is valid, sign him up and then go to the MyMoods screen
-        if (inputValid) {
-            Log.d(TAG, "Input valid. Signing up user...");
+            if (inputValid) {
+                Log.d(TAG, "Input valid. Signing up user...");
 
-            //store the input data in a user object
-            User newUser = new User(user.getText().toString(), phone.getText().toString(), email.getText().toString(), pwd.getText().toString());
+                //store the input data in a user object
+                User newUser = new User(user.getText().toString(), phone.getText().toString(), email.getText().toString(), pwd.getText().toString());
 
-            // call to API handler to sign up user
-            //create a UserBackend object
-            UserBackend createUser = new UserBackend();
-            //attach the event handlers for response handling and error handling
-            createUser.setListener(callHandlerPost);
-            createUser.setErrorListener(errorHandler);
-            //start the background task to create a new user
-            createUser.createUser(newUser);
+                // call to API handler to sign up user
+                //create a UserBackend object
+                UserBackend createUser = new UserBackend();
+                //attach the event handlers for response handling and error handling
+                createUser.setListener(callHandlerPost);
+                createUser.setErrorListener(errorHandler);
+                //start the background task to create a new user
+                createUser.createUser(newUser);
 
+            }
         }
     }
 
