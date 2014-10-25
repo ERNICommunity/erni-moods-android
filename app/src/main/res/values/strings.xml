@@ -19,6 +19,7 @@
     <string name="signUpPhoneHint">Phone number</string>
     <string name="signUpSendButton">Sign Up</string>
     <string name="signUpUsernameErrorMessage">Username must be at least 5 characters</string>
+    <string name="signUpUsernameTakenErrorMessage">Username already taken.</string>
     <string name="signUpEmailErrorMessage">Please enter a correct e-mail address</string>
     <string name="signUpPasswordErrorMessage">Password must be at least 5 characters</string>
     <string name="signUpPhoneErrorMessage">A phone number may only contain +,(), space and numbers</string>
@@ -70,9 +71,8 @@
     <string name="no_user"> No user selected or no e-mail available. </string>
 
     <string name="map_error"> Error creating map </string>
-
-
-
+    <string name="already_registered">Already registered?</string>
+    <string name="link">Login here.</string>
 
 
 
