@@ -18,6 +18,7 @@
     <string name="signUpEmailHint">E-Mail</string>
     <string name="signUpPhoneHint">Phone number</string>
     <string name="signUpSendButton">Sign Up</string>
+    <string name="signUpUsernameTakenErrorMessage">Username probably taken</string>
     <string name="signUpUsernameErrorMessage">Username must be at least 5 characters</string>
     <string name="signUpEmailErrorMessage">Please enter a correct e-mail address</string>
     <string name="signUpPasswordErrorMessage">Password must be at least 5 characters</string>
