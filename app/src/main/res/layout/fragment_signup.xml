@@ -79,5 +79,37 @@
         android:background="#ff1412dd"
         android:textColor="#ffffffff" />
 
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/already_registered"
+            android:id="@+id/textView"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="50dp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/link"
+            android:id="@+id/textView2"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="50dp"
+            android:textStyle="bold"
+            android:textColorLink="#ff0e159d"
+            android:textColor="#ff0e159d" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tologin"
+
+            android:id="@+id/textView3"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="50dp" />
+    </LinearLayout>
+
 
 </LinearLayout>
