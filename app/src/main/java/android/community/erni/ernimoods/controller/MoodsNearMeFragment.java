@@ -176,10 +176,10 @@ public class MoodsNearMeFragment extends Fragment {
                     String subject = "";
                     String body = "";
                     if (bar != "") {
-                        subject = "ERNI Moods: " + user + " contacts you";
-                        body = "Hello " + clickedUser.getUsername() + "! Would you like to meet at " + bar + "?";
+                        subject = getString(R.string.erni_moods) + user + getString(R.string.contacts);
+                        body = getString(R.string.hello) + clickedUser.getUsername() + getString(R.string.meet) + bar + "?";
                     } else {
-                        subject = "ERNI Moods: " + user + " contacts you";
+                        subject = getString(R.string.erni_moods) + user + getString(R.string.contacts);
                     }
                     Intent intent = new Intent(Intent.ACTION_SEND);
                     intent.setType("message/rfc822");
@@ -187,10 +187,10 @@ public class MoodsNearMeFragment extends Fragment {
                     intent.putExtra(Intent.EXTRA_SUBJECT, subject);
                     intent.putExtra(Intent.EXTRA_TEXT, body);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(Intent.createChooser(intent, "Send Email"));
+                    startActivity(Intent.createChooser(intent, getString(R.string.send_email)));
                 } else {
                     Toast.makeText(getActivity().getApplicationContext(),
-                            "No user selected or no e-mail available.", Toast.LENGTH_SHORT).show();
+                            getString(R.string.no_user), Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -202,16 +202,16 @@ public class MoodsNearMeFragment extends Fragment {
                     String bar = ((TextView) thisView.findViewById(R.id.selectedBarTextView)).getText().toString();
                     String body = "";
                     if (bar != "") {
-                        body = "Hello " + clickedUser.getUsername() + "! Would you like to meet at " + bar + "?";
+                        body = getString(R.string.hello) + clickedUser.getUsername() + getString(R.string.meet) + bar + "?";
                     }
                     Intent smsIntent = new Intent(Intent.ACTION_VIEW);
                     smsIntent.setType("vnd.android-dir/mms-sms");
                     smsIntent.putExtra("address", clickedUser.getPhone());
                     smsIntent.putExtra("sms_body", body);
-                    startActivity(Intent.createChooser(smsIntent, "Send text message"));
+                    startActivity(Intent.createChooser(smsIntent, getString(R.string.send_textmessage)));
                 } else {
                     Toast.makeText(getActivity().getApplicationContext(),
-                            "No user selected or no phone available.", Toast.LENGTH_SHORT).show();
+                            getString(R.string.no_user), Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -246,7 +246,7 @@ public class MoodsNearMeFragment extends Fragment {
                  */
                 if(null == googleMap) {
                     Toast.makeText(getActivity().getApplicationContext(),
-                            "Error creating map", Toast.LENGTH_SHORT).show();
+                            getString(R.string.map_error), Toast.LENGTH_SHORT).show();
                 }
             }
         } catch (NullPointerException exception){

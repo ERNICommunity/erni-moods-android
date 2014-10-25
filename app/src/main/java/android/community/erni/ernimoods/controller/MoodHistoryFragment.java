@@ -59,7 +59,7 @@ public class MoodHistoryFragment extends Fragment {
     private ArrayList<Mood> currentMoods = null;
 
     //this date format is used to display the chart's x-labels
-    SimpleDateFormat myDateFormat = new SimpleDateFormat("dd.MM.yyyy hh:mm");
+    SimpleDateFormat myDateFormat = new SimpleDateFormat(getString(R.string.simple_date));
 
     private View view;
 
@@ -72,7 +72,7 @@ public class MoodHistoryFragment extends Fragment {
          */
 
         //create new time series
-        mySeries = new TimeSeries("Mood History");
+        mySeries = new TimeSeries(getString(R.string.tab_mood_history));
 
         //create new multipleseriesdataset and add our time series to the set
         mDataset = new XYMultipleSeriesDataset();
@@ -110,8 +110,8 @@ public class MoodHistoryFragment extends Fragment {
         mRenderer.setXRoundedLabels(false); //if this is true, date-labels somehow don't display
         mRenderer.setXLabelsAngle(285); //oblique x-labels
         //axis titles
-        mRenderer.setXTitle("Date");
-        mRenderer.setYTitle("Mood [1-5]");
+        mRenderer.setXTitle(getString(R.string.date));
+        mRenderer.setYTitle(getString(R.string.mood));
         mRenderer.setAxisTitleTextSize(28);
         //background color
         mRenderer.setBackgroundColor(Color.LTGRAY);
@@ -167,7 +167,7 @@ public class MoodHistoryFragment extends Fragment {
                         // Displaying Toast Message
                         Toast.makeText(
                                 getActivity().getBaseContext(),
-                                "Comment: " + comment,
+                                getString(R.string.comment_alert_title) + comment,
                                 Toast.LENGTH_SHORT).show();
                     }
                 }

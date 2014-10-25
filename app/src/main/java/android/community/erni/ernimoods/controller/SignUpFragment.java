@@ -78,7 +78,7 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
 
                 // show an error. This doesn't check at the moment what the error was, but this is generally due to the username already taken
                     Toast.makeText(
-                            getActivity().getBaseContext(), "Something went wrong. Maybe the username is already taken.",
+                            getActivity().getBaseContext(), getString(R.string.signUpUsernameTakenErrorMessage),
                             Toast.LENGTH_LONG).show();
 
             }

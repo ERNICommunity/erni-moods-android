@@ -100,17 +100,17 @@ public class MyMoodFragment extends Fragment {
                 alert.setMessage(R.string.comment_alert_message);
                 final EditText commentInput = new EditText(getActivity());
                 alert.setView(commentInput);
-                alert.setPositiveButton("OK",new DialogInterface.OnClickListener() {
+                alert.setPositiveButton(getString(R.string.ok),new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                     String commentText = commentInput.getText().toString();
                     makeTheMood(user, commentText, moodId);
                     }
                 });
 
-                alert.setNegativeButton("No comment", new DialogInterface.OnClickListener() {
+                alert.setNegativeButton(getString(R.string.no_comment), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
 
-                        commentInput.setText("No comment");
+                        commentInput.setText(getString(R.string.no_comment));
                         String commentText = commentInput.getText().toString();
                         makeTheMood(user, commentText, moodId);
                     }
@@ -135,13 +135,13 @@ public class MyMoodFragment extends Fragment {
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         String timeOfDay;
         if (hour > 0 && hour < 12) {
-            timeOfDay = "morning";
+            timeOfDay = getString(R.string.greetings_morning);
         } else if (hour > 12 && hour < 17) {
-            timeOfDay = "afternoon";
+            timeOfDay = getString(R.string.greetings_afternoon);
         } else {
-            timeOfDay = "evening";
+            timeOfDay = getString(R.string.greetings_evening);
         }
-        greeting.setText("Good " + timeOfDay + ". How are you today?");
+        greeting.setText(getString(R.string.greetings_good) + timeOfDay + getString(R.string.greetings_how));
 
 
     }
@@ -164,7 +164,7 @@ public class MyMoodFragment extends Fragment {
         } else {
             Toast.makeText(
                     getActivity().getBaseContext(),
-                    "No network service. Enable service and try again.",
+                    getString(R.string.no_network),
                     Toast.LENGTH_SHORT).show();
         }
     }

@@ -72,20 +72,20 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
         setContentView(R.layout.activity_entry_point);
 
         //setup the action bar to show tabs
-       final ActionBar actionBar = getActionBar();
-       actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        final ActionBar actionBar = getActionBar();
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
         // hard code the tabs
-       actionBar.addTab(actionBar.newTab().setText(getString(R.string.tab_near_me)).setTabListener(this));
-       actionBar.addTab(actionBar.newTab().setText("My Mood").setTabListener(this));
-        actionBar.addTab(actionBar.newTab().setText("Mood History").setTabListener(this));
+        actionBar.addTab(actionBar.newTab().setText(getString(R.string.tab_near_me)).setTabListener(this));
+        actionBar.addTab(actionBar.newTab().setText(getString(R.string.tab_my_mood)).setTabListener(this));
+        actionBar.addTab(actionBar.newTab().setText(getString(R.string.tab_mood_history)).setTabListener(this));
         // etc for mood history in future
 
 
         /*
         to avoid problems if no location is accessible, we create a dummy-location first
          */
-        currentLocation = new Location("Dummy location");
+        currentLocation = new Location(getString(R.string.dummy_location));
         currentLocation.setLongitude(0.0);
         currentLocation.setLatitude(0.0);
         //get a handle to the location manager
@@ -177,7 +177,7 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
         };
 
         progress = new ProgressDialog(this);
-        progress.setTitle("Loading moods");
+        progress.setTitle(getString(R.string.loading_moods));
         progress.setCancelable(false);
         progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
     }
@@ -227,8 +227,8 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
 
         //load username and password from preferences
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        String username = prefs.getString("pref_username", null);
-        String pwd = prefs.getString("pref_password", null);
+        String username = prefs.getString(getString(R.string.pref_username), null);
+        String pwd = prefs.getString(getString(R.string.pref_password), null);
 
         //get user by username and password. the handlers will redirect to either the signup
         //or the mymood, depending on whether the user exists or not
@@ -236,7 +236,7 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
             getUser.getUserByPassword(username, pwd);
         } else {
             Toast.makeText(
-                    getBaseContext(), "No network service!",
+                    getBaseContext(), getString(R.string.no_network),
                     Toast.LENGTH_SHORT).show();
         }
 
@@ -260,7 +260,7 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
                 ft.replace(R.id.fragmentContainer, new MoodsNearMeFragment());
                 Log.d(TAG, "Created MoodsNearMeFragment");
 
-            break;
+                break;
             case 1:
                 ft.replace(R.id.fragmentContainer, new MyMoodFragment());
                 Log.d(TAG, "Created MyMoodFragment");
@@ -391,7 +391,7 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
         } else {
             Toast.makeText(
                     getBaseContext(),
-                    "No network service. Moods not updated.",
+                    getString(R.string.no_network),
                     Toast.LENGTH_SHORT).show();
         }
     }

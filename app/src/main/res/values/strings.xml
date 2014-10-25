@@ -18,6 +18,7 @@
     <string name="signUpEmailHint">E-Mail</string>
     <string name="signUpPhoneHint">Phone number</string>
     <string name="signUpSendButton">Sign Up</string>
+    <string name="signUpUsernameTakenErrorMessage">Something went wrong. Maybe the username is already taken.</string>
     <string name="signUpUsernameErrorMessage">Username must be at least 5 characters</string>
     <string name="signUpEmailErrorMessage">Please enter a correct e-mail address</string>
     <string name="signUpPasswordErrorMessage">Password must be at least 5 characters</string>
@@ -32,6 +33,48 @@
 
     <string name="comment_alert_title">Comment</string>
     <string name="comment_alert_message">Comment or no comment? That is the question.</string>
+    <string name="ok">OK</string>
+    <string name="no_comment">No comment</string>
+
+
     <string name="tab_near_me">Near Me</string>
+    <string name="tab_my_mood">My Mood</string>
+    <string name="tab_mood_history">Mood History</string>
+
+    <string name="dummy_location">Dummy location</string>
+
+    <string name="loading_moods">Loading moods</string>
+
+    <string name="no_network">No network service!</string>
+
+    <string name="simple_date">dd.MM.yyyy hh:mm</string>
+
+    <string name="date">Date</string>
+    <string name="mood">Mood [1-5]</string>
+
+    <string name="pref_username">pref_username</string>
+    <string name="pref_password">pref_password</string>
+
+    <string name="erni_moods">ERNI Moods:</string>
+    <string name="contacts">contacts you</string>
+    <string name="hello">Hello</string>
+    <string name="meet">! Would you like to meet at </string>
+
+    <string name="greetings_morning">morning</string>
+    <string name="greetings_afternoon">afternoon </string>
+    <string name="greetings_evening">evening </string>
+    <string name="greetings_good">Good </string>
+    <string name="greetings_how">. How are you today? </string>
+
+    <string name="send_email">Send Email </string>
+    <string name="send_textmessage">Send text message </string>
+    <string name="no_user"> No user selected or no e-mail available. </string>
+
+    <string name="map_error"> Error creating map </string>
+
+
+
+
+
 
 </resources>
