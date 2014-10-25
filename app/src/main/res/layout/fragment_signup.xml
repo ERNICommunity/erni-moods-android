@@ -76,7 +76,8 @@
         android:text="@string/signUpSendButton"
         android:id="@+id/signUpButton"
         android:layout_gravity="center_horizontal"
-        android:background="#ffdd6a61" />
+        android:background="#ff1412dd"
+        android:textColor="#ffffffff" />
 
 
 </LinearLayout>
