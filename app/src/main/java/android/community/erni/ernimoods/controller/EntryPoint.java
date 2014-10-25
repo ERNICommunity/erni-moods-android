@@ -76,7 +76,7 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
         // hard code the tabs
-       actionBar.addTab(actionBar.newTab().setText("Near Me").setTabListener(this));
+       actionBar.addTab(actionBar.newTab().setText(getString(R.string.tab_near_me)).setTabListener(this));
        actionBar.addTab(actionBar.newTab().setText("My Mood").setTabListener(this));
         actionBar.addTab(actionBar.newTab().setText("Mood History").setTabListener(this));
         // etc for mood history in future
