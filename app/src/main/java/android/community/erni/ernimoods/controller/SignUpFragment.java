@@ -82,6 +82,7 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
         phone = (EditText) view.findViewById(R.id.signUpPhoneInput);
 // attach on click listener to submit button
         submit = (Button) view.findViewById(R.id.signUpButton);
+        submit.setClickable(true);
         submit.setOnClickListener(this);
 //Attach validators for eMail
         EditText email = (EditText) view.findViewById(R.id.signUpEmailInput);
@@ -241,6 +242,7 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onResume() {
         super.onResume();
+
     }
 
     @Override

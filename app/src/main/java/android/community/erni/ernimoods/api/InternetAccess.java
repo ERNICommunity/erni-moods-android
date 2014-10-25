@@ -89,6 +89,7 @@ public class InternetAccess extends AsyncTask<String, Void, String> {
         try {
             // create HttpClient
             HttpClient httpclient = new DefaultHttpClient();
+            httpclient.getParams().setParameter("http.socket.timeout", new Integer(5000));
             // make GET request to the given URL
             HttpResponse httpResponse = httpclient.execute(new HttpGet(url));
             // receive response as inputStream
@@ -119,6 +120,7 @@ public class InternetAccess extends AsyncTask<String, Void, String> {
         try {
             // create HttpClient
             HttpClient httpclient = new DefaultHttpClient();
+            httpclient.getParams().setParameter("http.socket.timeout", new Integer(5000));
             // make DELETE request to the given URL
             HttpResponse httpResponse = httpclient.execute(new HttpDelete(url));
             result = "";
@@ -146,6 +148,7 @@ public class InternetAccess extends AsyncTask<String, Void, String> {
         try {
             // 1. create HttpClient
             HttpClient httpclient = new DefaultHttpClient();
+            httpclient.getParams().setParameter("http.socket.timeout", new Integer(5000));
             // 2. make POST request to the given URL
             HttpPost httpPost = new HttpPost(url);
             // 5. set json to StringEntity
