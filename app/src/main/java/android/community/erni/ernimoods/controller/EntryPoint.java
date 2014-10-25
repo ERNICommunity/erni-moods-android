@@ -109,7 +109,7 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
                 userID = user.getID();
             }
         };
-
+        //very important event
         //event handler for loading the user. log that something went wrong
         //call the change fragment method, which redirects to the sign-up page
         errorHandlerUser = new UserBackend.OnJSONResponseError() {
