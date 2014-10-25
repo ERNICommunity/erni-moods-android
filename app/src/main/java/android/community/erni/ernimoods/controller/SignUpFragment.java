@@ -192,7 +192,7 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
 
                     imm.hideSoftInputFromWindow(phone.getWindowToken(), 0);
 
-                    if (FormValidator.validatePhone((EditText) v)) {
+                                        if (FormValidator.validatePhone((EditText) v)) {
                         return true;
                     } else {
                         v.setError(getString(R.string.signUpPhoneErrorMessage));

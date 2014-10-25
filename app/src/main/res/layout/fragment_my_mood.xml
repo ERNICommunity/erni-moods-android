@@ -2,7 +2,8 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:weightSum="1">
 
     <ImageView
         android:layout_width="wrap_content"
@@ -30,17 +31,23 @@
         android:src="@drawable/smiley_very_happy"
         android:layout_gravity="center_horizontal"
         android:focusableInTouchMode="false"
-        android:contentDescription="@string/text_moodVeryHappy" />
+        android:contentDescription="@string/text_moodVeryHappy"
+        android:background="#ffffffff"
+        android:layout_weight="0.06"
+        android:layout_marginBottom="10dp" />
 
     <ImageButton
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:id="@+id/button_Good"
         android:src="@drawable/smiley_good"
         android:contentDescription="@string/text_moodGood"
         android:layout_gravity="center_horizontal"
         android:focusableInTouchMode="false"
-        android:cropToPadding="true" />
+        android:cropToPadding="true"
+        android:background="#ffffffff"
+        android:layout_weight="0.04"
+        android:layout_marginBottom="10dp" />
 
     <ImageButton
         android:layout_width="fill_parent"
@@ -49,7 +56,10 @@
         android:src="@drawable/smiley_sosolala"
         android:contentDescription="@string/text_moodSoSoLaLa"
         android:layout_gravity="center_horizontal"
-        android:focusableInTouchMode="false" />
+        android:focusableInTouchMode="false"
+        android:background="#ffffffff"
+        android:layout_weight="0.05"
+        android:layout_marginBottom="10dp" />
 
     <ImageButton
         android:layout_width="fill_parent"
@@ -58,7 +68,10 @@
         android:src="@drawable/smiley_not_amused"
         android:focusableInTouchMode="false"
         android:contentDescription="@string/text_moodNotAmused"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center_horizontal"
+        android:background="#ffffffff"
+        android:layout_weight="0.05"
+        android:layout_marginBottom="10dp" />
 
     <ImageButton
         android:layout_width="fill_parent"
@@ -68,7 +81,9 @@
         android:contentDescription="@string/text_moodVeryMoody"
         android:focusable="false"
         android:layout_gravity="center_horizontal"
-        android:focusableInTouchMode="false" />
+        android:focusableInTouchMode="false"
+        android:background="#ffffffff"
+        android:layout_weight="0.06" />
 
     <TextView
         android:layout_width="wrap_content"
