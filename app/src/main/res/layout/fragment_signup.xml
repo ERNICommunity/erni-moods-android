@@ -97,7 +97,10 @@
             android:text="@string/link"
             android:id="@+id/textView2"
             android:layout_marginLeft="5dp"
-            android:layout_marginTop="50dp" />
+            android:layout_marginTop="50dp"
+            android:textStyle="bold"
+            android:textColorLink="#ff0e159d"
+            android:textColor="#ff0e159d" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
