@@ -75,19 +75,12 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
             public void onJSONResponseError(JSONResponseException e) {
                 //log the error message from the json response
                 Log.d("Whoops...something went wrong creating the user", e.getErrorCode() + ": " + e.getErrorMessage());
-                // display a toast to tell the user something went wrong
 
-                // catch the duplicate key error E11000 Doesn't work
-                if (e.getErrorMessage().contains("E1100 duplicate key error index")) {
+                // show an error. This doesn't check at the moment what the error was, but this is generally due to the username already taken
                     Toast.makeText(
-                            getActivity().getBaseContext(), "The username is already taken. Try another username.",
+                            getActivity().getBaseContext(), "Something went wrong. Maybe the username is already taken.",
                             Toast.LENGTH_LONG).show();
-                }
-                else {
-                    Toast.makeText(
-                            getActivity().getBaseContext(), "Something damn weird went wrong:\n" + e.getErrorCode() + e.getErrorMessage(),
-                            Toast.LENGTH_LONG).show();
-                }
+
             }
         };
 
