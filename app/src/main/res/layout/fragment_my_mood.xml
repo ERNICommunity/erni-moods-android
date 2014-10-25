@@ -32,7 +32,7 @@
         android:layout_gravity="center_horizontal"
         android:focusableInTouchMode="false"
         android:contentDescription="@string/text_moodVeryHappy"
-        android:background="#ffffffff"
+        android:background="@android:color/transparent"
         android:layout_weight="0.06"
         android:layout_marginBottom="10dp" />
 
@@ -45,7 +45,7 @@
         android:layout_gravity="center_horizontal"
         android:focusableInTouchMode="false"
         android:cropToPadding="true"
-        android:background="#ffffffff"
+        android:background="@android:color/transparent"
         android:layout_weight="0.04"
         android:layout_marginBottom="10dp" />
 
@@ -57,7 +57,7 @@
         android:contentDescription="@string/text_moodSoSoLaLa"
         android:layout_gravity="center_horizontal"
         android:focusableInTouchMode="false"
-        android:background="#ffffffff"
+        android:background="@android:color/transparent"
         android:layout_weight="0.05"
         android:layout_marginBottom="10dp" />
 
@@ -69,7 +69,7 @@
         android:focusableInTouchMode="false"
         android:contentDescription="@string/text_moodNotAmused"
         android:layout_gravity="center_horizontal"
-        android:background="#ffffffff"
+        android:background="@android:color/transparent"
         android:layout_weight="0.05"
         android:layout_marginBottom="10dp" />
 
@@ -82,7 +82,7 @@
         android:focusable="false"
         android:layout_gravity="center_horizontal"
         android:focusableInTouchMode="false"
-        android:background="#ffffffff"
+        android:background="@android:color/transparent"
         android:layout_weight="0.06" />
 
     <TextView
