@@ -85,20 +85,4 @@
         android:background="@android:color/transparent"
         android:layout_weight="0.06" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="@string/lbl_enterYourComment"
-        android:id="@+id/textView"
-        android:layout_marginTop="30dp" />
-
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/commentText"
-        android:maxLines="2"
-        android:minLines="2"
-        android:focusable="true"/>
-
 </LinearLayout>

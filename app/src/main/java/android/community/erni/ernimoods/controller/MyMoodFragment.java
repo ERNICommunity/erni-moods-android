@@ -1,10 +1,12 @@
 package android.community.erni.ernimoods.controller;
 
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.community.erni.ernimoods.R;
 import android.community.erni.ernimoods.api.MoodsBackend;
 import android.community.erni.ernimoods.model.Mood;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -30,7 +32,8 @@ public class MyMoodFragment extends Fragment {
     private MoodsBackend.OnConversionCompleted callHandlerPostMood;
     // the greeting message, will be programmatically altered depending on the time of day
     private TextView greeting;
-    private EditText comment;
+    // the user
+    private String user;
 
 
     @Override
@@ -39,7 +42,7 @@ public class MyMoodFragment extends Fragment {
 
         // references to the UI objects we need
         greeting = (TextView)view.findViewById(R.id.textViewGreeting);
-        comment = (EditText)view.findViewById(R.id.commentText);
+
 
 
         // show the action bar when this fragment is displayed
@@ -89,30 +92,36 @@ public class MyMoodFragment extends Fragment {
                 Resources res = getResources();
                 SharedPreferences myPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getBaseContext());
 
-                String user = myPreferences.getString("pref_username", "nothing");
-                String commentText = comment.getText().toString();
+                user = myPreferences.getString("pref_username", "nothing");
+
+                // show a dialog
+                AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+                alert.setTitle(R.string.comment_alert_title);
+                alert.setMessage(R.string.comment_alert_message);
+                final EditText commentInput = new EditText(getActivity());
+                alert.setView(commentInput);
+                alert.setPositiveButton("OK",new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                    String commentText = commentInput.getText().toString();
+                    makeTheMood(user, commentText, moodId);
+                    }
+                });
+
+                alert.setNegativeButton("No comment", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                        commentInput.setText("No comment");
+                        String commentText = commentInput.getText().toString();
+                        makeTheMood(user, commentText, moodId);
+                    }
+                });
 
 
-                if (((EntryPoint) getActivity()).isOnline()) {
-                    // create a mood object
-                    Mood myCurrentMood = new Mood(user, ((EntryPoint) getActivity()).getCurrentLocation(), commentText, moodId);
 
-                    Log.d(TAG, "Created mood: " + myCurrentMood.toString());
+                alert.show();
 
-                    //create a moods backend object
-                    MoodsBackend getMoods = new MoodsBackend();
-                    //set listener to handle successful retrieval
-                    getMoods.setListener(callHandlerPostMood);
-                    //set event handler for the errors
-                    // getMoods.setErrorListener(errorHandler);
-                    //start async-task
-                    getMoods.postMood(myCurrentMood);
-                } else {
-                    Toast.makeText(
-                            getActivity().getBaseContext(),
-                            "No network service. Enable service and try again.",
-                            Toast.LENGTH_SHORT).show();
-                }
+
+
 
             }
         });
@@ -135,5 +144,28 @@ public class MyMoodFragment extends Fragment {
         greeting.setText("Good " + timeOfDay + ". How are you today?");
 
 
+    }
+
+    private void makeTheMood(String user, String commentText, int moodId) {
+        if (((EntryPoint) getActivity()).isOnline()) {
+            // create a mood object
+            Mood myCurrentMood = new Mood(user, ((EntryPoint) getActivity()).getCurrentLocation(), commentText, moodId);
+
+            Log.d(TAG, "Created mood: " + myCurrentMood.toString());
+
+            //create a moods backend object
+            MoodsBackend getMoods = new MoodsBackend();
+            //set listener to handle successful retrieval
+            getMoods.setListener(callHandlerPostMood);
+            //set event handler for the errors
+            // getMoods.setErrorListener(errorHandler);
+            //start async-task
+            getMoods.postMood(myCurrentMood);
+        } else {
+            Toast.makeText(
+                    getActivity().getBaseContext(),
+                    "No network service. Enable service and try again.",
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 }
