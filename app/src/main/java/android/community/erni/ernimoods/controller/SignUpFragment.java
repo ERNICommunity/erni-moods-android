@@ -7,6 +7,7 @@ import android.community.erni.ernimoods.api.JSONResponseException;
 import android.community.erni.ernimoods.api.UserBackend;
 import android.community.erni.ernimoods.model.User;
 import android.community.erni.ernimoods.service.FormValidator;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -16,9 +17,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * Fragment to handle user registration
@@ -72,6 +75,19 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
             public void onJSONResponseError(JSONResponseException e) {
                 //log the error message from the json response
                 Log.d("Whoops...something went wrong creating the user", e.getErrorCode() + ": " + e.getErrorMessage());
+                // display a toast to tell the user something went wrong
+
+                // catch the duplicate key error E11000 Doesn't work
+                if (e.getErrorMessage().contains("E1100 duplicate key error index")) {
+                    Toast.makeText(
+                            getActivity().getBaseContext(), "The username is already taken. Try another username.",
+                            Toast.LENGTH_LONG).show();
+                }
+                else {
+                    Toast.makeText(
+                            getActivity().getBaseContext(), "Something damn weird went wrong:\n" + e.getErrorCode() + e.getErrorMessage(),
+                            Toast.LENGTH_LONG).show();
+                }
             }
         };
 
@@ -166,11 +182,16 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
             }
         });
 //Attach validators for phone number
-        EditText phone = (EditText) view.findViewById(R.id.signUpPhoneInput);
+        final EditText phone = (EditText) view.findViewById(R.id.signUpPhoneInput);
         phone.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(
+                    Context.INPUT_METHOD_SERVICE);
+
+                    imm.hideSoftInputFromWindow(phone.getWindowToken(), 0);
+
                     if (FormValidator.validatePhone((EditText) v)) {
                         return true;
                     } else {
@@ -237,7 +258,6 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
 
         }
     }
-
 
     @Override
     public void onResume() {

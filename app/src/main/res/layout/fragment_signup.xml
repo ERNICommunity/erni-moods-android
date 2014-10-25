@@ -58,7 +58,9 @@
         android:ems="10"
         android:id="@+id/signUpPhoneInput"
         android:hint="@string/signUpPhoneHint"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center_horizontal"
+
+         />
 
     <TextView
         android:layout_width="wrap_content"
@@ -73,7 +75,7 @@
         android:text="@string/signUpSendButton"
         android:id="@+id/signUpButton"
         android:layout_gravity="center_horizontal"
-        android:background="@color/common_signin_btn_default_background" />
+        android:background="#ffdd6a61" />
 
 
 </LinearLayout>
