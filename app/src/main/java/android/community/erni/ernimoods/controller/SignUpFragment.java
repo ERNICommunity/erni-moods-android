@@ -86,7 +86,6 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
             }
         };
 
-
         user = (EditText) view.findViewById(R.id.signUpUserInput);
         pwd = (EditText) view.findViewById(R.id.signUpPasswordInput);
         email = (EditText) view.findViewById(R.id.signUpEmailInput);
@@ -189,7 +188,7 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(
+                  InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(
                     Context.INPUT_METHOD_SERVICE);
 
                     imm.hideSoftInputFromWindow(phone.getWindowToken(), 0);

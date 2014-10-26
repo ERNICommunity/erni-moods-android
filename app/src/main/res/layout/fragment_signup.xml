@@ -30,7 +30,8 @@
         android:id="@+id/signUpUserInput"
         android:inputType="text"
         android:hint="@string/signUpUsernameHint1"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center_horizontal"
+        android:singleLine="true"/>
 
     <EditText
         android:layout_width="330dp"
@@ -39,7 +40,8 @@
         android:ems="10"
         android:id="@+id/signUpPasswordInput"
         android:hint="@string/SignUpPasswordHint"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center_horizontal"
+        android:singleLine="true"/>
 
     <EditText
         android:layout_width="330dp"
@@ -49,7 +51,8 @@
         android:ems="10"
         android:id="@+id/signUpEmailInput"
         android:layout_gravity="center_horizontal"
-        android:hint="@string/signUpEmailHint" />
+        android:hint="@string/signUpEmailHint"
+        android:singleLine="true"/>
 
     <EditText
         android:layout_width="330dp"
@@ -59,7 +62,7 @@
         android:id="@+id/signUpPhoneInput"
         android:hint="@string/signUpPhoneHint"
         android:layout_gravity="center_horizontal"
-
+        android:singleLine="true"
          />
 
     <TextView

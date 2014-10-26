@@ -73,6 +73,7 @@
     <string name="map_error"> Error creating map </string>
     <string name="already_registered">Already registered?</string>
     <string name="link">Login here.</string>
+    <string name="login_label">Login using an existing username</string>
 
 
 
