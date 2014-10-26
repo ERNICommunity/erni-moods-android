@@ -228,10 +228,10 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
         // check source and if it was the login text that was clicked on then go to the special login page
         if (view.getId() == R.id.textView2) {
             // replace the current fragment with the login fragment
-                // todo
-            // for now just start the settings activity (temp fix)
-            Intent i = new Intent(getActivity(), SettingsActivity.class);
-            startActivity(i);
+
+            FragmentManager fragmentManager = getFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.fragmentContainer, new LoginFragment()).commit();
+            Log.d(TAG, "Replaced fragment with Login fragment");
 
         }
         else {
