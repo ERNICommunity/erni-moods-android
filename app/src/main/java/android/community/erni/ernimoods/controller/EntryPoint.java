@@ -26,8 +26,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Iterator;
 
 /**
@@ -138,18 +142,6 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
                 //Sort moods by username and keep only the most recent post
                 cleanMoodsList = sortAndCleanMoods(moods);
                 //redirect to the moods near me
-                FragmentManager fragmentManager = getFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                if (currentTab == 1) {
-                    fragmentTransaction
-                            .replace(R.id.fragmentContainer, new MoodsNearMeFragment())
-                            .commit();
-                } else {
-                    fragmentTransaction
-                            .replace(R.id.fragmentContainer, new MyMoodFragment())
-                            .commit();
-                }
-
             }
         };
 
@@ -162,6 +154,34 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
             public void onConversionCompleted(ArrayList<Mood> moods) {
                 myMoods = moods;
                 progress.dismiss();
+
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(new Date());
+                cal.add(Calendar.DATE, -1);
+                Date oneDayAgo = cal.getTime();
+
+                SimpleDateFormat myDateFormat = new SimpleDateFormat(getString(R.string.simple_date));
+                FragmentManager fragmentManager = getFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                try {
+                    if (!prefs.contains("lastPost") || myDateFormat.parse(prefs.getString("lastPost", null)).before(oneDayAgo)) {
+                        fragmentTransaction
+                                .replace(R.id.fragmentContainer, new MyMoodFragment())
+                                .commit();
+
+                    } else {
+                        fragmentTransaction
+                                .replace(R.id.fragmentContainer, new MoodsNearMeFragment())
+                                .commit();
+                    }
+                } catch (ParseException e) {
+                    fragmentTransaction
+                            .replace(R.id.fragmentContainer, new MyMoodFragment())
+                            .commit();
+                }
+
             }
         };
 
@@ -266,7 +286,11 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
                 Log.d(TAG, "Created MyMoodFragment");
                 break;
             case 2:
-                ft.replace(R.id.fragmentContainer, new MoodHistoryFragment());
+                try {
+                    ft.replace(R.id.fragmentContainer, new MoodHistoryFragment());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 Log.d(TAG, "Created MoodHistoryFragment");
                 break;
         }

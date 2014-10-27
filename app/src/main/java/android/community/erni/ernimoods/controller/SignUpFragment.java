@@ -8,7 +8,6 @@ import android.community.erni.ernimoods.api.UserBackend;
 import android.community.erni.ernimoods.model.User;
 import android.community.erni.ernimoods.service.FormValidator;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -64,8 +63,7 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
                 editor.putString("pref_password",pwd.getText().toString());
                 editor.commit();
                 // redirect to the MyMood by replacing the Signup fragment with MyMoodFragment
-                FragmentManager fragmentManager = getFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.fragmentContainer, new MyMoodFragment()).commit();
+                ((EntryPoint) getActivity()).updateMoodList();
                 Log.d(TAG, "Replaced fragment with MyMood");
             }
         };

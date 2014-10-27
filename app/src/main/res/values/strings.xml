@@ -22,7 +22,7 @@
     <string name="signUpUsernameTakenErrorMessage">Username already taken.</string>
     <string name="signUpEmailErrorMessage">Please enter a correct e-mail address</string>
     <string name="signUpPasswordErrorMessage">Password must be at least 5 characters</string>
-    <string name="signUpPhoneErrorMessage">A phone number may only contain +,(), space and numbers</string>
+    <string name="signUpPhoneErrorMessage">Enter a valid phone number of at least 10 characters</string>
     <!-- String resources for Mood -->
     <string name="text_moodVeryHappy">Very happy</string>
     <string name="text_moodGood">Good</string>

@@ -16,62 +16,66 @@ public class FormValidator {
                     + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 
     //very simple regex for phone numbers
-    private static final String PHONE_PATTERN = "^\\+?[\\d() -]{10,}$";
+    private static final String PHONE_PATTERN = "^([0-9\\(\\)\\/\\+ \\-]{10,})$";
 
     /**
      * Checks whether a username isn't empty
+     *
      * @param v textview that should be tested
      * @return true if length is larger than zero, false if empty inout
      */
-    public static boolean validateUsername(EditText v){
+    public static boolean validateUsername(EditText v) {
         if (v.getText().length() < 5) {
             return false;
-        }else{
+        } else {
             return true;
         }
     }
 
     /**
      * Checks whether a password has at least 4 characters
+     *
      * @param v textview that should be tested
      * @return True if valid, False if not valid
      */
-    public static boolean validatePassword(EditText v){
+    public static boolean validatePassword(EditText v) {
         if (v.getText().length() < 5) {
             return false;
-        }else{
+        } else {
             return true;
         }
     }
 
     /**
      * Checks whether an E-Mail address is valid against a regex
+     *
      * @param v textview that should be tested
      * @return True if valid, False if not valid
      */
-    public static boolean validateEmail(EditText v){
+    public static boolean validateEmail(EditText v) {
         Pattern emailPattern = Pattern.compile(EMAIL_PATTERN);
         Matcher matcher = emailPattern.matcher(v.getText().toString());
 
-        if(v.getText().length() != 0 && !matcher.matches()){
+        if (v.getText().length() != 0 && !matcher.matches()) {
             return false;
-        }else{
+        } else {
             return true;
         }
     }
 
     /**
      * Checks whether a phone number is valid against a regex
+     *
      * @param v textview that should be tested
      * @return True if valid, False if not valid
      */
-    public static boolean validatePhone(EditText v){
+    public static boolean validatePhone(EditText v) {
         Pattern emailPattern = Pattern.compile(PHONE_PATTERN);
         Matcher matcher = emailPattern.matcher(v.getText().toString());
 
-        if(!matcher.matches()){
+        if (!matcher.matches()) {
             return false;
-        }else{
+        } else {
             return true;
         }
     }

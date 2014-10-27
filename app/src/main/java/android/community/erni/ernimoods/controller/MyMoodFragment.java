@@ -19,7 +19,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 /**
  * This fragment is used to enter your current mood
@@ -61,6 +63,13 @@ public class MyMoodFragment extends Fragment {
                 //Log some data from the retrieved objects
                 Log.d("Mood create with id", id);
                 ((EntryPoint) getActivity()).updateMoodList();
+                SimpleDateFormat myDateFormat = new SimpleDateFormat(getString(R.string.simple_date));
+                Date time = new Date();
+                String now = myDateFormat.format(time);
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putString("lastPost", now);
+                editor.commit();
             }
         };
 
