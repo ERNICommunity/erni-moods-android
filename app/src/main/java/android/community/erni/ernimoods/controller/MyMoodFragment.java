@@ -150,7 +150,7 @@ public class MyMoodFragment extends Fragment {
         } else {
             timeOfDay = getString(R.string.greetings_evening);
         }
-        greeting.setText(getString(R.string.greetings_good) + timeOfDay + getString(R.string.greetings_how));
+        greeting.setText(getString(R.string.greetings_good) + " "+ timeOfDay + getString(R.string.greetings_how));
 
 
     }
