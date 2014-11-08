@@ -177,7 +177,7 @@ public class MoodsNearMeFragment extends Fragment {
                     String body = "";
                     if (bar != "") {
                         subject = getString(R.string.erni_moods) + user + getString(R.string.contacts);
-                        body = getString(R.string.hello) + clickedUser.getUsername() + getString(R.string.meet) + bar + "?";
+                        body = getString(R.string.hello) +  " " + clickedUser.getUsername() + getString(R.string.meet) + " "+ bar + "?";
                     } else {
                         subject = getString(R.string.erni_moods) + user + getString(R.string.contacts);
                     }
@@ -202,7 +202,7 @@ public class MoodsNearMeFragment extends Fragment {
                     String bar = ((TextView) thisView.findViewById(R.id.selectedBarTextView)).getText().toString();
                     String body = "";
                     if (bar != "") {
-                        body = getString(R.string.hello) + clickedUser.getUsername() + getString(R.string.meet) + bar + "?";
+                        body = getString(R.string.hello) + " "+  clickedUser.getUsername() + getString(R.string.meet) + " "+ bar + "?";
                     }
                     Intent smsIntent = new Intent(Intent.ACTION_VIEW);
                     smsIntent.setType("vnd.android-dir/mms-sms");
