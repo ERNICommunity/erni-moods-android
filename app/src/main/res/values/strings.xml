@@ -67,7 +67,7 @@
     <string name="greetings_how">. How are you today? </string>
 
     <string name="send_email">Send Email </string>
-    <string name="send_textmessage">Send text message </string>
+    <string name="send_textmessage">Send SMS </string>
     <string name="no_user"> No user selected or no e-mail available. </string>
 
     <string name="map_error"> Error creating map </string>
@@ -75,6 +75,8 @@
     <string name="link">Login here.</string>
     <string name="login_label">Login using an existing username</string>
 
+    <string name="selected_bar">Selected Bar:</string>
+    <string name="selected_user">Selected User:</string>
 
 
 </resources>

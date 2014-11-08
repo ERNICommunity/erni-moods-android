@@ -7,36 +7,37 @@
 
     <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="76dp">
+        android:layout_height="86dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/selectedUserTextView"
-            android:layout_alignParentTop="true"
             android:layout_toRightOf="@+id/selectedUserLabelTextView"
             android:layout_toEndOf="@+id/selectedUserLabelTextView"
-            android:paddingLeft="20dp" />
+            android:layout_alignParentTop="true" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Selected Bar:"
+            android:text="@string/selected_bar"
             android:id="@+id/selectedBarLabelTextView"
             android:layout_below="@+id/selectedUserLabelTextView"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:paddingRight="30dp" />
+            android:paddingRight="30dp"
+            android:layout_marginLeft="10dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Selected User: "
+            android:text="@string/selected_user"
             android:id="@+id/selectedUserLabelTextView"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:paddingRight="20dp" />
+            android:paddingRight="20dp"
+            android:layout_marginLeft="10dp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -44,26 +45,31 @@
             android:id="@+id/selectedBarTextView"
             android:layout_alignBottom="@+id/selectedBarLabelTextView"
             android:layout_toRightOf="@+id/selectedBarLabelTextView"
-            android:layout_toEndOf="@+id/selectedBarLabelTextView"
-            android:paddingLeft="20dp" />
+            android:layout_toEndOf="@+id/selectedBarLabelTextView" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Send Email"
+            android:text="@string/send_email"
             android:id="@+id/sendEmailButton"
-            android:layout_toStartOf="@+id/sendMessageButton"
             android:layout_alignParentBottom="true"
+            android:textStyle="bold"
+            android:layout_alignParentLeft="false"
+            android:singleLine="false"
+            android:layout_alignParentRight="false"
             android:layout_toLeftOf="@+id/sendMessageButton" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Send Textmessage"
+            android:text="@string/send_textmessage"
             android:id="@+id/sendMessageButton"
-            android:layout_alignParentBottom="true"
+            android:textStyle="bold"
+            android:singleLine="false"
             android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" />
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="false" />
+
     </RelativeLayout>
 
     <com.google.android.gms.maps.MapView
