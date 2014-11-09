@@ -53,6 +53,6 @@ Extends AsyncTask to handle http requests
 
 
 ###How to get involved
-Issues are tracked using the github [issues] (https://github.com/ERNICommunity/erni-moods-backend/issues) feature
+Issues are tracked using the github [issues] (https://github.com/ERNICommunity/erni-moods-android/issues) feature
 If you want to get involved, then please get started assigning unresolved issues to yourself and fixing them :-)
 
