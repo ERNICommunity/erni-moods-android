@@ -59,7 +59,7 @@ public class MoodHistoryFragment extends Fragment {
     private ArrayList<Mood> currentMoods = null;
 
     //this date format is used to display the chart's x-labels
-    SimpleDateFormat myDateFormat = new SimpleDateFormat(getString(R.string.simple_date));
+    SimpleDateFormat myDateFormat = new SimpleDateFormat("dd.MM.yyyy hh:mm");
 
     private View view;
 
@@ -120,6 +120,12 @@ public class MoodHistoryFragment extends Fragment {
         //enable the chart to be clickable. clicks on datapoints will show the respective comments
         mRenderer.setClickEnabled(true);
         mRenderer.setSelectableBuffer(50);
+
+        // show the action bar when this fragment is displayed
+        getActivity().getActionBar().show();
+
+        //make sure the MyMood Tab is highlighted
+        getActivity().getActionBar().setSelectedNavigationItem(2);
 
         this.view = view;
 

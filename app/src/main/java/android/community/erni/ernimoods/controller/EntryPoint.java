@@ -2,6 +2,7 @@ package android.community.erni.ernimoods.controller;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
@@ -34,10 +35,12 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 
+import static android.app.Fragment.*;
+
 /**
  * This is the starting Activity for the application.
  */
-public class EntryPoint extends Activity implements ActionBar.TabListener, LocationListener {
+public class EntryPoint extends Activity implements ActionBar.TabListener, LocationListener  {
     public static final String TAG = "EntryPoint";
 
     //always stores the current location
@@ -160,7 +163,7 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
                 cal.add(Calendar.DATE, -1);
                 Date oneDayAgo = cal.getTime();
 
-                SimpleDateFormat myDateFormat = new SimpleDateFormat(getString(R.string.simple_date));
+                SimpleDateFormat myDateFormat = new SimpleDateFormat("dd.MM.yyyy hh:mm");
                 FragmentManager fragmentManager = getFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
@@ -287,7 +290,9 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
                 break;
             case 2:
                 try {
-                    ft.replace(R.id.fragmentContainer, new MoodHistoryFragment());
+
+                 ft.replace(R.id.fragmentContainer,new MoodHistoryFragment());
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -443,4 +448,6 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
         }
         return moods;
     }
+
+
 }

@@ -63,7 +63,7 @@ public class MyMoodFragment extends Fragment {
                 //Log some data from the retrieved objects
                 Log.d("Mood create with id", id);
                 ((EntryPoint) getActivity()).updateMoodList();
-                SimpleDateFormat myDateFormat = new SimpleDateFormat(getString(R.string.simple_date));
+                SimpleDateFormat myDateFormat = new SimpleDateFormat("dd.MM.yyyy hh:mm");
                 Date time = new Date();
                 String now = myDateFormat.format(time);
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());

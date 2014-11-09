@@ -159,6 +159,7 @@ public class MoodsNearMeFragment extends Fragment {
                 } else {
                     //if a bar-marker has been clicked, only display its info window
                     marker.showInfoWindow();
+
                     ((TextView) thisView.findViewById(R.id.selectedBarTextView)).setText(barMap.get(marker).getName());
                     return true;
                 }
