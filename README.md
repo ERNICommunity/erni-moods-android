@@ -4,45 +4,55 @@ ERNI Moods
 Android app
 -----------
 
-This is the ERNI Moods app for Android to be developed during the Hack Sessions and the ERNI Hack Day.
-
-####Please use API 19 and build tools 20.0.0
-Please check that you have SDK version 19 before working with this project. Please do not change the build version in build.gradle
-Thanks... :-)
+This is the ERNI Moods app for Android, developed during the Hack Sessions and the ERNI Hack Day.
+The app is a client for the [Erni Moods backend API] (https://github.com/ERNICommunity/erni-moods-backend)
 
 ##Brief architectural overview
-The app is built using the Model, View, Controller paradigm, and the classes are packaged in that way.
-Additionally:
+* the controller package contains the Android Activity and Fragment classes that drive the frontend
+* the model package contains plain old Java classes
 * the api package creates an abstraction layer that exposes methods to use the API backend
 * the service package contains helper classes
 
-##Model
-###model.Mood
-Represents a Mood object.
-###model.User
-Represents a User object.
+##model
+###Mood
+Class representing the user's mood
+###User
+Class representing the user
+###GooglePlace
+Class representing a mood marker on the map 
 
-##Controller
-###controller.MoodsApp
-Class extends android.app.Application and useful for storing globals that will remain regardless of which Activity is currently running.
-###controller.EntryPoint
-Activity that is the first one created when the application starts. If the user is not registered, the SignUpFragment is inflated. If the user is already registered, then the MyMoodFragment is inflated.
-###controller.SignUpFragment
+##controller
+###EntryPoint
+Activity that is the first one created when the application starts. We use and swap-in/out Fragments to display different screens
+###SignUpFragment
 Allows the user to sign up and validates the input.
-###controller.MyMoodFragment
+###LoginFragment
+For logging in user who is already signed up.
+###MyMoodFragment
 The core of the app - here you select your current mood which is then shared with all the other users.
-###controller.MoodsNearMeActivity
-(not yet implemented)
+###MoodsNearMeActivity
 This shows the moods on a Google Map.
-###controller.SettingsActivity
-This inflates SettingsFragment which contains the user preferences.
+###SettingsActivity
+This inflates SettingsFragment which contains the user preferences. The username and password are stored in preferences.xml
 
-#ToDo List
-Here is a list of things that the app would need:
+##service
+###FormValidator
+A helper class for validating form input
+###MoodsJSONParser
+Provides a set of static methods to marshall and unmarshall User and Mood objects to JSON
 
-* myMoodActiviy: acquire location after the user has selected the mood. post the mood object to the database.
-* display the moodsNearMe on a google map
-* improve the navigation
-* ...
+##api
+###UserBackend
+Implementation of the Interface IUserBackend to query User data from the backend
+###MoodsBackend
+Implementation of the Interface IMoodsBackend to query Mood data from the backend
+###PlacesBackend
+Implementation of the Interface IPlacesBackend to query Mood data from the backend
+###InternetAccess
+Extends AsyncTask to handle http requests
 
+
+###How to get involved
+Issues are tracked using the github [issues] feature (https://github.com/ERNICommunity/erni-moods-backend/issues)
+If you want to get involved, then please get started assigning unresolved issues to yourself and fixing them :-)
 
