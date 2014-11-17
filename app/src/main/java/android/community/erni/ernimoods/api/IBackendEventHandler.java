@@ -14,9 +14,9 @@ public interface IBackendEventHandler {
         /**
          * This method has to be implemented to handle the retrieved data from the backend
          *
-         * @param mood Contains the return value (generic data type)
+         * @param apiResponse Contains the return value (generic data type)
          */
-        void onConversionCompleted(T mood); //todo make the variable name more generic, this is confusing
+        void onConversionCompleted(T apiResponse);
     }
 
     /**

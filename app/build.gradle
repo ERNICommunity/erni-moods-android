@@ -31,5 +31,5 @@ dependencies {
     compile 'com.google.android.gms:play-services:4.2.42'
     compile group: 'org.achartengine', name: 'achartengine', version: '1.2.0'
     compile 'com.android.support:support-v4:19.+'
-
+    compile 'com.squareup.retrofit:retrofit:1.6.1'
 }

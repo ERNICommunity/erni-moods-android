@@ -2,8 +2,20 @@ package android.community.erni.ernimoods.model;
 
 import android.location.Location;
 
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
+import java.lang.reflect.Type;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 
 /**
  * represents a Mood object
@@ -12,23 +24,29 @@ import java.util.Date;
  */
 public class Mood {
 
+
     private String username;
-    private Location location;
+    private Location location = new Location("Phone");
     private String comment;
-    private String id = "";
+    private String id = null;
+    @SerializedName("time")
     private Date date = null;
     private int mood;
 
+    public Mood(){
+
+    }
+
     public Mood (String username, Location location, String comment, int mood) {
         this.username = username;
-        this.location = location;
+        //this.location = location;
         this.comment = comment;
         this.mood = mood;
     }
 
     public Mood(String username, Location location, String comment, int mood, String id) {
         this.username = username;
-        this.location = location;
+        //this.location = location;
         this.comment = comment;
         this.mood = mood;
         this.id = id;

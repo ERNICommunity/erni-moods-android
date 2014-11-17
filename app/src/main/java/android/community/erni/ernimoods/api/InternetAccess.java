@@ -103,7 +103,7 @@ public class InternetAccess extends AsyncTask<String, Void, String> {
                 result = addErrorCode(result);
             }
         } catch (Exception e) {
-            Log.d("InputStream", e.getLocalizedMessage());
+            //Log.d("InputStream", e.getLocalizedMessage());
         }
         return result;
     }
@@ -184,7 +184,7 @@ public class InternetAccess extends AsyncTask<String, Void, String> {
      * @return converted Stream
      * @throws IOException
      */
-    private static String convertInputStreamToString(InputStream inputStream) throws IOException {
+    public static String convertInputStreamToString(InputStream inputStream) throws IOException {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
         String line = "";
         String result = "";

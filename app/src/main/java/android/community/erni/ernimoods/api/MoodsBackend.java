@@ -2,7 +2,53 @@ package android.community.erni.ernimoods.api;
 
 import android.community.erni.ernimoods.model.Mood;
 import android.community.erni.ernimoods.service.MoodsJSONParser;
+import android.location.Location;
 import android.net.Uri;
+import android.util.Log;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
+import com.google.gson.reflect.TypeToken;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.lang.reflect.Type;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
+import retrofit.Callback;
+import retrofit.RestAdapter;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
+import retrofit.converter.ConversionException;
+import retrofit.converter.Converter;
+import retrofit.converter.GsonConverter;
+import retrofit.http.Body;
+import retrofit.http.DELETE;
+import retrofit.http.GET;
+import retrofit.http.POST;
+import retrofit.http.Path;
+import retrofit.http.Query;
+import retrofit.mime.TypedInput;
+import retrofit.mime.TypedOutput;
 
 /**
  * Implementation of the abstract class to query mood data from the backend
@@ -10,16 +56,52 @@ import android.net.Uri;
 public class MoodsBackend implements IMoodsBackend {
 
     private OnConversionCompleted listener = null; //stores the event listener for completed http-response parsing
-    private InternetAccess task = new InternetAccess(); //class variable to store an Internet-Access object
     //event handler for an error message handler
     private OnJSONResponseError errorListener;
-    private Uri.Builder baseUri = new Uri.Builder();
+    private RestAdapter restAdapter;
+    private MoodsService service;
+
+    public interface MoodsService {
+        String SERVICE_ENDPOINT = "http://moodyrest.azurewebsites.net";
+
+        @GET("/moods")
+        void getAllMoodsAPI(Callback<List<Mood>> listCallback);
+
+        @GET("/moods")
+        void getMoodsByUserAPI(@Query("username") String username, Callback<List<Mood>> listCallback);
+
+        @GET("/moods")
+        void getMoodsByLocationAPI(@Query("lat") Double lat, @Query("lon") Double lon, @Query("dist") Double dist, Callback<List<Mood>> listCallback);
+
+        @POST("/moods")
+        void postMoodAPI(@Body Mood newMood, Callback<Response> postCallback);
+
+        @GET("/moods/{id}")
+        void getMoodByIdAPI(@Path("id") String id, Callback<Mood> moodCallback);
+
+        @DELETE("moods/{id}")
+        void deleteMoodAPI(@Path("id") String id, Callback<Response> rawCallback);
+    }
+
 
     public MoodsBackend() {
-        baseUri.scheme("http");
-        baseUri.authority("moodyrest.azurewebsites.net");
-        baseUri.appendPath("moods");
+        Gson gson = new GsonBuilder()
+                //.registerTypeAdapter(Date.class, new DateDeserializer())
+                .registerTypeAdapter(Location.class, new LocationDeserializer())
+                .registerTypeAdapter(Location.class, new LocationSerializer())
+                .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+                //.excludeFieldsWithoutExposeAnnotation()
+                .create();
+
+        restAdapter = new RestAdapter.Builder()
+                .setEndpoint(MoodsService.SERVICE_ENDPOINT)
+                .setConverter(new GsonConverter(gson))
+                        .build();
+
+        service = restAdapter.create(MoodsService.class);
     }
+
+
 
     /**
      * Method to set a listener to handle the converted data
@@ -46,15 +128,7 @@ public class MoodsBackend implements IMoodsBackend {
      * @see android.community.erni.ernimoods.api.IMoodsBackend
      */
     public void postMood(Mood mood) {
-        //set method of the internet call to post
-        task.setMethod("POST");
-        //attach the listener
-        task.setListener(postMoodListener);
-        //create a json-object as a string from a mood object
-        String jsonString = MoodsJSONParser.createJSONMood(mood);
-
-        //start the asynchronous background task to post a mood
-        task.execute(baseUri.toString(), jsonString);
+        service.postMoodAPI(mood, postCallback);
     }
 
 
@@ -62,11 +136,7 @@ public class MoodsBackend implements IMoodsBackend {
      * @see android.community.erni.ernimoods.api.IMoodsBackend
      */
     public void getAllMoods() {
-        // attach listener
-
-        task.setListener(getMoodsListener);
-        //start async task
-        task.execute(baseUri.toString());
+        service.getAllMoodsAPI(listCallback);
     }
 
     /**
@@ -74,11 +144,7 @@ public class MoodsBackend implements IMoodsBackend {
      * @see android.community.erni.ernimoods.api.IMoodsBackend
      */
     public void getMoodsByUsername(String username) {
-        // call AsyncTask to perform network operation on separate thread
-        task.setListener(getMoodsListener);
-        //call background task
-        baseUri.appendQueryParameter("username", username);
-        task.execute(baseUri.toString());
+        service.getMoodsByUserAPI(username, listCallback);
     }
 
     /**
@@ -88,116 +154,180 @@ public class MoodsBackend implements IMoodsBackend {
      * @see android.community.erni.ernimoods.api.IMoodsBackend
      */
     public void getMoodsByLocation(Double latitude, Double longitude, Double distance) {
-        // call AsyncTask to perform network operation on separate thread
-        task.setListener(getMoodsListener);
-        //call background task
-        baseUri.appendQueryParameter("lat", latitude.toString());
-        baseUri.appendQueryParameter("lon", longitude.toString());
-        baseUri.appendQueryParameter("dist", distance.toString());
-        task.execute(baseUri.toString());
+        service.getMoodsByLocationAPI(latitude, longitude, distance, listCallback);
     }
 
     public void getMoodById(String id) {
-        task.setListener(getMoodsListener);
-        //call background task
-        baseUri.appendPath(id);
-        task.execute(baseUri.toString());
+        service.getMoodByIdAPI(id, moodCallback);
     }
 
     public void deleteMood(String id) {
-        task.setMethod("DELETE");
-        task.setListener(deleteMoodListener);
-        //append id to the base url
-        baseUri.appendPath(id);
-        //start background task to delete a user
-        task.execute(baseUri.toString());
+        service.deleteMoodAPI(id, rawCallback);
     }
 
-    /**
-     * Event handler to process an async http call to the moods-backend to retrieve moods
-     */
-    private InternetAccess.OnTaskCompleted getMoodsListener = new InternetAccess.OnTaskCompleted() {
-        /**
-         * Implementation of the interface's method
-         *
-         * @param result Response data as a string
-         */
-        public void onTaskCompleted(String result) {
-            //If the sync-internet task has marked the response as an error message
-            if (result.indexOf("Error") != -1) {
-                //cut off the error-marker
-                int pos = result.indexOf("{");
-                String resultWithoutError = result.substring(pos);
-                //call the json-error message parser. the parser creates an exception object passes it to the error handler
-                if (errorListener != null) {
-                    errorListener.onJSONResponseError(MoodsJSONParser.parserError(resultWithoutError));
-                }
-                //if there is no error message
-            } else {
-                if (listener != null) {
-                    //parse the retrieved json-string and send the created list of mood objects to the listener
-                    //return type is ArrayList<Mood>
-                    listener.onConversionCompleted(MoodsJSONParser.getMoodsList(result));
+    private String getResponseBodyAsString(Response r){
+        TypedInput body = r.getBody();
+        try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(body.in()));
+            StringBuilder out = new StringBuilder();
+            String newLine = System.getProperty("line.separator");
+            String line;
+            while ((line = reader.readLine()) != null) {
+                out.append(line);
+                out.append(newLine);
+            }
+            return out.toString();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
 
-                }
+    private JSONResponseException getResponseException(RetrofitError err){
+            try {
+                //create new object
+                JSONObject jsonCode = new JSONObject(getResponseBodyAsString(err.getResponse()));
+                //get the code-attribute and the method-attribute and create a new exception
+                JSONResponseException e = new JSONResponseException(jsonCode.getString("message"), jsonCode.getString("code"));
+                return e;
+            } catch (JSONException e) {
+                e.printStackTrace();
+                return new JSONResponseException("Could not convert JSON-Error-message", "Conversion error");
+            }
+            //if convertion failed, create an artificial error message
+    }
+
+    private String getId(Response r) {
+        //try to parse the json-string
+        try {
+            //create new object
+            JSONObject jsonCode = new JSONObject(getResponseBodyAsString(r));
+            //get message attribute
+            String message = jsonCode.getString("message");
+            //split by spaced
+            String[] messageParts = message.split("\\s+");
+            //the id is the forth substring
+            return messageParts[3];
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        //return empty string if conversion failed
+        return "";
+    }
+
+    private final Callback postCallback = new Callback<Response>() {
+        @Override
+        public void success(Response resp, Response response) {
+            String id = getId(resp);
+            Log.d("Post",getId(resp));
+        }
+
+        /**
+         * On errors inside the framework, en error message is created
+         * @param retrofitError
+         */
+        @Override
+        public void failure(RetrofitError retrofitError) {
+            JSONResponseException error = getResponseException(retrofitError);
+            Log.d("Error",error.toString());
+            if(errorListener != null){
+                errorListener.onJSONResponseError(error);
             }
         }
     };
 
-    /**
-     * Event handler to process an async http call to the moods-backend to post a mood
-     */
-    private InternetAccess.OnTaskCompleted postMoodListener = new InternetAccess.OnTaskCompleted() {
+    private final Callback listCallback = new Callback<List<Mood>>() {
+        @Override
+        public void success(List<Mood> moodsList, Response response) {
+            if(listener != null) {
+                listener.onConversionCompleted(moodsList);
+            }
+        }
+
         /**
-         * Implementation of the interface's method
-         *
-         * @param result Response data as a string
-         * @throws JSONResponseException
+         * On errors inside the framework, en error message is created
+         * @param retrofitError
          */
-        public void onTaskCompleted(String result) {
-            //cut off error marker
-            if (result.indexOf("Error") != -1) {
-                int pos = result.indexOf("{");
-                String resultWithoutError = result.substring(pos);
-                //call the json-error message parser. the parser creates an exception object passes it to the error handler
-                if (errorListener != null) {
-                    errorListener.onJSONResponseError(MoodsJSONParser.parserError(resultWithoutError));
-                }
-                //if there is no error message
-            } else {
-                if (listener != null) {
-                    //parse the retrieved json-string and send id of the created mood object to the listener
-                    //return type is String
-                    //the mood object in the backend is created, even if there is no event attached
-                    listener.onConversionCompleted(MoodsJSONParser.getId(result));
-                }
+        @Override
+        public void failure(RetrofitError retrofitError) {
+            JSONResponseException error = getResponseException(retrofitError);
+            Log.d("Error",error.toString());
+            if(errorListener != null){
+                errorListener.onJSONResponseError(error);
             }
         }
     };
 
-    /**
-     * Event handler to process an async http call to the moods-backend to delete a mood
-     */
-    private InternetAccess.OnTaskCompleted deleteMoodListener = new InternetAccess.OnTaskCompleted() {
+    private final Callback moodCallback = new Callback<Mood>() {
+        @Override
+        public void success(Mood mood, Response response) {
+            if(listener != null) {
+                listener.onConversionCompleted(mood);
+            }
+        }
+
         /**
-         * Implementation of the interface's method
-         *
-         * @param result return true if the user has successfully been deleted
+         * On errors inside the framework, en error message is created
+         * @param retrofitError
          */
-        public void onTaskCompleted(String result) {
-            if (result.indexOf("Error") != -1) {
-                //if there is an error, create an error message
-                if (errorListener != null) {
-                    errorListener.onJSONResponseError(new JSONResponseException("The moods object could not be deleted. The object with the specified id was not found", "Ressource not found"));
-                }
-                //if there is no error message
-            } else {
-                if (listener != null) {
-                    //return true if the user has been deleted
-                    listener.onConversionCompleted(true);
-                }
+        @Override
+        public void failure(RetrofitError retrofitError) {
+            JSONResponseException error = getResponseException(retrofitError);
+            Log.d("Error",error.toString());
+            if(errorListener != null){
+                errorListener.onJSONResponseError(error);
+            }
+        }
+    };
+
+    private final Callback rawCallback = new Callback<Response>() {
+        @Override
+        public void success(Response myResponse, Response response) {
+            if(listener != null) {
+                listener.onConversionCompleted(getId(myResponse));
+            }
+        }
+
+        /**
+         * On errors inside the framework, en error message is created
+         * @param retrofitError
+         */
+        @Override
+        public void failure(RetrofitError retrofitError) {
+            JSONResponseException error = getResponseException(retrofitError);
+            Log.d("Error",error.toString());
+            if(errorListener != null){
+                errorListener.onJSONResponseError(error);
             }
         }
     };
 
 }
+
+class LocationSerializer implements JsonSerializer<Location>
+{
+    public JsonElement serialize(Location t, Type type,
+                                 JsonSerializationContext jsc)
+    {
+        JsonArray ja = new JsonArray();
+        ja.add(new JsonPrimitive(t.getLatitude()));
+        ja.add(new JsonPrimitive(t.getLongitude()));
+        return ja;
+    }
+
+}
+
+class LocationDeserializer implements JsonDeserializer<Location>
+{
+    public Location deserialize(JsonElement je, Type type,
+                                JsonDeserializationContext jdc)
+            throws JsonParseException
+    {
+        JsonArray locArray = je.getAsJsonArray();
+        Location l = new Location("Backend");
+        l.setLatitude(locArray.get(0).getAsDouble());
+        l.setLongitude(locArray.get(1).getAsDouble());
+        return l;
+    }
+}
+

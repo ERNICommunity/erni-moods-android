@@ -31,7 +31,7 @@
     <string name="text_moodVeryMoody">Very moody</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
-    <string name="comment_alert_title">Comment</string>
+    <string name="comment_alert_title">Comment:  </string>
     <string name="comment_alert_message">Comment or no comment? That is the question.</string>
     <string name="ok">OK</string>
     <string name="no_comment">No comment</string>
