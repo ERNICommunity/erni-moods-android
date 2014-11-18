@@ -2,15 +2,19 @@ package android.community.erni.ernimoods.model;
 
 import android.location.Location;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by ue65403 on 19.09.2014.
  */
 public class GooglePlace {
 
+    @SerializedName("geometry")
     private Location location;
     private String icon;
     private String name;
     private Double rating;
+    @SerializedName("vicinity")
     private String address;
 
     public GooglePlace(String name, Location location, String address, Double rating, String icon) {
@@ -23,15 +27,6 @@ public class GooglePlace {
 
     public GooglePlace() {
     }
-
-    public void setLocation(Location location) {
-        this.location = location;
-    }
-
-    public void setIcon(String icon) {
-        this.icon = icon;
-    }
-
 
     public String getName() {
         return name;
@@ -61,7 +56,15 @@ public class GooglePlace {
         return icon;
     }
 
+    public void setIcon(String icon) {
+        this.icon = icon;
+    }
+
     public Location getLocation() {
         return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
     }
 }

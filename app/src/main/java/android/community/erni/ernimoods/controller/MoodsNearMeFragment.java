@@ -2,10 +2,10 @@ package android.community.erni.ernimoods.controller;
 
 import android.app.Fragment;
 import android.community.erni.ernimoods.R;
-import android.community.erni.ernimoods.api.JSONResponseException;
 import android.community.erni.ernimoods.api.PlacesBackend;
 import android.community.erni.ernimoods.api.UserBackend;
 import android.community.erni.ernimoods.model.GooglePlace;
+import android.community.erni.ernimoods.model.JSONResponseException;
 import android.community.erni.ernimoods.model.Mood;
 import android.community.erni.ernimoods.model.User;
 import android.content.Context;
@@ -35,12 +35,14 @@ import java.util.Iterator;
 import java.util.Map;
 
 
-/** This fragment is used to enter your current mood
- *
+/**
+ * This fragment is used to enter your current mood
  */
 public class MoodsNearMeFragment extends Fragment {
 
-    /** Local variables **/
+    /**
+     * Local variables *
+     */
     GoogleMap googleMap; //store the map
     //variables for map view
     private MapView mMapView;
@@ -178,7 +180,7 @@ public class MoodsNearMeFragment extends Fragment {
                     String body = "";
                     if (bar != "") {
                         subject = getString(R.string.erni_moods) + user + getString(R.string.contacts);
-                        body = getString(R.string.hello) +  " " + clickedUser.getUsername() + getString(R.string.meet) + " "+ bar + "?";
+                        body = getString(R.string.hello) + " " + clickedUser.getUsername() + getString(R.string.meet) + " " + bar + "?";
                     } else {
                         subject = getString(R.string.erni_moods) + user + getString(R.string.contacts);
                     }
@@ -203,7 +205,7 @@ public class MoodsNearMeFragment extends Fragment {
                     String bar = ((TextView) thisView.findViewById(R.id.selectedBarTextView)).getText().toString();
                     String body = "";
                     if (bar != "") {
-                        body = getString(R.string.hello) + " "+  clickedUser.getUsername() + getString(R.string.meet) + " "+ bar + "?";
+                        body = getString(R.string.hello) + " " + clickedUser.getUsername() + getString(R.string.meet) + " " + bar + "?";
                     }
                     Intent smsIntent = new Intent(Intent.ACTION_VIEW);
                     smsIntent.setType("vnd.android-dir/mms-sms");
@@ -238,19 +240,19 @@ public class MoodsNearMeFragment extends Fragment {
          * may be thrown when initialising the map
          */
         try {
-            if(null == googleMap){
+            if (null == googleMap) {
                 googleMap = ((MapView) v.findViewById(R.id.map)).getMap();
 
                 /**
                  * If the map is still null after attempted initialisation,
                  * show an error to the user
                  */
-                if(null == googleMap) {
+                if (null == googleMap) {
                     Toast.makeText(getActivity().getApplicationContext(),
                             getString(R.string.map_error), Toast.LENGTH_SHORT).show();
                 }
             }
-        } catch (NullPointerException exception){
+        } catch (NullPointerException exception) {
             Log.e("mapApp", exception.toString());
         }
     }
@@ -261,7 +263,7 @@ public class MoodsNearMeFragment extends Fragment {
     private void addMarker(Mood mood) {
 
         /** Make sure that the map has been initialised **/
-        if(null != googleMap){
+        if (null != googleMap) {
             String snippet;
             if (mood.getDate() != null) {
                 String time = mood.getDate().toString();
@@ -271,10 +273,10 @@ public class MoodsNearMeFragment extends Fragment {
             }
             Marker marker = googleMap.addMarker(new MarkerOptions()
                     .position(new LatLng(mood.getLocation().getLatitude(), mood.getLocation().getLongitude()))
-                            .title(mood.getUsername())
+                    .title(mood.getUsername())
                     .snippet(snippet)
-                                    //.icon(BitmapDescriptorFactory.fromResource(iconMap.get(mood.getMood())))
-                            .icon(BitmapDescriptorFactory.fromResource(iconMap.get(mood.getMood())))
+                            //.icon(BitmapDescriptorFactory.fromResource(iconMap.get(mood.getMood())))
+                    .icon(BitmapDescriptorFactory.fromResource(iconMap.get(mood.getMood())))
                     .draggable(true));
             //add the relationship between mood-object and marker to the map
             moodMap.put(marker, mood);

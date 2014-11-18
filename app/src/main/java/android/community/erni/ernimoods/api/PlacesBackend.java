@@ -1,83 +1,89 @@
 package android.community.erni.ernimoods.api;
 
-import android.community.erni.ernimoods.service.MoodsJSONParser;
-import android.net.Uri;
+import android.community.erni.ernimoods.model.JSONResponseException;
+import android.community.erni.ernimoods.model.Places;
+import android.location.Location;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+
+import java.lang.reflect.Type;
+
+import retrofit.Callback;
+import retrofit.RestAdapter;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
+import retrofit.converter.GsonConverter;
+import retrofit.http.GET;
+import retrofit.http.Query;
 
 /**
  * Created by ue65403 on 19.09.2014.
  */
-public class PlacesBackend implements IPlacesBackend {
+public class PlacesBackend extends AbstractBackend {
 
-    private OnConversionCompleted listener = null; //stores the event listener for completed http-response parsing
-    private InternetAccess task = new InternetAccess(); //class variable to store an Internet-Access object
-    //event handler for an error message handler
-    private OnJSONResponseError errorListener;
-    private Uri.Builder baseUri = new Uri.Builder();
-    private int maxResults = 10;
-
-    public PlacesBackend() {
-        baseUri.scheme("https");
-        baseUri.authority("maps.googleapis.com");
-        baseUri.appendPath("maps");
-        baseUri.appendPath("api");
-        baseUri.appendPath("place");
-        baseUri.appendPath("nearbysearch");
-        baseUri.appendPath("json");
-    }
-
-    /**
-     * Method to set a listener to handle the converted data
-     *
-     * @param listener Setter method to set the listener
-     */
-    public void setListener(OnConversionCompleted listener) {
-        this.listener = listener;
-    }
-
-    /**
-     * Setter for the event handler of backend-error messages
-     *
-     * @param listener
-     */
-    public void setErrorListener(IBackendEventHandler.OnJSONResponseError listener) {
-        this.errorListener = listener;
-    }
-
-    public void getBars(Double lat, Double lng, Integer radius, Integer maxResults) {
-        this.maxResults = maxResults;
-        //attach a listener to handle the queried response-string
-        task.setListener(getPlacesListener);
-        //make a post-request to the user base-url
-        baseUri.appendQueryParameter("key", "AIzaSyC0DFg9ARJTr3I_52lXEk_q58jzO-fb_S0");
-        baseUri.appendQueryParameter("location", Double.toString(lat) + "," + Double.toString(lng));
-        baseUri.appendQueryParameter("types", "bar");
-        baseUri.appendQueryParameter("radius", Integer.toString(radius));
-        baseUri.appendQueryParameter("rankBy", "distance");
-        task.execute(baseUri.toString());
-    }
-
-    private InternetAccess.OnTaskCompleted getPlacesListener = new InternetAccess.OnTaskCompleted() {
-        /**
-         * Implementation of the interface's method
-         * @param result Response status as a string
-         */
-        public void onTaskCompleted(String result) {
+    private final Callback listCallback = new Callback<Places>() {
+        @Override
+        public void success(Places places, Response response) {
             if (listener != null) {
-                if (result.indexOf("Error") != -1) {
-                    int pos = result.indexOf("{");
-                    String resultWithoutError = result.substring(pos);
-                    //call the json-error message parser. the parser creates an exception object passes it to the error handler
-                    if (errorListener != null) {
-                        errorListener.onJSONResponseError(new JSONResponseException("Google Places could not be accessed", "Places API"));
-                    }
-                    //if the response is no error message
-                } else {
-                    if (listener != null) {
-                        //parse the response message. the id of the create user is extracted an returned
-                        listener.onConversionCompleted(MoodsJSONParser.parsePlacesJSON(result, maxResults));
-                    }
-                }
+                listener.onConversionCompleted(places.getResults());
+            }
+        }
+
+        /**
+         * On errors inside the framework, en error message is created
+         *
+         * @param retrofitError
+         */
+        @Override
+        public void failure(RetrofitError retrofitError) {
+            if (errorListener != null) {
+                errorListener.onJSONResponseError(new JSONResponseException("Google Places could not be accessed", "Places API"));
             }
         }
     };
+    private PlacesService service;
+
+    public PlacesBackend() {
+        Gson gson = new GsonBuilder()
+                //.registerTypeAdapter(Date.class, new DateDeserializer())
+                .registerTypeAdapter(Location.class, new LocationDeserializer())
+                .create();
+
+        restAdapter = new RestAdapter.Builder()
+                .setEndpoint(PlacesService.SERVICE_ENDPOINT)
+                .setConverter(new GsonConverter(gson))
+                .build();
+
+        service = restAdapter.create(PlacesService.class);
+    }
+
+    public void getBars(Double lat, Double lng, Integer radius, Integer maxResults) {
+        service.getPlacesAPI(Double.toString(lat) + "," + Double.toString(lng), Integer.toString(radius), listCallback);
+    }
+
+    public interface PlacesService {
+        String SERVICE_ENDPOINT = "https://maps.googleapis.com";
+
+        @GET("/maps/api/place/nearbysearch/json?types=bar&rankgy=distance&key=AIzaSyC0DFg9ARJTr3I_52lXEk_q58jzO-fb_S0")
+        void getPlacesAPI(@Query("location") String location, @Query("radius") String radius, Callback<Places> listCallback);
+    }
+
+    private class LocationDeserializer implements JsonDeserializer<Location> {
+        public Location deserialize(JsonElement je, Type type,
+                                    JsonDeserializationContext jdc)
+                throws JsonParseException {
+            JsonObject geoObject = je.getAsJsonObject();
+            JsonObject locObject = geoObject.getAsJsonObject("location");
+            Location l = new Location("Places API");
+            l.setLatitude(locObject.get("lat").getAsDouble());
+            l.setLongitude(locObject.get("lng").getAsDouble());
+            return l;
+        }
+    }
 }

@@ -3,8 +3,8 @@ package android.community.erni.ernimoods.controller;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.community.erni.ernimoods.R;
-import android.community.erni.ernimoods.api.JSONResponseException;
 import android.community.erni.ernimoods.api.UserBackend;
+import android.community.erni.ernimoods.model.JSONResponseException;
 import android.community.erni.ernimoods.model.User;
 import android.community.erni.ernimoods.service.FormValidator;
 import android.content.Context;
@@ -58,9 +58,9 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
                 //store username and password in the preferences for further usage
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
                 SharedPreferences.Editor editor = prefs.edit();
-                editor.putString("pref_username",user.getText().toString());
+                editor.putString("pref_username", user.getText().toString());
                 editor.commit();
-                editor.putString("pref_password",pwd.getText().toString());
+                editor.putString("pref_password", pwd.getText().toString());
                 editor.commit();
                 // redirect to the MyMood by replacing the Signup fragment with MyMoodFragment
                 ((EntryPoint) getActivity()).updateMoodList();
@@ -77,9 +77,9 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
                 Log.d("Whoops...something went wrong creating the user", e.getErrorCode() + ": " + e.getErrorMessage());
 
                 // show an error. This doesn't check at the moment what the error was, but this is generally due to the username already taken
-                    Toast.makeText(
-                            getActivity().getBaseContext(), getString(R.string.signUpUsernameTakenErrorMessage),
-                            Toast.LENGTH_LONG).show();
+                Toast.makeText(
+                        getActivity().getBaseContext(), getString(R.string.signUpUsernameTakenErrorMessage),
+                        Toast.LENGTH_LONG).show();
 
             }
         };
@@ -186,12 +186,12 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                  InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(
-                    Context.INPUT_METHOD_SERVICE);
+                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(
+                            Context.INPUT_METHOD_SERVICE);
 
                     imm.hideSoftInputFromWindow(phone.getWindowToken(), 0);
 
-                                        if (FormValidator.validatePhone((EditText) v)) {
+                    if (FormValidator.validatePhone((EditText) v)) {
                         return true;
                     } else {
                         v.setError(getString(R.string.signUpPhoneErrorMessage));
@@ -231,8 +231,7 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
             fragmentManager.beginTransaction().replace(R.id.fragmentContainer, new LoginFragment()).commit();
             Log.d(TAG, "Replaced fragment with Login fragment");
 
-        }
-        else {
+        } else {
 //ultimately check user inputs
             if (!FormValidator.validateUsername(user)) {
                 user.setError(getString(R.string.signUpUsernameErrorMessage));

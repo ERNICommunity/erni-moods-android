@@ -1,4 +1,4 @@
-package android.community.erni.ernimoods.api;
+package android.community.erni.ernimoods.model;
 
 /**
  * A custom exception class, which is used to handle error-codes from the moods-backend. If

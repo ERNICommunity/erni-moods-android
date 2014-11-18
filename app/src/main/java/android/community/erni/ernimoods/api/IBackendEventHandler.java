@@ -1,5 +1,7 @@
 package android.community.erni.ernimoods.api;
 
+import android.community.erni.ernimoods.model.JSONResponseException;
+
 /**
  * Interface class that describes the event handlers for backend-calls
  */
@@ -28,7 +30,7 @@ public interface IBackendEventHandler {
          * Implement method in order to handle an Error Message from the backend.
          *
          * @param error Specific error type for Moods-backend errors
-         * @see android.community.erni.ernimoods.api.JSONResponseException
+         * @see android.community.erni.ernimoods.model.JSONResponseException
          */
         void onJSONResponseError(JSONResponseException error);
     }

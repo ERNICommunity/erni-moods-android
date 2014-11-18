@@ -7,13 +7,14 @@ public class User {
 
     private String username;
     private String phone;
-    private String email;
-    private String password;
+    private String email = "";
+    private String password = "";
     private String id = "";
 
     /**
      * Constructor
      * Invoke this on signup
+     *
      * @param username
      * @param phone
      * @param email
@@ -65,16 +66,16 @@ public class User {
         return password;
     }
 
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     public void setId(String id) {
         this.id = id;
     }
 
     public String getID() {
         return this.id;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
 

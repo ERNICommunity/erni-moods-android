@@ -4,11 +4,13 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.community.erni.ernimoods.R;
 import android.community.erni.ernimoods.api.MoodsBackend;
+import android.community.erni.ernimoods.model.JSONResponseException;
 import android.community.erni.ernimoods.model.Mood;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.location.Location;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -32,6 +34,7 @@ public class MyMoodFragment extends Fragment {
     private static final String TAG = "MyMoodFragment";
     //storage variable to handle the mood-request
     private MoodsBackend.OnConversionCompleted callHandlerPostMood;
+    private MoodsBackend.OnJSONResponseError callHandlerPostError;
     // the greeting message, will be programmatically altered depending on the time of day
     private TextView greeting;
     // the user
@@ -43,8 +46,7 @@ public class MyMoodFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_my_mood, container, false);
 
         // references to the UI objects we need
-        greeting = (TextView)view.findViewById(R.id.textViewGreeting);
-
+        greeting = (TextView) view.findViewById(R.id.textViewGreeting);
 
 
         // show the action bar when this fragment is displayed
@@ -70,6 +72,16 @@ public class MyMoodFragment extends Fragment {
                 SharedPreferences.Editor editor = prefs.edit();
                 editor.putString("lastPost", now);
                 editor.commit();
+            }
+        };
+
+        callHandlerPostError = new MoodsBackend.OnJSONResponseError() {
+            @Override
+            public void onJSONResponseError(JSONResponseException e) {
+                Toast.makeText(
+                        getActivity().getBaseContext(),
+                        e.getErrorMessage(),
+                        Toast.LENGTH_LONG).show();
             }
         };
 
@@ -109,10 +121,10 @@ public class MyMoodFragment extends Fragment {
                 alert.setMessage(R.string.comment_alert_message);
                 final EditText commentInput = new EditText(getActivity());
                 alert.setView(commentInput);
-                alert.setPositiveButton(getString(R.string.ok),new DialogInterface.OnClickListener() {
+                alert.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                    String commentText = commentInput.getText().toString();
-                    makeTheMood(user, commentText, moodId);
+                        String commentText = commentInput.getText().toString();
+                        makeTheMood(user, commentText, moodId);
                     }
                 });
 
@@ -126,10 +138,7 @@ public class MyMoodFragment extends Fragment {
                 });
 
 
-
                 alert.show();
-
-
 
 
             }
@@ -150,7 +159,7 @@ public class MyMoodFragment extends Fragment {
         } else {
             timeOfDay = getString(R.string.greetings_evening);
         }
-        greeting.setText(getString(R.string.greetings_good) + " "+ timeOfDay + getString(R.string.greetings_how));
+        greeting.setText(getString(R.string.greetings_good) + " " + timeOfDay + getString(R.string.greetings_how));
 
 
     }
@@ -158,7 +167,8 @@ public class MyMoodFragment extends Fragment {
     private void makeTheMood(String user, String commentText, int moodId) {
         if (((EntryPoint) getActivity()).isOnline()) {
             // create a mood object
-            Mood myCurrentMood = new Mood(user, ((EntryPoint) getActivity()).getCurrentLocation(), commentText, moodId);
+            Location loc = ((EntryPoint) getActivity()).getCurrentLocation();
+            Mood myCurrentMood = new Mood(user, loc, commentText, moodId);
 
             Log.d(TAG, "Created mood: " + myCurrentMood.toString());
 
@@ -166,6 +176,7 @@ public class MyMoodFragment extends Fragment {
             MoodsBackend getMoods = new MoodsBackend();
             //set listener to handle successful retrieval
             getMoods.setListener(callHandlerPostMood);
+            getMoods.setErrorListener(callHandlerPostError);
             //set event handler for the errors
             // getMoods.setErrorListener(errorHandler);
             //start async-task

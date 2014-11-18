@@ -2,14 +2,13 @@ package android.community.erni.ernimoods.controller;
 
 import android.app.ActionBar;
 import android.app.Activity;
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.community.erni.ernimoods.R;
-import android.community.erni.ernimoods.api.JSONResponseException;
 import android.community.erni.ernimoods.api.MoodsBackend;
 import android.community.erni.ernimoods.api.UserBackend;
+import android.community.erni.ernimoods.model.JSONResponseException;
 import android.community.erni.ernimoods.model.Mood;
 import android.community.erni.ernimoods.model.User;
 import android.content.Context;
@@ -35,12 +34,10 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 
-import static android.app.Fragment.*;
-
 /**
  * This is the starting Activity for the application.
  */
-public class EntryPoint extends Activity implements ActionBar.TabListener, LocationListener  {
+public class EntryPoint extends Activity implements ActionBar.TabListener, LocationListener {
     public static final String TAG = "EntryPoint";
 
     //always stores the current location
@@ -139,23 +136,9 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
             //what to do on successful conversion?
             public void onConversionCompleted(ArrayList<Mood> moods) {
                 //Add markers for all moods
-
-                int currentTab = getActionBar().getSelectedTab().getPosition();
-
                 //Sort moods by username and keep only the most recent post
                 cleanMoodsList = sortAndCleanMoods(moods);
                 //redirect to the moods near me
-            }
-        };
-
-        /**
-         * Each time when the activity resumes, the moods from the current user are loaded.
-         */
-        callHandlerGetMyMoods = new MoodsBackend.OnConversionCompleted<ArrayList<Mood>>() {
-            @Override
-            //what to do on successful conversion?
-            public void onConversionCompleted(ArrayList<Mood> moods) {
-                myMoods = moods;
                 progress.dismiss();
 
                 Calendar cal = Calendar.getInstance();
@@ -185,6 +168,17 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
                             .commit();
                 }
 
+            }
+        };
+
+        /**
+         * Each time when the activity resumes, the moods from the current user are loaded.
+         */
+        callHandlerGetMyMoods = new MoodsBackend.OnConversionCompleted<ArrayList<Mood>>() {
+            @Override
+            //what to do on successful conversion?
+            public void onConversionCompleted(ArrayList<Mood> moods) {
+                myMoods = moods;
             }
         };
 
@@ -291,7 +285,7 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
             case 2:
                 try {
 
-                 ft.replace(R.id.fragmentContainer,new MoodHistoryFragment());
+                    ft.replace(R.id.fragmentContainer, new MoodHistoryFragment());
 
                 } catch (Exception e) {
                     e.printStackTrace();
