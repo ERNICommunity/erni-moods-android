@@ -43,7 +43,10 @@ public class MyMoodFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_my_mood, container, false);
+
+        setRetainInstance(true);
 
         // references to the UI objects we need
         greeting = (TextView) view.findViewById(R.id.textViewGreeting);

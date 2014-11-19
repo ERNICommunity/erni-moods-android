@@ -68,6 +68,9 @@ public class MoodsNearMeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        setRetainInstance(true);
+
         final View view = inflater.inflate(R.layout.fragment_moods_near_me, container, false);
 
         // show the action bar when this fragment is displayed

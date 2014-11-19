@@ -1,12 +1,11 @@
 package android.community.erni.ernimoods.controller;
 
 import android.app.Fragment;
-import android.app.FragmentManager;
 import android.community.erni.ernimoods.R;
+import android.community.erni.ernimoods.api.UserBackend;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,33 +34,30 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        //load username and password from preferences
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String username = prefs.getString(getString(R.string.pref_username), null);
+        String pwd = prefs.getString(getString(R.string.pref_password), null);
+        this.username.setText(username);
+        this.password.setText(pwd);
+    }
+
+    @Override
     public void onClick(View v) {
 
-        boolean isAuthenticated = false; // flag will be set to true if the user can be authenticated
-
-        //TODO
-        // when the user clicks on the login, check with the backend if the username exists and password is valid
-
-        // if yes, set the isAuthenticated flag to true
-
-        if (isAuthenticated) {
-            // write the username and password to shared preferences and redirect to the moodsNearMe
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.putString("pref_username", username.getText().toString());
-            editor.commit();
-            editor.putString("pref_password", password.getText().toString());
-            editor.commit();
-
-            // redirect to the MyMood by replacing the Login fragment with MyMoodFragment
-            FragmentManager fragmentManager = getFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.fragmentContainer, new MyMoodFragment()).commit();
-            Log.d(TAG, "Replaced fragment with MyMood");
-        }
-        else {
-
-            // if no, display an error with "try again"
-        }
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("pref_username", username.getText().toString());
+        editor.commit();
+        editor.putString("pref_password", password.getText().toString());
+        editor.commit();
+        //again, create an object to call the user-backend
+        UserBackend getUser = new UserBackend();
+        //attached the specified handlers
+        getUser.setListener(((EntryPoint) getActivity()).getUserAuthCallback());
+        getUser.setErrorListener(((EntryPoint) getActivity()).getUserNonauthCallback());
 
     }
 }

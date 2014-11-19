@@ -34,6 +34,8 @@ import java.util.Iterator;
  */
 public class MoodHistoryFragment extends Fragment {
 
+    //this date format is used to display the chart's x-labels
+    SimpleDateFormat myDateFormat = new SimpleDateFormat("dd.MM.yyyy hh:mm");
     //The time series stores dates (x) and mood (y)
     private TimeSeries mySeries = null;
     //achartengine can store multiple series by default, that's why this is used
@@ -48,28 +50,25 @@ public class MoodHistoryFragment extends Fragment {
     private XYMultipleSeriesRenderer mRenderer = null;
     //this is the view element to store the chart and add to the layout
     private GraphicalView myChart = null;
-
     /**
      * To be able to map between dates and comments, we need to create a hashmap with an element
      * for each mood object. this is used to display the comment, when clicking on a datapoint in the chart
      */
     private HashMap<Long, String> dateCommentMap = new HashMap<Long, String>();
-
     //store the user's moods in a hashmap
     private ArrayList<Mood> currentMoods = null;
-
-    //this date format is used to display the chart's x-labels
-    SimpleDateFormat myDateFormat = new SimpleDateFormat("dd.MM.yyyy hh:mm");
-
     private View view;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_mood_history, container, false);
 
         /*
         chart setup
          */
+
+        setRetainInstance(true);
 
         //create new time series
         mySeries = new TimeSeries(getString(R.string.tab_mood_history));

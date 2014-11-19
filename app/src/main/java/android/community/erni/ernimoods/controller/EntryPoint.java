@@ -86,6 +86,8 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
         // etc for mood history in future
 
 
+
+
         /*
         to avoid problems if no location is accessible, we create a dummy-location first
          */
@@ -108,6 +110,9 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
                 //display username
                 Log.d("User successfully loaded", user.getUsername());
                 //after authentication of the user, update the mood list
+                if (!actionBar.isShowing()) {
+                    actionBar.show();
+                }
                 updateMoodList();
                 //store userID
                 userID = user.getID();
@@ -122,10 +127,13 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
                 //user does not exist or something else went wrong
                 Log.d("Something went wrong", e.getErrorCode() + ": " + e.getErrorMessage());
                 //redirect to the signup activity
+                if (actionBar.isShowing()) {
+                    actionBar.hide();
+                }
                 FragmentManager fragmentManager = getFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                 fragmentTransaction
-                        .replace(R.id.fragmentContainer, new SignUpFragment())
+                        .replace(R.id.fragmentContainer, new LoginFragment())
                         .commit();
             }
         };
@@ -236,30 +244,40 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
     public void onResume() {
         super.onResume();
 
-        //again, create an object to call the user-backend
-        UserBackend getUser = new UserBackend();
-        //attached the specified handlers
-        getUser.setListener(callHandlerGetUser);
-        getUser.setErrorListener(errorHandlerUser);
-
-        //load username and password from preferences
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        String username = prefs.getString(getString(R.string.pref_username), null);
-        String pwd = prefs.getString(getString(R.string.pref_password), null);
+        Boolean fromOrientation = prefs.getBoolean("pref_orientation", false);
 
-        //get user by username and password. the handlers will redirect to either the signup
-        //or the mymood, depending on whether the user exists or not
-        if (isOnline()) {
-            getUser.getUserByPassword(username, pwd);
-        } else {
-            Toast.makeText(
-                    getBaseContext(), getString(R.string.no_network),
-                    Toast.LENGTH_SHORT).show();
+        if (!fromOrientation) {
+
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean("pref_orientation", false);
+            editor.commit();
+
+            //again, create an object to call the user-backend
+            UserBackend getUser = new UserBackend();
+            //attached the specified handlers
+            getUser.setListener(callHandlerGetUser);
+            getUser.setErrorListener(errorHandlerUser);
+
+            //load username and password from preferences
+            String username = prefs.getString(getString(R.string.pref_username), null);
+            String pwd = prefs.getString(getString(R.string.pref_password), null);
+
+            //get user by username and password. the handlers will redirect to either the signup
+            //or the mymood, depending on whether the user exists or not
+            if (isOnline()) {
+                getUser.getUserByPassword(username, pwd);
+            } else {
+                Toast.makeText(
+                        getBaseContext(), getString(R.string.no_network),
+                        Toast.LENGTH_SHORT).show();
+            }
+
+            //when the app is resumed, the location might have changed
+            //we get updates not more often than every 500 ms and if the change is smaller than 50m
+            locationManager.requestLocationUpdates(provider, 500, 50, this);
+
         }
-
-        //when the app is resumed, the location might have changed
-        //we get updates not more often than every 500 ms and if the change is smaller than 50m
-        locationManager.requestLocationUpdates(provider, 500, 50, this);
     }
 
     @Override
@@ -267,6 +285,17 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
         super.onPause();
         //as soon as the application pauses, we stop getting location updates (if we still receive)
         locationManager.removeUpdates(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (isChangingConfigurations()) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean("pref_orientation", true);
+            editor.commit();
+        }
     }
 
 
@@ -441,6 +470,14 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
             username = currentMood.getUsername();
         }
         return moods;
+    }
+
+    public UserBackend.OnConversionCompleted getUserAuthCallback() {
+        return this.callHandlerGetUser;
+    }
+
+    public UserBackend.OnJSONResponseError getUserNonauthCallback() {
+        return this.errorHandlerUser;
     }
 
 
