@@ -2,6 +2,7 @@ package android.community.erni.ernimoods.controller;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
@@ -70,22 +71,63 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
 
     private ProgressDialog progress;
 
+    private LoginFragment loginFragment = null;
+    private MoodHistoryFragment moodHistoryFragment = null;
+    private MoodsNearMeFragment moodsNearMeFragment = null;
+    private MyMoodFragment myMoodFragment = null;
+    private SignUpFragment signUpFragment = null;
+
+    private Fragment shownFragment = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_entry_point);
 
+        FragmentManager fm = getFragmentManager();
+
+        loginFragment = (LoginFragment) fm.findFragmentByTag("loginFragment");
+        moodHistoryFragment = (MoodHistoryFragment) fm.findFragmentByTag("moodHistoryFragment");
+        moodsNearMeFragment = (MoodsNearMeFragment) fm.findFragmentByTag("moodsNearMeFragment");
+        myMoodFragment = (MyMoodFragment) fm.findFragmentByTag("myMoodFragment");
+        signUpFragment = (SignUpFragment) fm.findFragmentByTag("signUpFragment");
+
+        if (loginFragment == null) {
+            loginFragment = new LoginFragment();
+            fm.beginTransaction().add(R.id.fragmentContainer, loginFragment, "loginFragment").commit();
+        }
+        if (moodHistoryFragment == null) {
+            moodHistoryFragment = new MoodHistoryFragment();
+            fm.beginTransaction().add(R.id.fragmentContainer, moodHistoryFragment, "moodHistoryFragment").commit();
+        }
+        if (moodsNearMeFragment == null) {
+            moodsNearMeFragment = new MoodsNearMeFragment();
+            fm.beginTransaction().add(R.id.fragmentContainer, moodsNearMeFragment, "moodsNearMeFragment").commit();
+        }
+        if (signUpFragment == null) {
+            signUpFragment = new SignUpFragment();
+            fm.beginTransaction().add(R.id.fragmentContainer, signUpFragment, "signUpFragment").commit();
+        }
+        if (myMoodFragment == null) {
+            myMoodFragment = new MyMoodFragment();
+            fm.beginTransaction().add(R.id.fragmentContainer, myMoodFragment, "myMoodsFragment").commit();
+        }
+
         //setup the action bar to show tabs
         final ActionBar actionBar = getActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
+
         // hard code the tabs
-        actionBar.addTab(actionBar.newTab().setText(getString(R.string.tab_near_me)).setTabListener(this));
-        actionBar.addTab(actionBar.newTab().setText(getString(R.string.tab_my_mood)).setTabListener(this));
-        actionBar.addTab(actionBar.newTab().setText(getString(R.string.tab_mood_history)).setTabListener(this));
-        // etc for mood history in future
+        actionBar.addTab(actionBar.newTab().setText(getString(R.string.tab_near_me)).setTabListener(this), true);
+        actionBar.addTab(actionBar.newTab().setText(getString(R.string.tab_my_mood)).setTabListener(this), false);
+        actionBar.addTab(actionBar.newTab().setText(getString(R.string.tab_mood_history)).setTabListener(this), false);
 
-
+        fm.beginTransaction().hide(myMoodFragment).commit();
+        fm.beginTransaction().hide(signUpFragment).commit();
+        fm.beginTransaction().hide(moodHistoryFragment).commit();
+        fm.beginTransaction().hide(loginFragment).commit();
+        fm.beginTransaction().hide(moodsNearMeFragment).commit();
 
 
         /*
@@ -130,11 +172,11 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
                 if (actionBar.isShowing()) {
                     actionBar.hide();
                 }
+                hideFragment();
                 FragmentManager fragmentManager = getFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction
-                        .replace(R.id.fragmentContainer, new LoginFragment())
-                        .commit();
+                fragmentTransaction.show(loginFragment);
+                shownFragment = loginFragment;
             }
         };
 
@@ -155,27 +197,19 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
                 Date oneDayAgo = cal.getTime();
 
                 SimpleDateFormat myDateFormat = new SimpleDateFormat("dd.MM.yyyy hh:mm");
-                FragmentManager fragmentManager = getFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                 try {
                     if (!prefs.contains("lastPost") || myDateFormat.parse(prefs.getString("lastPost", null)).before(oneDayAgo)) {
-                        fragmentTransaction
-                                .replace(R.id.fragmentContainer, new MyMoodFragment())
-                                .commit();
-
+                        actionBar.setSelectedNavigationItem(1);
+                        //fragmentTransaction.show(myMoodFragment);
                     } else {
-                        fragmentTransaction
-                                .replace(R.id.fragmentContainer, new MoodsNearMeFragment())
-                                .commit();
+                        //fragmentTransaction.show(moodsNearMeFragment);
+                        actionBar.setSelectedNavigationItem(0);
                     }
                 } catch (ParseException e) {
-                    fragmentTransaction
-                            .replace(R.id.fragmentContainer, new MyMoodFragment())
-                            .commit();
+                    actionBar.setSelectedNavigationItem(1);
                 }
-
             }
         };
 
@@ -249,10 +283,6 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
 
         if (!fromOrientation) {
 
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.putBoolean("pref_orientation", false);
-            editor.commit();
-
             //again, create an object to call the user-backend
             UserBackend getUser = new UserBackend();
             //attached the specified handlers
@@ -277,6 +307,11 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
             //we get updates not more often than every 500 ms and if the change is smaller than 50m
             locationManager.requestLocationUpdates(provider, 500, 50, this);
 
+        } else {
+            getActionBar().setSelectedNavigationItem(prefs.getInt("actionBarTab", 0));
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean("pref_orientation", false);
+            editor.commit();
         }
     }
 
@@ -285,41 +320,40 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
         super.onPause();
         //as soon as the application pauses, we stop getting location updates (if we still receive)
         locationManager.removeUpdates(this);
+        hideFragment();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor editor = prefs.edit();
         if (isChangingConfigurations()) {
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-            SharedPreferences.Editor editor = prefs.edit();
             editor.putBoolean("pref_orientation", true);
-            editor.commit();
         }
+        editor.putInt("actionBarTab", getActionBar().getSelectedTab().getPosition());
+        editor.commit();
     }
 
 
     @Override
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
+        hideFragment();
+
         switch (tab.getPosition()) {
             case 0:
-                ft.replace(R.id.fragmentContainer, new MoodsNearMeFragment());
-                Log.d(TAG, "Created MoodsNearMeFragment");
-
+                ft.show(moodsNearMeFragment);
+                moodsNearMeFragment.updateMap();
+                shownFragment = moodsNearMeFragment;
                 break;
             case 1:
-                ft.replace(R.id.fragmentContainer, new MyMoodFragment());
-                Log.d(TAG, "Created MyMoodFragment");
+                ft.show(myMoodFragment);
+                shownFragment = myMoodFragment;
                 break;
             case 2:
-                try {
-
-                    ft.replace(R.id.fragmentContainer, new MoodHistoryFragment());
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                Log.d(TAG, "Created MoodHistoryFragment");
+                ft.show(moodHistoryFragment);
+                moodHistoryFragment.updateChart();
+                shownFragment = moodHistoryFragment;
                 break;
         }
 
@@ -327,7 +361,6 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
 
     @Override
     public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction ft) {
-
     }
 
     @Override
@@ -480,5 +513,10 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
         return this.errorHandlerUser;
     }
 
-
+    private void hideFragment() {
+        FragmentManager fm = getFragmentManager();
+        if (shownFragment != null) {
+            fm.beginTransaction().hide(shownFragment).commit();
+        }
+    }
 }

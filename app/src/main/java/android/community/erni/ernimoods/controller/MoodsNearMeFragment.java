@@ -1,5 +1,6 @@
 package android.community.erni.ernimoods.controller;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.community.erni.ernimoods.R;
 import android.community.erni.ernimoods.api.PlacesBackend;
@@ -69,7 +70,7 @@ public class MoodsNearMeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setRetainInstance(true);
+        setRetainInstance(false);
 
         final View view = inflater.inflate(R.layout.fragment_moods_near_me, container, false);
 
@@ -118,9 +119,6 @@ public class MoodsNearMeFragment extends Fragment {
         mMapView.onCreate(mBundle);
         createMapView(view);
         MapsInitializer.initialize(context);
-        //zoom into the map, reflecting the current location
-        Location currentLoc = ((EntryPoint) getActivity()).getCurrentLocation();
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLoc.getLatitude(), currentLoc.getLongitude()), 12.0f));
 
         //this methods is called when a marker has been clicked
         googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
@@ -316,24 +314,13 @@ public class MoodsNearMeFragment extends Fragment {
     public void onResume() {
         super.onResume();
         mMapView.onResume();
-        //get list with moods
-        ArrayList<Mood> cleanMoods = ((EntryPoint) getActivity()).getMoodsList();
 
-        if (moodMap != null) {
-            Iterator moodIt = moodMap.entrySet().iterator();
-            while (moodIt.hasNext()) {
-                Map.Entry pair = (Map.Entry) moodIt.next();
-                ((Marker) pair.getKey()).remove();
-                moodIt.remove();
-            }
-        }
 
-        if (cleanMoods != null) {
-            Log.d("Number of moods in database", String.valueOf(cleanMoods.size()));
-            for (int i = 0; i < cleanMoods.size(); i++) {
-                addMarker(cleanMoods.get(i));
-            }
-        }
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
 
     }
 
@@ -347,5 +334,33 @@ public class MoodsNearMeFragment extends Fragment {
     public void onDestroy() {
         mMapView.onDestroy();
         super.onDestroy();
+    }
+
+    public void updateMap() {
+        if (googleMap != null) {
+
+            //zoom into the map, reflecting the current location
+            Location currentLoc = ((EntryPoint) getActivity()).getCurrentLocation();
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLoc.getLatitude(), currentLoc.getLongitude()), 12.0f));
+
+            //get list with moods
+            ArrayList<Mood> cleanMoods = ((EntryPoint) getActivity()).getMoodsList();
+
+            if (moodMap != null) {
+                Iterator moodIt = moodMap.entrySet().iterator();
+                while (moodIt.hasNext()) {
+                    Map.Entry pair = (Map.Entry) moodIt.next();
+                    ((Marker) pair.getKey()).remove();
+                    moodIt.remove();
+                }
+            }
+
+            if (cleanMoods != null) {
+                Log.d("Number of moods in database", String.valueOf(cleanMoods.size()));
+                for (int i = 0; i < cleanMoods.size(); i++) {
+                    addMarker(cleanMoods.get(i));
+                }
+            }
+        }
     }
 }

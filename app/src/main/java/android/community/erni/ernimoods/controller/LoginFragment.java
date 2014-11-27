@@ -1,5 +1,6 @@
 package android.community.erni.ernimoods.controller;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.community.erni.ernimoods.R;
 import android.community.erni.ernimoods.api.UserBackend;
@@ -42,6 +43,12 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
         String pwd = prefs.getString(getString(R.string.pref_password), null);
         this.username.setText(username);
         this.password.setText(pwd);
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
     }
 
     @Override
