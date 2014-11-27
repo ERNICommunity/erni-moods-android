@@ -39,7 +39,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 /**
  * This is the starting Activity for the application.
@@ -77,13 +79,11 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
 
     private ProgressDialog progress;
 
-    private LoginFragment loginFragment = null;
-    private MoodHistoryFragment moodHistoryFragment = null;
-    private MoodsNearMeFragment moodsNearMeFragment = null;
-    private MyMoodFragment myMoodFragment = null;
-    private SignUpFragment signUpFragment = null;
+    private Map<String, Fragment> fragmentMap = new HashMap();
 
-    private Fragment shownFragment = null;
+    private String shownFragment = "";
+
+    private boolean isAuthorized = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +91,50 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
         setContentView(R.layout.activity_entry_point);
 
         FragmentManager fm = getFragmentManager();
+
+
+        fragmentMap.put("loginFragment", fm.findFragmentByTag("loginFragment"));
+        fragmentMap.put("signUpFragment", fm.findFragmentByTag("signUpFragment"));
+        fragmentMap.put("moodsNearMeFragment", fm.findFragmentByTag("moodsNearMeFragment"));
+        fragmentMap.put("myMoodFragment", fm.findFragmentByTag("myMoodFragment"));
+        fragmentMap.put("moodHistoryFragment", fm.findFragmentByTag("moodHistoryFragment"));
+
+        if (fragmentMap.get("loginFragment") == null) {
+            fragmentMap.put("loginFragment", new LoginFragment());
+            fm.beginTransaction().add(R.id.fragmentContainer, fragmentMap.get("loginFragment"), "loginFragment").commit();
+        }
+        if (fragmentMap.get("signUpFragment") == null) {
+            fragmentMap.put("signUpFragment", new SignUpFragment());
+            fm.beginTransaction().add(R.id.fragmentContainer, fragmentMap.get("signUpFragment"), "signUpFragment").commit();
+        }
+        if (fragmentMap.get("moodsNearMeFragment") == null) {
+            fragmentMap.put("moodsNearMeFragment", new MoodsNearMeFragment());
+            fm.beginTransaction().add(R.id.fragmentContainer, fragmentMap.get("moodsNearMeFragment"), "moodsNearMeFragment").commit();
+        }
+        if (fragmentMap.get("myMoodFragment") == null) {
+            fragmentMap.put("myMoodFragment", new MyMoodFragment());
+            fm.beginTransaction().add(R.id.fragmentContainer, fragmentMap.get("myMoodFragment"), "myMoodFragment").commit();
+        }
+        if (fragmentMap.get("moodHistoryFragment") == null) {
+            fragmentMap.put("moodHistoryFragment", new MoodHistoryFragment());
+            fm.beginTransaction().add(R.id.fragmentContainer, fragmentMap.get("moodHistoryFragment"), "moodHistoryFragment").commit();
+        }
+
+        //setup the action bar to show tabs
+        final ActionBar actionBar = getActionBar();
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+
+
+        // hard code the tabs
+        actionBar.addTab(actionBar.newTab().setText(getString(R.string.tab_near_me)).setTabListener(this), true);
+        actionBar.addTab(actionBar.newTab().setText(getString(R.string.tab_my_mood)).setTabListener(this), false);
+        actionBar.addTab(actionBar.newTab().setText(getString(R.string.tab_mood_history)).setTabListener(this), false);
+
+        fm.beginTransaction().hide(fragmentMap.get("myMoodFragment")).commit();
+        fm.beginTransaction().hide(fragmentMap.get("signUpFragment")).commit();
+        fm.beginTransaction().hide(fragmentMap.get("moodHistoryFragment")).commit();
+        fm.beginTransaction().hide(fragmentMap.get("loginFragment")).commit();
+        fm.beginTransaction().hide(fragmentMap.get("moodsNearMeFragment")).commit();
 
         if (savedInstanceState != null) {
             Gson gson = new GsonBuilder()
@@ -109,51 +153,15 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
             if (savedInstanceState.containsKey("myMoods")) {
                 myMoods = gson.fromJson(savedInstanceState.getString("myMoods"), new TypeToken<ArrayList<Mood>>() {
                 }.getType());
+                ((MoodHistoryFragment) fragmentMap.get("moodHistoryFragment")).updateChart();
+            }
+            if (savedInstanceState.containsKey("isAuthorized")) {
+                isAuthorized = savedInstanceState.getBoolean("isAuthorized");
+            }
+            if (savedInstanceState.containsKey("shownFragment")) {
+                shownFragment = savedInstanceState.getString("shownFragment");
             }
         }
-
-        loginFragment = (LoginFragment) fm.findFragmentByTag("loginFragment");
-        moodHistoryFragment = (MoodHistoryFragment) fm.findFragmentByTag("moodHistoryFragment");
-        moodsNearMeFragment = (MoodsNearMeFragment) fm.findFragmentByTag("moodsNearMeFragment");
-        myMoodFragment = (MyMoodFragment) fm.findFragmentByTag("myMoodFragment");
-        signUpFragment = (SignUpFragment) fm.findFragmentByTag("signUpFragment");
-
-        if (loginFragment == null) {
-            loginFragment = new LoginFragment();
-            fm.beginTransaction().add(R.id.fragmentContainer, loginFragment, "loginFragment").commit();
-        }
-        if (moodHistoryFragment == null) {
-            moodHistoryFragment = new MoodHistoryFragment();
-            fm.beginTransaction().add(R.id.fragmentContainer, moodHistoryFragment, "moodHistoryFragment").commit();
-        }
-        if (moodsNearMeFragment == null) {
-            moodsNearMeFragment = new MoodsNearMeFragment();
-            fm.beginTransaction().add(R.id.fragmentContainer, moodsNearMeFragment, "moodsNearMeFragment").commit();
-        }
-        if (signUpFragment == null) {
-            signUpFragment = new SignUpFragment();
-            fm.beginTransaction().add(R.id.fragmentContainer, signUpFragment, "signUpFragment").commit();
-        }
-        if (myMoodFragment == null) {
-            myMoodFragment = new MyMoodFragment();
-            fm.beginTransaction().add(R.id.fragmentContainer, myMoodFragment, "myMoodsFragment").commit();
-        }
-
-        //setup the action bar to show tabs
-        final ActionBar actionBar = getActionBar();
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-
-
-        // hard code the tabs
-        actionBar.addTab(actionBar.newTab().setText(getString(R.string.tab_near_me)).setTabListener(this), true);
-        actionBar.addTab(actionBar.newTab().setText(getString(R.string.tab_my_mood)).setTabListener(this), false);
-        actionBar.addTab(actionBar.newTab().setText(getString(R.string.tab_mood_history)).setTabListener(this), false);
-
-        fm.beginTransaction().hide(myMoodFragment).commit();
-        fm.beginTransaction().hide(signUpFragment).commit();
-        fm.beginTransaction().hide(moodHistoryFragment).commit();
-        fm.beginTransaction().hide(loginFragment).commit();
-        fm.beginTransaction().hide(moodsNearMeFragment).commit();
 
 
         /*
@@ -181,9 +189,12 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
                 if (!actionBar.isShowing()) {
                     actionBar.show();
                 }
+                progress.dismiss();
+                hideFragment();
                 updateMoodList();
                 //store userID
                 userID = user.getID();
+                isAuthorized = true;
             }
         };
         //very important event
@@ -194,15 +205,8 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
             public void onJSONResponseError(JSONResponseException e) {
                 //user does not exist or something else went wrong
                 Log.d("Something went wrong", e.getErrorCode() + ": " + e.getErrorMessage());
-                //redirect to the signup activity
-                if (actionBar.isShowing()) {
-                    actionBar.hide();
-                }
-                hideFragment();
-                FragmentManager fragmentManager = getFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.show(loginFragment);
-                shownFragment = loginFragment;
+                progress.dismiss();
+                forwardToLogin();
             }
         };
 
@@ -262,7 +266,6 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
         };
 
         progress = new ProgressDialog(this);
-        progress.setTitle(getString(R.string.loading_moods));
         progress.setCancelable(false);
         progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
     }
@@ -305,39 +308,28 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
         super.onResume();
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        Boolean fromOrientation = prefs.getBoolean("pref_orientation", false);
 
-        if (!fromOrientation) {
+        if (!fromOrientation()) {
 
-            //again, create an object to call the user-backend
-            UserBackend getUser = new UserBackend();
-            //attached the specified handlers
-            getUser.setListener(callHandlerGetUser);
-            getUser.setErrorListener(errorHandlerUser);
-
-            //load username and password from preferences
-            String username = prefs.getString(getString(R.string.pref_username), null);
-            String pwd = prefs.getString(getString(R.string.pref_password), null);
-
-            //get user by username and password. the handlers will redirect to either the signup
-            //or the mymood, depending on whether the user exists or not
-            if (isOnline()) {
-                getUser.getUserByPassword(username, pwd);
-            } else {
-                Toast.makeText(
-                        getBaseContext(), getString(R.string.no_network),
-                        Toast.LENGTH_SHORT).show();
-            }
+            authorizeUser();
 
             //when the app is resumed, the location might have changed
             //we get updates not more often than every 500 ms and if the change is smaller than 50m
             locationManager.requestLocationUpdates(provider, 500, 50, this);
 
         } else {
-            getActionBar().setSelectedNavigationItem(prefs.getInt("actionBarTab", 0));
             SharedPreferences.Editor editor = prefs.edit();
             editor.putBoolean("pref_orientation", false);
             editor.commit();
+            if (shownFragment != "loginFragment" && shownFragment != "signUpFragment") {
+                getActionBar().setSelectedNavigationItem(prefs.getInt("actionBarTab", 0));
+                getFragmentManager().beginTransaction().show(fragmentMap.get(shownFragment)).commit();
+                ((MoodsNearMeFragment) fragmentMap.get("moodsNearMeFragment")).updateMap();
+                ((MoodHistoryFragment) fragmentMap.get("moodHistoryFragment")).updateChart();
+            } else {
+                getFragmentManager().beginTransaction().show(fragmentMap.get(shownFragment)).commit();
+                getActionBar().hide();
+            }
         }
     }
 
@@ -360,6 +352,8 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
                 .create();
         savedInstanceState.putString("moodsList", gson.toJson(cleanMoodsList));
         savedInstanceState.putString("myMoods", gson.toJson(myMoods));
+        savedInstanceState.putBoolean("isAuthorized", isAuthorized);
+        savedInstanceState.putString("shownFragment", shownFragment);
         // Always call the superclass so it can save the view hierarchy state
         super.onSaveInstanceState(savedInstanceState);
     }
@@ -379,25 +373,26 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
 
     @Override
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
-        hideFragment();
 
-        switch (tab.getPosition()) {
-            case 0:
-                ft.show(moodsNearMeFragment);
-                moodsNearMeFragment.updateMap();
-                shownFragment = moodsNearMeFragment;
-                break;
-            case 1:
-                ft.show(myMoodFragment);
-                shownFragment = myMoodFragment;
-                break;
-            case 2:
-                ft.show(moodHistoryFragment);
-                moodHistoryFragment.updateChart();
-                shownFragment = moodHistoryFragment;
-                break;
+        if (!fromOrientation()) {
+            hideFragment();
+            switch (tab.getPosition()) {
+                case 0:
+                    ft.show(fragmentMap.get("moodsNearMeFragment"));
+                    ((MoodsNearMeFragment) fragmentMap.get("moodsNearMeFragment")).updateMap();
+                    shownFragment = "moodsNearMeFragment";
+                    break;
+                case 1:
+                    ft.show(fragmentMap.get("myMoodFragment"));
+                    shownFragment = "myMoodFragment";
+                    break;
+                case 2:
+                    ft.show(fragmentMap.get("moodHistoryFragment"));
+                    ((MoodHistoryFragment) fragmentMap.get("moodHistoryFragment")).updateChart();
+                    shownFragment = "moodHistoryFragment";
+                    break;
+            }
         }
-
     }
 
     @Override
@@ -492,6 +487,7 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
      * on application start or if a mood has been posted
      */
     public void updateMoodList() {
+        progress.setTitle(getString(R.string.loading_moods));
         progress.show();
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -556,8 +552,62 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
 
     private void hideFragment() {
         FragmentManager fm = getFragmentManager();
-        if (shownFragment != null) {
-            fm.beginTransaction().hide(shownFragment).commit();
+        if (shownFragment != "") {
+            fm.beginTransaction().hide(fragmentMap.get(shownFragment)).commit();
         }
+    }
+
+    public void authorizeUser() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        //again, create an object to call the user-backend
+        UserBackend getUser = new UserBackend();
+        //attached the specified handlers
+        getUser.setListener(callHandlerGetUser);
+        getUser.setErrorListener(errorHandlerUser);
+
+        //load username and password from preferences
+        String username = prefs.getString(getString(R.string.pref_username), null);
+        String pwd = prefs.getString(getString(R.string.pref_password), null);
+
+        //get user by username and password. the handlers will redirect to either the signup
+        //or the mymood, depending on whether the user exists or not
+        if (isOnline()) {
+            getUser.getUserByPassword(username, pwd);
+            progress.setTitle(getString(R.string.authorize_progress));
+            progress.show();
+        } else {
+            forwardToLogin();
+            Toast.makeText(
+                    getBaseContext(), getString(R.string.no_network),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private boolean fromOrientation() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        return prefs.getBoolean("pref_orientation", false);
+    }
+
+    public void swapLoginSignUp() {
+        if (shownFragment == "loginFragment") {
+            getFragmentManager().beginTransaction().show(fragmentMap.get("signUpFragment")).commit();
+            getFragmentManager().beginTransaction().hide(fragmentMap.get("loginFragment")).commit();
+            shownFragment = "signUpFragment";
+        } else {
+            getFragmentManager().beginTransaction().hide(fragmentMap.get("signUpFragment")).commit();
+            getFragmentManager().beginTransaction().show(fragmentMap.get("loginFragment")).commit();
+            shownFragment = "loginFragment";
+        }
+    }
+
+    private void forwardToLogin() {
+        if (getActionBar().isShowing()) {
+            getActionBar().hide();
+        }
+        hideFragment();
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.show(fragmentMap.get("loginFragment")).commit();
+        shownFragment = "loginFragment";
     }
 }

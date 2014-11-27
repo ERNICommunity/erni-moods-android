@@ -45,8 +45,7 @@
 
     <string name="loading_moods">Loading moods</string>
 
-    <string name="no_network">No network service!</string>
-
+    <string name="no_network">Turn on the network connection and try again!</string>
 
 
     <string name="date">Date</string>
@@ -77,6 +76,10 @@
 
     <string name="selected_bar">Selected Bar:</string>
     <string name="selected_user">Selected User:</string>
+    <string name="signupLink_label">Sign Up</string>
+    <string name="linkToSignUp">Sign Up here</string>
+    <string name="not_registered">Not signed up yet?</string>
+    <string name="authorize_progress">Authorizing user</string>
 
 
 </resources>

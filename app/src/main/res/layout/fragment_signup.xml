@@ -1,109 +1,111 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:textAlignment="center"
     android:background="@drawable/background"
+    android:orientation="vertical"
+    android:textAlignment="center"
     android:weightSum="1">
 
     <ImageView
+        android:id="@+id/imageView"
         android:layout_width="161dp"
         android:layout_height="162dp"
-        android:id="@+id/imageView"
-        android:src="@drawable/erni_mood_icon"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center_horizontal"
+        android:src="@drawable/erni_mood_icon" />
 
     <TextView
+        android:id="@+id/signUpTitleLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="20dp"
         android:text="@string/signUpTitle"
-        android:id="@+id/signUpTitleLabel"
-        android:layout_gravity="center_horizontal"
-        android:textColor="#444"
-        android:layout_marginBottom="20dp" />
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#444" />
 
     <EditText
-        android:layout_width="330dp"
-        android:layout_height="wrap_content"
         android:id="@+id/signUpUserInput"
-        android:inputType="text"
+        android:layout_width="330dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
         android:hint="@string/signUpUsernameHint1"
-        android:layout_gravity="center_horizontal"
+        android:inputType="text"
         android:singleLine="true"/>
 
     <EditText
-        android:layout_width="330dp"
-        android:layout_height="wrap_content"
-        android:inputType="textPassword"
-        android:ems="10"
         android:id="@+id/signUpPasswordInput"
+        android:layout_width="330dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:ems="10"
         android:hint="@string/SignUpPasswordHint"
-        android:layout_gravity="center_horizontal"
+        android:inputType="textPassword"
         android:singleLine="true"/>
 
     <EditText
-        android:layout_width="330dp"
-
-        android:layout_height="wrap_content"
-        android:inputType="textEmailAddress"
-        android:ems="10"
         android:id="@+id/signUpEmailInput"
+
+        android:layout_width="330dp"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:ems="10"
         android:hint="@string/signUpEmailHint"
+        android:inputType="textEmailAddress"
         android:singleLine="true"/>
 
     <EditText
+        android:id="@+id/signUpPhoneInput"
         android:layout_width="330dp"
         android:layout_height="wrap_content"
-        android:inputType="phone"
-        android:ems="10"
-        android:id="@+id/signUpPhoneInput"
-        android:hint="@string/signUpPhoneHint"
         android:layout_gravity="center_horizontal"
+        android:ems="10"
+        android:hint="@string/signUpPhoneHint"
+        android:inputType="phone"
         android:singleLine="true"
          />
 
     <TextView
+        android:id="@+id/signUpError"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:id="@+id/signUpError"
         android:layout_gravity="center_horizontal"
-        android:clickable="false" />
+        android:clickable="false"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <Button
+        android:id="@+id/signUpButton"
         android:layout_width="124dp"
         android:layout_height="wrap_content"
-        android:text="@string/signUpSendButton"
-        android:id="@+id/signUpButton"
         android:layout_gravity="center_horizontal"
         android:background="#ff1412dd"
+        android:text="@string/signUpSendButton"
         android:textColor="#ffffffff" />
 
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/already_registered"
             android:id="@+id/textView"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="50dp" />
-        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/link"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="50dp"
+            android:text="@string/already_registered" />
+
+        <TextView
             android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:layout_marginTop="50dp"
-            android:textStyle="bold"
+            android:text="@string/link"
+            android:textColor="#ff0e159d"
             android:textColorLink="#ff0e159d"
-            android:textColor="#ff0e159d" />
+            android:textStyle="bold" />
     </LinearLayout>
 
 

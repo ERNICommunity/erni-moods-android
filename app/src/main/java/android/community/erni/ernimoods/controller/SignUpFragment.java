@@ -1,7 +1,6 @@
 package android.community.erni.ernimoods.controller;
 
 import android.app.Fragment;
-import android.app.FragmentManager;
 import android.community.erni.ernimoods.R;
 import android.community.erni.ernimoods.api.UserBackend;
 import android.community.erni.ernimoods.model.JSONResponseException;
@@ -48,6 +47,8 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
         // hide the action bar entirely as it is not required on signup and navigation is prohibited
         getActivity().getActionBar().hide();
 
+        setRetainInstance(true);
+
         // handler that handles the event if a user is successfully created
         //the method yields the userid as a string
         callHandlerPost = new UserBackend.OnConversionCompleted<String>() {
@@ -63,8 +64,7 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
                 editor.putString("pref_password", pwd.getText().toString());
                 editor.commit();
                 // redirect to the MyMood by replacing the Signup fragment with MyMoodFragment
-                ((EntryPoint) getActivity()).updateMoodList();
-                Log.d(TAG, "Replaced fragment with MyMood");
+                ((EntryPoint) getActivity()).authorizeUser();
             }
         };
 
@@ -225,12 +225,7 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
 
         // check source and if it was the login text that was clicked on then go to the special login page
         if (view.getId() == R.id.textView2) {
-            // replace the current fragment with the login fragment
-
-            FragmentManager fragmentManager = getFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.fragmentContainer, new LoginFragment()).commit();
-            Log.d(TAG, "Replaced fragment with Login fragment");
-
+            ((EntryPoint) getActivity()).swapLoginSignUp();
         } else {
 //ultimately check user inputs
             if (!FormValidator.validateUsername(user)) {
