@@ -72,12 +72,10 @@ public class MoodsNearMeFragment extends Fragment {
 
         setRetainInstance(false);
 
-        final View view = inflater.inflate(R.layout.fragment_moods_near_me, container, false);
-
-        // show the action bar when this fragment is displayed
         getActivity().getActionBar().show();
-        //make sure the NearMe Tab is highlighted
         getActivity().getActionBar().setSelectedNavigationItem(0);
+
+        final View view = inflater.inflate(R.layout.fragment_moods_near_me, container, false);
 
         //get application context
         Context context = getActivity().getApplicationContext();

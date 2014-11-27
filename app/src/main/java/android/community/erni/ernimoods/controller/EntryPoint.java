@@ -10,6 +10,8 @@ import android.community.erni.ernimoods.R;
 import android.community.erni.ernimoods.api.MoodsBackend;
 import android.community.erni.ernimoods.api.UserBackend;
 import android.community.erni.ernimoods.model.JSONResponseException;
+import android.community.erni.ernimoods.model.LocationDeserializer;
+import android.community.erni.ernimoods.model.LocationSerializer;
 import android.community.erni.ernimoods.model.Mood;
 import android.community.erni.ernimoods.model.User;
 import android.content.Context;
@@ -26,6 +28,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -85,6 +91,26 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
         setContentView(R.layout.activity_entry_point);
 
         FragmentManager fm = getFragmentManager();
+
+        if (savedInstanceState != null) {
+            Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(Location.class, new LocationDeserializer())
+                    .registerTypeAdapter(Location.class, new LocationSerializer())
+                    .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+                    .serializeNulls()
+                    .create();
+            if (savedInstanceState.containsKey("userID")) {
+                userID = savedInstanceState.getString("userID");
+            }
+            if (savedInstanceState.containsKey("moodsList")) {
+                cleanMoodsList = gson.fromJson(savedInstanceState.getString("moodsList"), new TypeToken<ArrayList<Mood>>() {
+                }.getType());
+            }
+            if (savedInstanceState.containsKey("myMoods")) {
+                myMoods = gson.fromJson(savedInstanceState.getString("myMoods"), new TypeToken<ArrayList<Mood>>() {
+                }.getType());
+            }
+        }
 
         loginFragment = (LoginFragment) fm.findFragmentByTag("loginFragment");
         moodHistoryFragment = (MoodHistoryFragment) fm.findFragmentByTag("moodHistoryFragment");
@@ -321,6 +347,21 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
         //as soon as the application pauses, we stop getting location updates (if we still receive)
         locationManager.removeUpdates(this);
         hideFragment();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putString("userID", userID);
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(Location.class, new LocationDeserializer())
+                .registerTypeAdapter(Location.class, new LocationSerializer())
+                .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+                .serializeNulls()
+                .create();
+        savedInstanceState.putString("moodsList", gson.toJson(cleanMoodsList));
+        savedInstanceState.putString("myMoods", gson.toJson(myMoods));
+        // Always call the superclass so it can save the view hierarchy state
+        super.onSaveInstanceState(savedInstanceState);
     }
 
     @Override

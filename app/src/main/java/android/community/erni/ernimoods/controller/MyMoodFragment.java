@@ -43,6 +43,9 @@ public class MyMoodFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        getActivity().getActionBar().show();
+        getActivity().getActionBar().setSelectedNavigationItem(1);
+
         super.onCreate(savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_my_mood, container, false);
 
@@ -50,13 +53,6 @@ public class MyMoodFragment extends Fragment {
 
         // references to the UI objects we need
         greeting = (TextView) view.findViewById(R.id.textViewGreeting);
-
-
-        // show the action bar when this fragment is displayed
-        getActivity().getActionBar().show();
-
-        //make sure the MyMood Tab is highlighted
-        getActivity().getActionBar().setSelectedNavigationItem(1);
 
         // set the greeting depending on the time of day
         createGreeting();

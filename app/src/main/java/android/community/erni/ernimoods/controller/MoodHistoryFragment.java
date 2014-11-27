@@ -69,7 +69,7 @@ public class MoodHistoryFragment extends Fragment {
         chart setup
          */
 
-        setRetainInstance(true);
+        setRetainInstance(false);
 
         //create new time series
         mySeries = new TimeSeries(getString(R.string.tab_mood_history));
@@ -121,10 +121,7 @@ public class MoodHistoryFragment extends Fragment {
         mRenderer.setClickEnabled(true);
         mRenderer.setSelectableBuffer(50);
 
-        // show the action bar when this fragment is displayed
         getActivity().getActionBar().show();
-
-        //make sure the MyMood Tab is highlighted
         getActivity().getActionBar().setSelectedNavigationItem(2);
 
         this.view = view;
@@ -182,6 +179,7 @@ public class MoodHistoryFragment extends Fragment {
             //finally add the chart to our view
             layout.addView(myChart);
             //if the chart has already been created, we don't to anything else than repainting
+            updateChart();
         } else {
             myChart.repaint();
         }

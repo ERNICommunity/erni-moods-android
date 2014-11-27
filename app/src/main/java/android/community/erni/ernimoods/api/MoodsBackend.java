@@ -1,22 +1,15 @@
 package android.community.erni.ernimoods.api;
 
 import android.community.erni.ernimoods.model.JSONResponseException;
+import android.community.erni.ernimoods.model.LocationDeserializer;
+import android.community.erni.ernimoods.model.LocationSerializer;
 import android.community.erni.ernimoods.model.Mood;
 import android.location.Location;
 import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonPrimitive;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
 
-import java.lang.reflect.Type;
 import java.util.List;
 
 import retrofit.Callback;
@@ -152,29 +145,6 @@ public class MoodsBackend extends AbstractBackend {
 
         @DELETE("moods/{id}")
         void deleteMoodAPI(@Path("id") String id, Callback<Response> rawCallback);
-    }
-
-    private class LocationSerializer implements JsonSerializer<Location> {
-        public JsonElement serialize(Location t, Type type,
-                                     JsonSerializationContext jsc) {
-            JsonArray ja = new JsonArray();
-            ja.add(new JsonPrimitive(t.getLatitude()));
-            ja.add(new JsonPrimitive(t.getLongitude()));
-            return ja;
-        }
-
-    }
-
-    private class LocationDeserializer implements JsonDeserializer<Location> {
-        public Location deserialize(JsonElement je, Type type,
-                                    JsonDeserializationContext jdc)
-                throws JsonParseException {
-            JsonArray locArray = je.getAsJsonArray();
-            Location l = new Location("Backend");
-            l.setLatitude(locArray.get(0).getAsDouble());
-            l.setLongitude(locArray.get(1).getAsDouble());
-            return l;
-        }
     }
 }
 

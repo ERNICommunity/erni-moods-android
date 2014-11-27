@@ -4,6 +4,7 @@ import android.location.Location;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Date;
 
@@ -12,7 +13,7 @@ import java.util.Date;
  * The idea is that we store an arraylist of mood objects in the Moods class
  * And use this to create the user's current mood
  */
-public class Mood {
+public class Mood implements Serializable {
 
 
     /**
