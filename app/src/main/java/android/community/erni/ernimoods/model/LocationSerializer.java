@@ -11,7 +11,8 @@ import com.google.gson.JsonSerializer;
 import java.lang.reflect.Type;
 
 /**
- * Created by ue65403 on 27.11.2014.
+ * Since the backend provides the location as an array of coordinates and our Model-Object
+ * needs a Location-object, the GSON-library needs a custom serialization class to post moods.
  */
 public class LocationSerializer implements JsonSerializer<Location> {
     public JsonElement serialize(Location t, Type type,

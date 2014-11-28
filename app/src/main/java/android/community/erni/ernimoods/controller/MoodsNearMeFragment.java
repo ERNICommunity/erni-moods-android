@@ -1,6 +1,5 @@
 package android.community.erni.ernimoods.controller;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.community.erni.ernimoods.R;
 import android.community.erni.ernimoods.api.PlacesBackend;
@@ -70,6 +69,10 @@ public class MoodsNearMeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        /**
+         * We don't retain the fragment-instance on orientation changes, since it doesn't work
+         * together with the the map-view.
+         */
         setRetainInstance(false);
 
         getActivity().getActionBar().show();
@@ -317,12 +320,6 @@ public class MoodsNearMeFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-
-    }
-
-    @Override
     public void onPause() {
         super.onPause();
         mMapView.onPause();
@@ -334,6 +331,10 @@ public class MoodsNearMeFragment extends Fragment {
         super.onDestroy();
     }
 
+    /**
+     * Update the map. Method is public, such that also the containing activity can
+     * perform a map-update
+     */
     public void updateMap() {
         if (googleMap != null) {
 

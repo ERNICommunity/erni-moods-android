@@ -33,6 +33,7 @@ public class Mood implements Serializable {
     private Location location;
     private String comment;
     private String id = null;
+    //tell the gson-serializar that date in the json-string is called time
     @SerializedName("time")
     private Date date = null;
     private int mood;

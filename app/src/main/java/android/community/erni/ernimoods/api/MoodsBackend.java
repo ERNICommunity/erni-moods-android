@@ -28,6 +28,13 @@ import retrofit.http.Query;
  * Implementation of the abstract class to query mood data from the backend
  */
 public class MoodsBackend extends AbstractBackend {
+
+    /**
+     * This callback methods is called, if the retrofit api tries to gather
+     * a list of mood objects. Either the response is automatically converted to
+     * a list of Mood objects and forwarded to the registered listener, or an error message
+     * is forwarded to the listener.
+     */
     private final Callback listCallback = new Callback<List<Mood>>() {
         @Override
         public void success(List<Mood> moodsList, Response response) {
@@ -50,6 +57,10 @@ public class MoodsBackend extends AbstractBackend {
             }
         }
     };
+
+    /**
+     * Callback to retrieve a single mood object
+     */
     private final Callback moodCallback = new Callback<Mood>() {
         @Override
         public void success(Mood mood, Response response) {
@@ -72,14 +83,22 @@ public class MoodsBackend extends AbstractBackend {
             }
         }
     };
+
+    //instance variable of retrofit-service, which is actually used to query data from the ERNI-backend
     private MoodsService service;
+
+    /**
+     * Public constructor, which sets up the gson converter (automatic conversion from json to
+     * our object-models. Additionally it creates the retrofit rest-adapter and specifies the
+     * endpoint of the service
+     */
     public MoodsBackend() {
         Gson gson = new GsonBuilder()
-                //.registerTypeAdapter(Date.class, new DateDeserializer())
+                //custom handling of location objects
                 .registerTypeAdapter(Location.class, new LocationDeserializer())
                 .registerTypeAdapter(Location.class, new LocationSerializer())
+                        //specify the date format
                 .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-                        //.excludeFieldsWithoutExposeAnnotation()
                 .create();
 
         restAdapter = new RestAdapter.Builder()
@@ -91,6 +110,7 @@ public class MoodsBackend extends AbstractBackend {
     }
 
     /**
+     * Post a mood object
      * @param mood Mood object to post
      */
     public void postMood(Mood mood) {
@@ -102,6 +122,7 @@ public class MoodsBackend extends AbstractBackend {
     }
 
     /**
+     * Get all moods belonging to a certain user
      * @param username Specifies the user
      */
     public void getMoodsByUsername(String username) {
@@ -109,6 +130,7 @@ public class MoodsBackend extends AbstractBackend {
     }
 
     /**
+     * Get all mods inside a certain range
      * @param latitude  latitude in degrees
      * @param longitude longitude in degrees
      * @param distance  distance from the origin in meters
@@ -117,33 +139,78 @@ public class MoodsBackend extends AbstractBackend {
         service.getMoodsByLocationAPI(latitude, longitude, distance, listCallback);
     }
 
+    /**
+     * Gather a mood-object by the id
+     *
+     * @param id
+     */
     public void getMoodById(String id) {
         service.getMoodByIdAPI(id, moodCallback);
     }
 
+    /**
+     * delete a mood-object by specifying its id
+     * @param id
+     */
     public void deleteMood(String id) {
         service.deleteMoodAPI(id, rawCallback);
     }
 
+    /**
+     * This interface specifies all the methods that can be used together with moods-backend.
+     * Retrofit-API is annotation based. To make use of the asynchronous handling and autmatic
+     * json-conversion to model objects, an appropriate callback needs to be specified.
+     */
     public interface MoodsService {
+        //service endpoint of moods-backend
         String SERVICE_ENDPOINT = "http://moodyrest.azurewebsites.net";
 
+        /**
+         * Perform a get-request to get all moods
+         * @param listCallback
+         */
         @GET("/moods")
         void getAllMoodsAPI(Callback<List<Mood>> listCallback);
 
+        /**
+         * Perform a get request to get moods for a specified user
+         * @param username
+         * @param listCallback
+         */
         @GET("/moods")
         void getMoodsByUserAPI(@Query("username") String username, Callback<List<Mood>> listCallback);
 
+        /**
+         * Perform a get request to get all moods around a location in a specified radius
+         * @param lat
+         * @param lon
+         * @param dist
+         * @param listCallback
+         */
         @GET("/moods")
+        //params ar query params in the url
         void getMoodsByLocationAPI(@Query("lat") Double lat, @Query("lon") Double lon, @Query("dist") Double dist, Callback<List<Mood>> listCallback);
 
+        //perform a post-request to save a new mood
         @POST("/moods")
         void postMoodAPI(@Body Mood newMood, Callback<Response> postCallback);
 
+        /**
+         * Get a mood object based on its id
+         * @param id
+         * @param moodCallback
+         */
         @GET("/moods/{id}")
+        //the id is part of the path
         void getMoodByIdAPI(@Path("id") String id, Callback<Mood> moodCallback);
 
+        /**
+         * Delete a mood object based on its id
+         * @param id
+         * @param rawCallback
+         */
         @DELETE("moods/{id}")
+        //the id is part of the path
         void deleteMoodAPI(@Path("id") String id, Callback<Response> rawCallback);
     }
 }

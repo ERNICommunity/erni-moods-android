@@ -11,7 +11,8 @@ import com.google.gson.JsonParseException;
 import java.lang.reflect.Type;
 
 /**
- * Created by ue65403 on 27.11.2014.
+ * Since the backend provides the location as an array of coordinates and our Model-Object
+ * needs a Location-object, the GSON-library needs a custom deserialization class.
  */
 public class LocationDeserializer implements JsonDeserializer<Location> {
     public Location deserialize(JsonElement je, Type type,

@@ -63,7 +63,7 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
                 editor.commit();
                 editor.putString("pref_password", pwd.getText().toString());
                 editor.commit();
-                // redirect to the MyMood by replacing the Signup fragment with MyMoodFragment
+                // after sign-up, authorize user, which initiates the normal app-initialization
                 ((EntryPoint) getActivity()).authorizeUser();
             }
         };

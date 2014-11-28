@@ -5,15 +5,17 @@ import android.location.Location;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Created by ue65403 on 19.09.2014.
+ * POJO to store a google-place object
  */
 public class GooglePlace {
 
+    //This is named differently in the google API, why we have to tell gson that the serialized name is geometry
     @SerializedName("geometry")
     private Location location;
     private String icon;
     private String name;
     private Double rating;
+    //Address is named vicinity in the google API
     @SerializedName("vicinity")
     private String address;
 

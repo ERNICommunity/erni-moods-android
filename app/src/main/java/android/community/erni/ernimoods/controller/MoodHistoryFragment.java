@@ -1,6 +1,5 @@
 package android.community.erni.ernimoods.controller;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.community.erni.ernimoods.R;
 import android.community.erni.ernimoods.model.Mood;
@@ -69,6 +68,10 @@ public class MoodHistoryFragment extends Fragment {
         chart setup
          */
 
+        /**
+         * We don't retain the fragment-instance on orientation changes, since it doesn't work
+         * together with the charting library.
+         */
         setRetainInstance(false);
 
         //create new time series
@@ -178,7 +181,6 @@ public class MoodHistoryFragment extends Fragment {
 
             //finally add the chart to our view
             layout.addView(myChart);
-            //if the chart has already been created, we don't to anything else than repainting
             updateChart();
         } else {
             myChart.repaint();
@@ -186,16 +188,14 @@ public class MoodHistoryFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-
-    }
-
-    @Override
     public void onPause() {
         super.onPause();
     }
 
+    /**
+     * Update the chart. Method is public, such that also the containing activity can
+     * perform a chart-update
+     */
     public void updateChart() {
 
         if (myChart != null) {

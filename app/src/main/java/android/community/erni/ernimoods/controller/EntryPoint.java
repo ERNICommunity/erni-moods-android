@@ -77,12 +77,16 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
     //stores the current user's moods
     private ArrayList<Mood> myMoods = null;
 
+    //progress bar to notify user about communication with the backend
     private ProgressDialog progress;
 
+    //stores handles to the app's five fragments
     private Map<String, Fragment> fragmentMap = new HashMap();
 
+    //an identifier of the currently displayed fragment
     private String shownFragment = "";
 
+    //boolean that is set when the user has successfully been authorized
     private boolean isAuthorized = false;
 
     @Override
@@ -92,13 +96,18 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
 
         FragmentManager fm = getFragmentManager();
 
-
+        /**
+         * Try to restore fragments from a saved instance, by identifying their tags
+         */
         fragmentMap.put("loginFragment", fm.findFragmentByTag("loginFragment"));
         fragmentMap.put("signUpFragment", fm.findFragmentByTag("signUpFragment"));
         fragmentMap.put("moodsNearMeFragment", fm.findFragmentByTag("moodsNearMeFragment"));
         fragmentMap.put("myMoodFragment", fm.findFragmentByTag("myMoodFragment"));
         fragmentMap.put("moodHistoryFragment", fm.findFragmentByTag("moodHistoryFragment"));
 
+        /**
+         * If the fragments could not be restored, create the and add them to the fragment container
+         */
         if (fragmentMap.get("loginFragment") == null) {
             fragmentMap.put("loginFragment", new LoginFragment());
             fm.beginTransaction().add(R.id.fragmentContainer, fragmentMap.get("loginFragment"), "loginFragment").commit();
@@ -124,18 +133,26 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
         final ActionBar actionBar = getActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
-
         // hard code the tabs
         actionBar.addTab(actionBar.newTab().setText(getString(R.string.tab_near_me)).setTabListener(this), true);
         actionBar.addTab(actionBar.newTab().setText(getString(R.string.tab_my_mood)).setTabListener(this), false);
         actionBar.addTab(actionBar.newTab().setText(getString(R.string.tab_mood_history)).setTabListener(this), false);
 
+        /**
+         * By default, hide all fragments. Importantly: This is done after the action bar initialization,
+         * since fragments are implicitly shown and hidden during initialization
+         */
         fm.beginTransaction().hide(fragmentMap.get("myMoodFragment")).commit();
         fm.beginTransaction().hide(fragmentMap.get("signUpFragment")).commit();
         fm.beginTransaction().hide(fragmentMap.get("moodHistoryFragment")).commit();
         fm.beginTransaction().hide(fragmentMap.get("loginFragment")).commit();
         fm.beginTransaction().hide(fragmentMap.get("moodsNearMeFragment")).commit();
 
+        /**
+         * If an configuration change occured (back-button, orientation change important variables
+         * of the previous activity instance have been stored and are recovered here. These include:
+         * list of moods, user-ID of current user, authorization state and currently shown fragment
+         */
         if (savedInstanceState != null) {
             Gson gson = new GsonBuilder()
                     .registerTypeAdapter(Location.class, new LocationDeserializer())
@@ -199,7 +216,8 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
         };
         //very important event
         //event handler for loading the user. log that something went wrong
-        //call the change fragment method, which redirects to the sign-up page
+        //and forward the user to the login-page (where he could navigate further to the
+        //sign-up page
         errorHandlerUser = new UserBackend.OnJSONResponseError() {
             @Override
             public void onJSONResponseError(JSONResponseException e) {
@@ -228,6 +246,10 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
 
                 SimpleDateFormat myDateFormat = new SimpleDateFormat("dd.MM.yyyy hh:mm");
 
+                /**
+                 * Depending on whether the user has posted a mood within the last 24 hours, he the fragment to either
+                 * post a mood or display the moods is displayed
+                 */
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                 try {
                     if (!prefs.contains("lastPost") || myDateFormat.parse(prefs.getString("lastPost", null)).before(oneDayAgo)) {
@@ -265,6 +287,9 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
             }
         };
 
+        /**
+         * Set up the progress dialog
+         */
         progress = new ProgressDialog(this);
         progress.setCancelable(false);
         progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -302,6 +327,8 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
     /**
      * On application resume, start listening for the location and check whether the user is registered
      * If yes, the mood-lists are updated
+     * If the application resumes due to a configuration change, no communication with the backend ist done.
+     * Instead we recover all data and the previously shown fragment.
      */
     @Override
     public void onResume() {
@@ -311,6 +338,7 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
 
         if (!fromOrientation()) {
 
+            //start authorization
             authorizeUser();
 
             //when the app is resumed, the location might have changed
@@ -321,11 +349,18 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
             SharedPreferences.Editor editor = prefs.edit();
             editor.putBoolean("pref_orientation", false);
             editor.commit();
+            //If the user has been on the apps "normal" fragments, recover it
             if (shownFragment != "loginFragment" && shownFragment != "signUpFragment") {
                 getActionBar().setSelectedNavigationItem(prefs.getInt("actionBarTab", 0));
+                /**
+                 * Actually, the above line should be sufficient to recover the fragment. However the
+                 * google-map and the mood history are not shown correctly, that's why we explcitly
+                 * show the fragment and update the map/chart
+                 */
                 getFragmentManager().beginTransaction().show(fragmentMap.get(shownFragment)).commit();
                 ((MoodsNearMeFragment) fragmentMap.get("moodsNearMeFragment")).updateMap();
                 ((MoodHistoryFragment) fragmentMap.get("moodHistoryFragment")).updateChart();
+                //if the user was on either login-page oder sign-up page, recover fragment
             } else {
                 getFragmentManager().beginTransaction().show(fragmentMap.get(shownFragment)).commit();
                 getActionBar().hide();
@@ -341,9 +376,19 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
         hideFragment();
     }
 
+    /**
+     * This method is called, when the activity is destroyed due to a configuration change. This is the
+     * possibility to store important instance variables.
+     *
+     * @param savedInstanceState
+     */
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putString("userID", userID);
+        /**
+         * Mood-lists are converted to a json string by gson and then passed
+         * to the next activity instance as a string in the bundle
+         */
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(Location.class, new LocationDeserializer())
                 .registerTypeAdapter(Location.class, new LocationSerializer())
@@ -358,6 +403,10 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
         super.onSaveInstanceState(savedInstanceState);
     }
 
+    /**
+     * Whenever the app is destroyed, this method is called. If the destruction is due to a configuration change,
+     * we indicate this for the next activity creation and save the action-bar's tab index in the preferences
+     */
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -371,9 +420,15 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
     }
 
 
+    /**
+     * This method handles clicks on tabs and exchanges the respecting fragments. Map and chart are
+     * updated for moodsNearMe and MoodHistory, respectively
+     *
+     * @param tab
+     * @param ft
+     */
     @Override
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
-
         if (!fromOrientation()) {
             hideFragment();
             switch (tab.getPosition()) {
@@ -462,6 +517,11 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
         return this.myMoods;
     }
 
+    /**
+     * Method that can be called by a fragment to obtain the authorized user's username
+     *
+     * @return Username as a string
+     */
     public String getUserName() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         return prefs.getString("pref_username", null);
@@ -542,14 +602,9 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
         return moods;
     }
 
-    public UserBackend.OnConversionCompleted getUserAuthCallback() {
-        return this.callHandlerGetUser;
-    }
-
-    public UserBackend.OnJSONResponseError getUserNonauthCallback() {
-        return this.errorHandlerUser;
-    }
-
+    /**
+     * Hides the currently shown fragment
+     */
     private void hideFragment() {
         FragmentManager fm = getFragmentManager();
         if (shownFragment != "") {
@@ -557,6 +612,12 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
         }
     }
 
+    /**
+     * This methods starts the authorization process by checking the credentials in the
+     * stored preferences against the backend. Method is public, such that fragments can
+     * authorize a user as well. Authorization process starts update-process of moods-list if
+     * successful
+     */
     public void authorizeUser() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         //again, create an object to call the user-backend
@@ -583,11 +644,20 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
         }
     }
 
+    /**
+     * Check whether the activity has been create due to a configuration change
+     *
+     * @return True if due to configuration change, false if not
+     */
     private boolean fromOrientation() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         return prefs.getBoolean("pref_orientation", false);
     }
 
+    /**
+     * The user can switch per link between login-form and sign-up-form. This methods enables
+     * the respective fragments to easily switch between the corresponding forms
+     */
     public void swapLoginSignUp() {
         if (shownFragment == "loginFragment") {
             getFragmentManager().beginTransaction().show(fragmentMap.get("signUpFragment")).commit();
@@ -600,6 +670,11 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
         }
     }
 
+    /**
+     * Display the login fragment and hide the action bar. Login-form is displayed if
+     * a) user had wrong credentials
+     * b) authorization not possible due to network issues
+     */
     private void forwardToLogin() {
         if (getActionBar().isShowing()) {
             getActionBar().hide();

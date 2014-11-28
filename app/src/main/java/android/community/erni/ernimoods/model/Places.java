@@ -3,7 +3,7 @@ package android.community.erni.ernimoods.model;
 import java.util.List;
 
 /**
- * Created by ue65403 on 18.11.2014.
+ * POJO to store a list of places
  */
 public class Places {
     private List<GooglePlace> results;
