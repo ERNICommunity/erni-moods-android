@@ -43,10 +43,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import static android.app.ActionBar.*;
+
 /**
  * This is the starting Activity for the application.
  */
-public class EntryPoint extends Activity implements ActionBar.TabListener, LocationListener {
+public class EntryPoint extends Activity implements LocationListener {
     public static final String TAG = "EntryPoint";
 
     //always stores the current location
@@ -99,12 +101,12 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
 
         //setup the action bar to show tabs
         final ActionBar actionBar = getActionBar();
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        actionBar.setNavigationMode(NAVIGATION_MODE_TABS);
 
         // hard code the tabs
-        actionBar.addTab(actionBar.newTab().setText(getString(R.string.tab_near_me)).setTabListener(this), true);
-        actionBar.addTab(actionBar.newTab().setText(getString(R.string.tab_my_mood)).setTabListener(this), false);
-        actionBar.addTab(actionBar.newTab().setText(getString(R.string.tab_mood_history)).setTabListener(this), false);
+        actionBar.addTab(actionBar.newTab().setText(getString(R.string.tab_near_me)).setTabListener(new NearMeTabListener()), true);
+        actionBar.addTab(actionBar.newTab().setText(getString(R.string.tab_my_mood)).setTabListener(new MyMoodTabListener()), false);
+        actionBar.addTab(actionBar.newTab().setText(getString(R.string.tab_mood_history)).setTabListener(new MoodHistoryTabListener()), false);
 
         /**
          * By default, hide all fragments. Importantly: This is done after the action bar initialization,
@@ -396,45 +398,6 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
     }
 
 
-    /**
-     * This method handles clicks on tabs and exchanges the respecting fragments. Map and chart are
-     * updated for moodsNearMe and MoodHistory, respectively
-     *
-     * @param tab
-     * @param ft
-     */
-    @Override
-    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
-        if (!fromOrientation()) {
-            hideFragment();
-            switch (tab.getPosition()) {
-                case 0:
-                    ft.show(fragmentMap.get("moodsNearMeFragment"));
-                    ((MoodsNearMeFragment) fragmentMap.get("moodsNearMeFragment")).updateMap();
-                    shownFragment = "moodsNearMeFragment";
-                    break;
-                case 1:
-                    ft.show(fragmentMap.get("myMoodFragment"));
-                    shownFragment = "myMoodFragment";
-                    break;
-                case 2:
-                    ft.show(fragmentMap.get("moodHistoryFragment"));
-                    ((MoodHistoryFragment) fragmentMap.get("moodHistoryFragment")).updateChart();
-                    shownFragment = "moodHistoryFragment";
-                    break;
-            }
-        }
-    }
-
-    @Override
-    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction ft) {
-    }
-
-    @Override
-    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
-
-    }
-
     /*
     When the location has changed, we store the new location to be accessible for the fragments.
     As soon as the accuracy is within 50m, we stop requesting updates
@@ -698,6 +661,75 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
             fm.beginTransaction().add(R.id.fragmentContainer, fragmentMap.get("moodHistoryFragment"), "moodHistoryFragment").commit();
         }
         return fm;
+    }
+
+    /**
+     * AbstractTabListener provides an abstract class to handle the ActionBarTabs
+     * When you click on a tab it exchanges the respecting fragments and provides tab-specific actions.
+     * Concrete implementations for each tab provide the tab specific actions
+     */
+    private abstract class AbstractTabListener implements TabListener {
+        private String fragmentName;
+
+        public AbstractTabListener(String fragmentName) {
+            this.fragmentName = fragmentName;
+        }
+
+        protected abstract void updateFragment (Fragment fragment);
+
+        @Override
+        public void onTabSelected(Tab tab, FragmentTransaction ft) {
+            if (!fromOrientation()) {
+                hideFragment();
+                Fragment fragment = fragmentMap.get(fragmentName);
+                ft.show(fragment);
+                updateFragment(fragment);
+                shownFragment = fragmentName;
+            }
+        }
+
+        @Override
+        public void onTabUnselected(Tab tab, FragmentTransaction ft) {
+
+        }
+
+        @Override
+        public void onTabReselected(Tab tab, FragmentTransaction ft) {
+
+        }
+    }
+
+    private class NearMeTabListener extends AbstractTabListener {
+
+        public NearMeTabListener() {
+            super("moodsNearMeFragment");
+        }
+        @Override
+        protected void updateFragment(Fragment fragment) {
+            ((MoodsNearMeFragment)fragment).updateMap();
+        }
+    }
+
+    private class MyMoodTabListener extends AbstractTabListener {
+
+        public MyMoodTabListener() {
+            super("myMoodFragment");
+        }
+        @Override
+        protected void updateFragment(Fragment fragment) {
+            // empty (default implementation desired)
+        }
+    }
+
+    private class MoodHistoryTabListener extends AbstractTabListener {
+
+        public MoodHistoryTabListener() {
+            super("moodHistoryFragment");
+        }
+        @Override
+        protected void updateFragment(Fragment fragment) {
+            ((MoodHistoryFragment)fragment).updateChart();
+        }
     }
 
 }
