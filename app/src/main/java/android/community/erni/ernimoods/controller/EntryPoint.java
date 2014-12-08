@@ -598,7 +598,7 @@ public class EntryPoint extends Activity implements LocationListener {
      * the respective fragments to easily switch between the corresponding forms
      */
     public void swapLoginSignUp() {
-        if (shownFragment == "loginFragment") {
+        if (shownFragment.equals("loginFragment")) {
             getFragmentManager().beginTransaction().show(fragmentMap.get("signUpFragment")).commit();
             getFragmentManager().beginTransaction().hide(fragmentMap.get("loginFragment")).commit();
             shownFragment = "signUpFragment";
