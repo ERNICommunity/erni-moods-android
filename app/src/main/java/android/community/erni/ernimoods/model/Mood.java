@@ -9,9 +9,7 @@ import java.util.Comparator;
 import java.util.Date;
 
 /**
- * represents a Mood object
- * The idea is that we store an arraylist of mood objects in the Moods class
- * And use this to create the user's current mood
+ * POJO representing a Mood object
  */
 public class Mood implements Serializable {
 

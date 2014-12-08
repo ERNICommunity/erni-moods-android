@@ -1,7 +1,7 @@
 package android.community.erni.ernimoods.model;
 
 /**
- * represents a User object
+ * POJO represents a User object
  */
 public class User {
 
