@@ -255,7 +255,10 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
         errorHandlerGetMoods = new MoodsBackend.OnJSONResponseError() {
             @Override
             public void onJSONResponseError(JSONResponseException e) {
-                //user does not exist or something else went wrong
+                Toast.makeText(
+                        getBaseContext(),
+                        "Something went wrong getting the moods.",
+                        Toast.LENGTH_LONG).show();
                 Log.d("Something went wrong", e.getErrorCode() + ": " + e.getErrorMessage());
             }
         };
@@ -266,43 +269,6 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
         progress = new ProgressDialog(this);
         progress.setCancelable(false);
         progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-    }
-
-    /**
-     * This method does two things:
-     * It tries to restore fragments from a saved instance, by identifying their tags
-     * If it cannot, then it creates them and adds them to the fragment container
-     */
-    private FragmentManager setupFragments() {
-        FragmentManager fm = getFragmentManager();
-
-        fragmentMap.put("loginFragment", fm.findFragmentByTag("loginFragment"));
-        fragmentMap.put("signUpFragment", fm.findFragmentByTag("signUpFragment"));
-        fragmentMap.put("moodsNearMeFragment", fm.findFragmentByTag("moodsNearMeFragment"));
-        fragmentMap.put("myMoodFragment", fm.findFragmentByTag("myMoodFragment"));
-        fragmentMap.put("moodHistoryFragment", fm.findFragmentByTag("moodHistoryFragment"));
-
-        if (fragmentMap.get("loginFragment") == null) {
-            fragmentMap.put("loginFragment", new LoginFragment());
-            fm.beginTransaction().add(R.id.fragmentContainer, fragmentMap.get("loginFragment"), "loginFragment").commit();
-        }
-        if (fragmentMap.get("signUpFragment") == null) {
-            fragmentMap.put("signUpFragment", new SignUpFragment());
-            fm.beginTransaction().add(R.id.fragmentContainer, fragmentMap.get("signUpFragment"), "signUpFragment").commit();
-        }
-        if (fragmentMap.get("moodsNearMeFragment") == null) {
-            fragmentMap.put("moodsNearMeFragment", new MoodsNearMeFragment());
-            fm.beginTransaction().add(R.id.fragmentContainer, fragmentMap.get("moodsNearMeFragment"), "moodsNearMeFragment").commit();
-        }
-        if (fragmentMap.get("myMoodFragment") == null) {
-            fragmentMap.put("myMoodFragment", new MyMoodFragment());
-            fm.beginTransaction().add(R.id.fragmentContainer, fragmentMap.get("myMoodFragment"), "myMoodFragment").commit();
-        }
-        if (fragmentMap.get("moodHistoryFragment") == null) {
-            fragmentMap.put("moodHistoryFragment", new MoodHistoryFragment());
-            fm.beginTransaction().add(R.id.fragmentContainer, fragmentMap.get("moodHistoryFragment"), "moodHistoryFragment").commit();
-        }
-        return fm;
     }
 
 
@@ -695,4 +661,43 @@ public class EntryPoint extends Activity implements ActionBar.TabListener, Locat
         fragmentTransaction.show(fragmentMap.get("loginFragment")).commit();
         shownFragment = "loginFragment";
     }
+
+
+    /**
+     * Setup Fragments. Called from onCreate()
+     * This method tries to restore fragments from a saved instance, by identifying their tags.
+     * If it cannot, then it creates them and adds them to the fragment container and Map
+     */
+    private FragmentManager setupFragments() {
+        FragmentManager fm = getFragmentManager();
+
+        fragmentMap.put("loginFragment", fm.findFragmentByTag("loginFragment"));
+        fragmentMap.put("signUpFragment", fm.findFragmentByTag("signUpFragment"));
+        fragmentMap.put("moodsNearMeFragment", fm.findFragmentByTag("moodsNearMeFragment"));
+        fragmentMap.put("myMoodFragment", fm.findFragmentByTag("myMoodFragment"));
+        fragmentMap.put("moodHistoryFragment", fm.findFragmentByTag("moodHistoryFragment"));
+
+        if (fragmentMap.get("loginFragment") == null) {
+            fragmentMap.put("loginFragment", new LoginFragment());
+            fm.beginTransaction().add(R.id.fragmentContainer, fragmentMap.get("loginFragment"), "loginFragment").commit();
+        }
+        if (fragmentMap.get("signUpFragment") == null) {
+            fragmentMap.put("signUpFragment", new SignUpFragment());
+            fm.beginTransaction().add(R.id.fragmentContainer, fragmentMap.get("signUpFragment"), "signUpFragment").commit();
+        }
+        if (fragmentMap.get("moodsNearMeFragment") == null) {
+            fragmentMap.put("moodsNearMeFragment", new MoodsNearMeFragment());
+            fm.beginTransaction().add(R.id.fragmentContainer, fragmentMap.get("moodsNearMeFragment"), "moodsNearMeFragment").commit();
+        }
+        if (fragmentMap.get("myMoodFragment") == null) {
+            fragmentMap.put("myMoodFragment", new MyMoodFragment());
+            fm.beginTransaction().add(R.id.fragmentContainer, fragmentMap.get("myMoodFragment"), "myMoodFragment").commit();
+        }
+        if (fragmentMap.get("moodHistoryFragment") == null) {
+            fragmentMap.put("moodHistoryFragment", new MoodHistoryFragment());
+            fm.beginTransaction().add(R.id.fragmentContainer, fragmentMap.get("moodHistoryFragment"), "moodHistoryFragment").commit();
+        }
+        return fm;
+    }
+
 }
