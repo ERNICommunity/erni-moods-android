@@ -7,68 +7,88 @@
 
     <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="86dp">
+        android:layout_height="86dp"
+        android:background="@android:color/background_light">
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:id="@+id/selectedUserTextView"
-            android:layout_toRightOf="@+id/selectedUserLabelTextView"
-            android:layout_toEndOf="@+id/selectedUserLabelTextView"
-            android:layout_alignParentTop="true" />
-
-        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/selected_bar"
-            android:id="@+id/selectedBarLabelTextView"
-            android:layout_below="@+id/selectedUserLabelTextView"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:paddingRight="30dp"
-            android:layout_marginLeft="10dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/selected_user"
-            android:id="@+id/selectedUserLabelTextView"
             android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:paddingRight="20dp"
-            android:layout_marginLeft="10dp" />
+            android:layout_toEndOf="@+id/selectedUserLabelTextView"
+            android:layout_toRightOf="@+id/selectedUserLabelTextView"
+            android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/selectedBarLabelTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/selectedUserLabelTextView"
+            android:layout_marginLeft="10dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="30dp"
+            android:text="@string/selected_bar"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/selectedUserLabelTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="10dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:text="@string/selected_user"
+            android:textStyle="bold" />
+
+        <TextView
             android:id="@+id/selectedBarTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/selectedBarLabelTextView"
+            android:layout_toEndOf="@+id/selectedBarLabelTextView"
             android:layout_toRightOf="@+id/selectedBarLabelTextView"
-            android:layout_toEndOf="@+id/selectedBarLabelTextView" />
+            android:textStyle="bold" />
 
         <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/send_email"
             android:id="@+id/sendEmailButton"
-            android:layout_alignParentBottom="true"
-            android:textStyle="bold"
-            android:layout_alignParentLeft="false"
-            android:singleLine="false"
-            android:layout_alignParentRight="false"
-            android:layout_toLeftOf="@+id/sendMessageButton" />
-
-        <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/send_textmessage"
-            android:id="@+id/sendMessageButton"
-            android:textStyle="bold"
+            android:layout_below="@id/selectedBarLabelTextView"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginTop="5dp"
+            android:background="#ff1412dd"
+            android:maxHeight="25dp"
+            android:maxWidth="120dp"
+            android:minWidth="110dp"
             android:singleLine="false"
+            android:text="@string/send_email"
+            android:textColor="#fff"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/sendMessageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentStart="false" />
+            android:layout_below="@id/selectedBarLabelTextView"
+            android:layout_marginBottom="10dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginTop="5dp"
+            android:background="#ff1412dd"
+            android:maxHeight="25dp"
+            android:maxWidth="120dp"
+            android:minWidth="110dp"
+            android:singleLine="false"
+            android:text="@string/send_textmessage"
+            android:textColor="#fff"
+            android:textStyle="bold" />
 
     </RelativeLayout>
 
