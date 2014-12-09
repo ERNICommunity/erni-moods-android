@@ -43,7 +43,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import static android.app.ActionBar.*;
+import static android.app.ActionBar.NAVIGATION_MODE_TABS;
+import static android.app.ActionBar.Tab;
+import static android.app.ActionBar.TabListener;
 
 /**
  * This is the starting Activity for the application.
@@ -123,147 +125,15 @@ public class EntryPoint extends Activity implements LocationListener {
          * of the previous activity instance have been stored and are recovered here. These include:
          * list of moods, user-ID of current user, authorization state and currently shown fragment
          */
-        if (savedInstanceState != null) {
-            Gson gson = new GsonBuilder()
-                    .registerTypeAdapter(Location.class, new LocationDeserializer())
-                    .registerTypeAdapter(Location.class, new LocationSerializer())
-                    .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-                    .serializeNulls()
-                    .create();
-            if (savedInstanceState.containsKey("userID")) {
-                userID = savedInstanceState.getString("userID");
-            }
-            if (savedInstanceState.containsKey("moodsList")) {
-                cleanMoodsList = gson.fromJson(savedInstanceState.getString("moodsList"), new TypeToken<ArrayList<Mood>>() {
-                }.getType());
-            }
-            if (savedInstanceState.containsKey("myMoods")) {
-                myMoods = gson.fromJson(savedInstanceState.getString("myMoods"), new TypeToken<ArrayList<Mood>>() {
-                }.getType());
-                ((MoodHistoryFragment) fragmentMap.get("moodHistoryFragment")).updateChart();
-            }
-            if (savedInstanceState.containsKey("isAuthorized")) {
-                isAuthorized = savedInstanceState.getBoolean("isAuthorized");
-            }
-            if (savedInstanceState.containsKey("shownFragment")) {
-                shownFragment = savedInstanceState.getString("shownFragment");
-            }
-        }
-
+        recoverSavedInstanceVariables(savedInstanceState);
 
         /*
         to avoid problems if no location is accessible, we create a dummy-location first
          */
-        currentLocation = new Location(getString(R.string.dummy_location));
-        currentLocation.setLongitude(0.0);
-        currentLocation.setLatitude(0.0);
-        //get a handle to the location manager
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        //select network_provider for location services; accurate enough for our purposes
-        provider = LocationManager.NETWORK_PROVIDER;
-        //request a single update to begin with
-        locationManager.requestSingleUpdate(provider, this, null);
-        //store the last known location
-        currentLocation = locationManager.getLastKnownLocation(provider);
+        setUpLocationManager();
 
-        //event handler when user could not be loaded
-        callHandlerGetUser = new UserBackend.OnConversionCompleted<User>() {
-            @Override
-            public void onConversionCompleted(User user) {
-                //display username
-                Log.d("User successfully loaded", user.getUsername());
-                //after authentication of the user, update the mood list
-                if (!actionBar.isShowing()) {
-                    actionBar.show();
-                }
-                progress.dismiss();
-                hideFragment();
-                updateMoodList();
-                //store userID
-                userID = user.getID();
-                isAuthorized = true;
-            }
-        };
-        //very important event
-        //event handler for loading the user. log that something went wrong
-        //and forward the user to the login-page (where he could navigate further to the
-        //sign-up page
-        errorHandlerUser = new UserBackend.OnJSONResponseError() {
-            @Override
-            public void onJSONResponseError(JSONResponseException e) {
-                // Assuming that the error is due to invalid user/password. The actual error is printed to Log. Fixes issue #40.
-                Toast.makeText(
-                        getBaseContext(),
-                        "Username and/or password not valid.\nPlease check and try again.",
-                        Toast.LENGTH_LONG).show();
-
-                Log.d("Something went wrong", e.getErrorCode() + ": " + e.getErrorMessage());
-                progress.dismiss();
-                forwardToLogin();
-            }
-        };
-
-        //attach call handler. this method is called as soon as the moods-list is loaded
-        callHandlerGetMoods = new MoodsBackend.OnConversionCompleted<ArrayList<Mood>>() {
-            @Override
-            //what to do on successful conversion?
-            public void onConversionCompleted(ArrayList<Mood> moods) {
-                //Add markers for all moods
-                //Sort moods by username and keep only the most recent post
-                cleanMoodsList = sortAndCleanMoods(moods);
-                //redirect to the moods near me
-                progress.dismiss();
-
-                Calendar cal = Calendar.getInstance();
-                cal.setTime(new Date());
-                cal.add(Calendar.DATE, -1);
-                Date oneDayAgo = cal.getTime();
-
-                SimpleDateFormat myDateFormat = new SimpleDateFormat("dd.MM.yyyy hh:mm");
-
-                /**
-                 * Depending on whether the user has posted a mood within the last 24 hours, he the fragment to either
-                 * post a mood or display the moods is displayed
-                 */
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                try {
-                    if (!prefs.contains("lastPost") || myDateFormat.parse(prefs.getString("lastPost", null)).before(oneDayAgo)) {
-                        actionBar.setSelectedNavigationItem(1);
-                        //fragmentTransaction.show(myMoodFragment);
-                    } else {
-                        //fragmentTransaction.show(moodsNearMeFragment);
-                        actionBar.setSelectedNavigationItem(0);
-                    }
-                } catch (ParseException e) {
-                    actionBar.setSelectedNavigationItem(1);
-                }
-            }
-        };
-
-        /**
-         * Each time when the activity resumes, the moods from the current user are loaded.
-         */
-        callHandlerGetMyMoods = new MoodsBackend.OnConversionCompleted<ArrayList<Mood>>() {
-            @Override
-            //what to do on successful conversion?
-            public void onConversionCompleted(ArrayList<Mood> moods) {
-                myMoods = moods;
-            }
-        };
-
-        /**
-         * Well, we want to be informed if the moods could not be loaded
-         */
-        errorHandlerGetMoods = new MoodsBackend.OnJSONResponseError() {
-            @Override
-            public void onJSONResponseError(JSONResponseException e) {
-                Toast.makeText(
-                        getBaseContext(),
-                        "Something went wrong getting the moods.",
-                        Toast.LENGTH_LONG).show();
-                Log.d("Something went wrong", e.getErrorCode() + ": " + e.getErrorMessage());
-            }
-        };
+        attachUserCallbacks();
+        attachMoodsCallbacks();
 
         /**
          * Set up the progress dialog
@@ -335,9 +205,9 @@ public class EntryPoint extends Activity implements LocationListener {
                  * google-map and the mood history are not shown correctly, that's why we explcitly
                  * show the fragment and update the map/chart
                  */
-                getFragmentManager().beginTransaction().show(fragmentMap.get(shownFragment)).commit();
                 ((MoodsNearMeFragment) fragmentMap.get("moodsNearMeFragment")).updateMap();
                 ((MoodHistoryFragment) fragmentMap.get("moodHistoryFragment")).updateChart();
+                getFragmentManager().beginTransaction().show(fragmentMap.get(shownFragment)).commit();
                 //if the user was on either login-page oder sign-up page, recover fragment
             } else {
                 getFragmentManager().beginTransaction().show(fragmentMap.get(shownFragment)).commit();
@@ -661,6 +531,154 @@ public class EntryPoint extends Activity implements LocationListener {
             fm.beginTransaction().add(R.id.fragmentContainer, fragmentMap.get("moodHistoryFragment"), "moodHistoryFragment").commit();
         }
         return fm;
+    }
+
+    private void recoverSavedInstanceVariables(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(Location.class, new LocationDeserializer())
+                    .registerTypeAdapter(Location.class, new LocationSerializer())
+                    .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+                    .serializeNulls()
+                    .create();
+            if (savedInstanceState.containsKey("userID")) {
+                userID = savedInstanceState.getString("userID");
+            }
+            if (savedInstanceState.containsKey("moodsList")) {
+                cleanMoodsList = gson.fromJson(savedInstanceState.getString("moodsList"), new TypeToken<ArrayList<Mood>>() {
+                }.getType());
+            }
+            if (savedInstanceState.containsKey("myMoods")) {
+                myMoods = gson.fromJson(savedInstanceState.getString("myMoods"), new TypeToken<ArrayList<Mood>>() {
+                }.getType());
+                ((MoodHistoryFragment) fragmentMap.get("moodHistoryFragment")).updateChart();
+            }
+            if (savedInstanceState.containsKey("isAuthorized")) {
+                isAuthorized = savedInstanceState.getBoolean("isAuthorized");
+            }
+            if (savedInstanceState.containsKey("shownFragment")) {
+                shownFragment = savedInstanceState.getString("shownFragment");
+            }
+        }
+
+    }
+
+    private void setUpLocationManager() {
+        currentLocation = new Location(getString(R.string.dummy_location));
+        currentLocation.setLongitude(0.0);
+        currentLocation.setLatitude(0.0);
+        //get a handle to the location manager
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        //select network_provider for location services; accurate enough for our purposes
+        provider = LocationManager.NETWORK_PROVIDER;
+        //request a single update to begin with
+        locationManager.requestSingleUpdate(provider, this, null);
+        //store the last known location
+        currentLocation = locationManager.getLastKnownLocation(provider);
+    }
+
+    private void attachUserCallbacks() {
+        //event handler when user could not be loaded
+        callHandlerGetUser = new UserBackend.OnConversionCompleted<User>() {
+            @Override
+            public void onConversionCompleted(User user) {
+                //display username
+                Log.d("User successfully loaded", user.getUsername());
+                //after authentication of the user, update the mood list
+                if (!getActionBar().isShowing()) {
+                    getActionBar().show();
+                }
+                progress.dismiss();
+                hideFragment();
+                updateMoodList();
+                //store userID
+                userID = user.getID();
+                isAuthorized = true;
+            }
+        };
+        //very important event
+        //event handler for loading the user. log that something went wrong
+        //and forward the user to the login-page (where he could navigate further to the
+        //sign-up page
+        errorHandlerUser = new UserBackend.OnJSONResponseError() {
+            @Override
+            public void onJSONResponseError(JSONResponseException e) {
+                // Assuming that the error is due to invalid user/password. The actual error is printed to Log. Fixes issue #40.
+                Toast.makeText(
+                        getBaseContext(),
+                        "Username and/or password not valid.\nPlease check and try again.",
+                        Toast.LENGTH_LONG).show();
+
+                Log.d("Something went wrong", e.getErrorCode() + ": " + e.getErrorMessage());
+                progress.dismiss();
+                forwardToLogin();
+            }
+        };
+    }
+
+    private void attachMoodsCallbacks() {
+        //attach call handler. this method is called as soon as the moods-list is loaded
+        callHandlerGetMoods = new MoodsBackend.OnConversionCompleted<ArrayList<Mood>>() {
+            @Override
+            //what to do on successful conversion?
+            public void onConversionCompleted(ArrayList<Mood> moods) {
+                //Add markers for all moods
+                //Sort moods by username and keep only the most recent post
+                cleanMoodsList = sortAndCleanMoods(moods);
+                //redirect to the moods near me
+                progress.dismiss();
+
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(new Date());
+                cal.add(Calendar.DATE, -1);
+                Date oneDayAgo = cal.getTime();
+
+                SimpleDateFormat myDateFormat = new SimpleDateFormat("dd.MM.yyyy hh:mm");
+
+                /**
+                 * Depending on whether the user has posted a mood within the last 24 hours, he the fragment to either
+                 * post a mood or display the moods is displayed
+                 */
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                try {
+                    if (!prefs.contains("lastPost") || myDateFormat.parse(prefs.getString("lastPost", null)).before(oneDayAgo)) {
+                        getActionBar().setSelectedNavigationItem(1);
+                        //fragmentTransaction.show(myMoodFragment);
+                    } else {
+                        //fragmentTransaction.show(moodsNearMeFragment);
+                        getActionBar().setSelectedNavigationItem(0);
+                    }
+                } catch (ParseException e) {
+                    getActionBar().setSelectedNavigationItem(1);
+                }
+            }
+        };
+
+        /**
+         * Each time when the activity resumes, the moods from the current user are loaded.
+         */
+        callHandlerGetMyMoods = new MoodsBackend.OnConversionCompleted<ArrayList<Mood>>() {
+            @Override
+            //what to do on successful conversion?
+            public void onConversionCompleted(ArrayList<Mood> moods) {
+                myMoods = moods;
+            }
+        };
+
+        /**
+         * Well, we want to be informed if the moods could not be loaded
+         */
+        errorHandlerGetMoods = new MoodsBackend.OnJSONResponseError() {
+            @Override
+            public void onJSONResponseError(JSONResponseException e) {
+                Toast.makeText(
+                        getBaseContext(),
+                        "Something went wrong getting the moods.",
+                        Toast.LENGTH_LONG).show();
+                Log.d("Something went wrong", e.getErrorCode() + ": " + e.getErrorMessage());
+            }
+        };
+
     }
 
     /**
