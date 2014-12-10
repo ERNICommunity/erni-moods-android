@@ -1,17 +1,28 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/chart"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/chart"
     tools:context="android.community.erni.ernimoods.controller.MoodHistoryFragment">
+
+    <ImageView
+        android:id="@+id/background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:alpha="0.3"
+        android:scaleType="fitCenter"
+        android:src="@drawable/erni"></ImageView>
 
 
     <TextView
+        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Click data point to display comment"
-        android:id="@+id/textView"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp"
+        android:text="Click data point to display comment"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 </RelativeLayout>

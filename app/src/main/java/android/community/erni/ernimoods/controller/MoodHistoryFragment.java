@@ -19,11 +19,13 @@ import org.achartengine.chart.PointStyle;
 import org.achartengine.model.SeriesSelection;
 import org.achartengine.model.TimeSeries;
 import org.achartengine.model.XYMultipleSeriesDataset;
+import org.achartengine.model.XYSeries;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -35,9 +37,9 @@ import java.util.Iterator;
 public class MoodHistoryFragment extends Fragment {
 
     //this date format is used to display the chart's x-labels
-    SimpleDateFormat myDateFormat = new SimpleDateFormat("dd.MM.yyyy hh:mm");
+    SimpleDateFormat myDateFormat = new SimpleDateFormat("dd.MM.yyyy");
     //The time series stores dates (x) and mood (y)
-    private TimeSeries mySeries = null;
+    private XYSeries mySeries = null;
     //achartengine can store multiple series by default, that's why this is used
     private XYMultipleSeriesDataset mDataset = null;
     /*
@@ -84,11 +86,11 @@ public class MoodHistoryFragment extends Fragment {
         //create a new series renderer
         renderer = new XYSeriesRenderer();
 
-        renderer.setLineWidth(4); //linewith
+        renderer.setLineWidth(8); //linewith
         renderer.setColor(Color.BLUE); //erni-like blue for the series
         renderer.setDisplayBoundingPoints(true);
         renderer.setPointStyle(PointStyle.CIRCLE); //circular markers
-        renderer.setPointStrokeWidth(3);
+        renderer.setPointStrokeWidth(20);
         renderer.setAnnotationsColor(Color.LTGRAY); //light, grey background
 
         //create new multiple series renderer and add our mood history renderer
@@ -109,17 +111,25 @@ public class MoodHistoryFragment extends Fragment {
         //set the y-asxis limit such that all moods can be displayed
         mRenderer.setYAxisMax(6);
         mRenderer.setYAxisMin(0);
-        mRenderer.setLabelsTextSize(20); //size of the labels
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.add(Calendar.DATE, -7);
+        Date oneWeekAgo = cal.getTime();
+        cal.add(Calendar.DATE, 8);
+        Date tmrw = cal.getTime();
+        mRenderer.setXAxisMin(oneWeekAgo.getTime());
+        mRenderer.setXAxisMax(tmrw.getTime());
+        mRenderer.setLabelsTextSize(46); //size of the labels
         mRenderer.setXRoundedLabels(false); //if this is true, date-labels somehow don't display
         mRenderer.setXLabelsAngle(285); //oblique x-labels
         //axis titles
         mRenderer.setXTitle(getString(R.string.date));
         mRenderer.setYTitle(getString(R.string.mood));
-        mRenderer.setAxisTitleTextSize(28);
+        mRenderer.setAxisTitleTextSize(48);
         //background color
         mRenderer.setBackgroundColor(Color.LTGRAY);
         mRenderer.setShowLegend(false); //no legend is necessary
-        mRenderer.setMargins(new int[]{100, 100, 100, 100}); //add a nice margin around the chart
+        mRenderer.setMargins(new int[]{150, 150, 150, 150}); //add a nice margin around the chart
         //enable the chart to be clickable. clicks on datapoints will show the respective comments
         mRenderer.setClickEnabled(true);
         mRenderer.setSelectableBuffer(50);
@@ -148,6 +158,7 @@ public class MoodHistoryFragment extends Fragment {
 
         //this is where we are going to add the chart
         RelativeLayout layout = (RelativeLayout) view.findViewById(R.id.chart);
+
 
         //if the chart does not exist yet (application start up)
         if (myChart == null) {
@@ -214,7 +225,8 @@ public class MoodHistoryFragment extends Fragment {
                 Mood currentMood = null;
                 while (it.hasNext()) {
                     currentMood = it.next();
-                    mySeries.add((Date) currentMood.getDate(), currentMood.getMood());
+                    mySeries.add(currentMood.getDate().getTime(), currentMood.getMood());
+                    //mySeries.add((Date) currentMood.getDate(), currentMood.getMood());
                     dateCommentMap.put(currentMood.getDate().getTime(), currentMood.getComment());
                 }
             }
