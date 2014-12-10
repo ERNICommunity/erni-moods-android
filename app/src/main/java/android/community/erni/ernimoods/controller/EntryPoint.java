@@ -53,6 +53,13 @@ import static android.app.ActionBar.TabListener;
 public class EntryPoint extends Activity implements LocationListener {
     public static final String TAG = "EntryPoint";
 
+    // constants for the mood tags
+    public static final String MY_MOOD_FRAGMENT = "myMoodFragment";
+    public static final String SIGN_UP_FRAGMENT = "signUpFragment";
+    public static final String MOOD_HISTORY_FRAGMENT = "moodHistoryFragment";
+    public static final String LOGIN_FRAGMENT = "loginFragment";
+    public static final String MOODS_NEAR_ME_FRAGMENT = "moodsNearMeFragment";
+
     //always stores the current location
     private Location currentLocation = null;
     //location manager is used to get the location
@@ -114,11 +121,11 @@ public class EntryPoint extends Activity implements LocationListener {
          * By default, hide all fragments. Importantly: This is done after the action bar initialization,
          * since fragments are implicitly shown and hidden during initialization
          */
-        fm.beginTransaction().hide(fragmentMap.get("myMoodFragment")).commit();
-        fm.beginTransaction().hide(fragmentMap.get("signUpFragment")).commit();
-        fm.beginTransaction().hide(fragmentMap.get("moodHistoryFragment")).commit();
-        fm.beginTransaction().hide(fragmentMap.get("loginFragment")).commit();
-        fm.beginTransaction().hide(fragmentMap.get("moodsNearMeFragment")).commit();
+        fm.beginTransaction().hide(fragmentMap.get(MY_MOOD_FRAGMENT)).commit();
+        fm.beginTransaction().hide(fragmentMap.get(SIGN_UP_FRAGMENT)).commit();
+        fm.beginTransaction().hide(fragmentMap.get(MOOD_HISTORY_FRAGMENT)).commit();
+        fm.beginTransaction().hide(fragmentMap.get(LOGIN_FRAGMENT)).commit();
+        fm.beginTransaction().hide(fragmentMap.get(MOODS_NEAR_ME_FRAGMENT)).commit();
 
         /**
          * If an configuration change occured (back-button, orientation change important variables
@@ -198,15 +205,15 @@ public class EntryPoint extends Activity implements LocationListener {
             editor.putBoolean("pref_orientation", false);
             editor.commit();
             //If the user has been on the apps "normal" fragments, recover it
-            if (shownFragment != "loginFragment" && shownFragment != "signUpFragment") {
+            if (shownFragment != LOGIN_FRAGMENT && shownFragment != SIGN_UP_FRAGMENT) {
                 getActionBar().setSelectedNavigationItem(prefs.getInt("actionBarTab", 0));
                 /**
                  * Actually, the above line should be sufficient to recover the fragment. However the
                  * google-map and the mood history are not shown correctly, that's why we explcitly
                  * show the fragment and update the map/chart
                  */
-                ((MoodsNearMeFragment) fragmentMap.get("moodsNearMeFragment")).updateMap();
-                ((MoodHistoryFragment) fragmentMap.get("moodHistoryFragment")).updateChart();
+                ((MoodsNearMeFragment) fragmentMap.get(MOODS_NEAR_ME_FRAGMENT)).updateMap();
+                ((MoodHistoryFragment) fragmentMap.get(MOOD_HISTORY_FRAGMENT)).updateChart();
                 getFragmentManager().beginTransaction().show(fragmentMap.get(shownFragment)).commit();
                 //if the user was on either login-page oder sign-up page, recover fragment
             } else {
@@ -468,14 +475,14 @@ public class EntryPoint extends Activity implements LocationListener {
      * the respective fragments to easily switch between the corresponding forms
      */
     public void swapLoginSignUp() {
-        if (shownFragment.equals("loginFragment")) {
-            getFragmentManager().beginTransaction().show(fragmentMap.get("signUpFragment")).commit();
-            getFragmentManager().beginTransaction().hide(fragmentMap.get("loginFragment")).commit();
-            shownFragment = "signUpFragment";
+        if (shownFragment.equals(LOGIN_FRAGMENT)) {
+            getFragmentManager().beginTransaction().show(fragmentMap.get(SIGN_UP_FRAGMENT)).commit();
+            getFragmentManager().beginTransaction().hide(fragmentMap.get(LOGIN_FRAGMENT)).commit();
+            shownFragment = SIGN_UP_FRAGMENT;
         } else {
-            getFragmentManager().beginTransaction().hide(fragmentMap.get("signUpFragment")).commit();
-            getFragmentManager().beginTransaction().show(fragmentMap.get("loginFragment")).commit();
-            shownFragment = "loginFragment";
+            getFragmentManager().beginTransaction().hide(fragmentMap.get(SIGN_UP_FRAGMENT)).commit();
+            getFragmentManager().beginTransaction().show(fragmentMap.get(LOGIN_FRAGMENT)).commit();
+            shownFragment = LOGIN_FRAGMENT;
         }
     }
 
@@ -491,8 +498,8 @@ public class EntryPoint extends Activity implements LocationListener {
         hideFragment();
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.show(fragmentMap.get("loginFragment")).commit();
-        shownFragment = "loginFragment";
+        fragmentTransaction.show(fragmentMap.get(LOGIN_FRAGMENT)).commit();
+        shownFragment = LOGIN_FRAGMENT;
     }
 
 
@@ -504,31 +511,31 @@ public class EntryPoint extends Activity implements LocationListener {
     private FragmentManager setupFragments() {
         FragmentManager fm = getFragmentManager();
 
-        fragmentMap.put("loginFragment", fm.findFragmentByTag("loginFragment"));
-        fragmentMap.put("signUpFragment", fm.findFragmentByTag("signUpFragment"));
-        fragmentMap.put("moodsNearMeFragment", fm.findFragmentByTag("moodsNearMeFragment"));
-        fragmentMap.put("myMoodFragment", fm.findFragmentByTag("myMoodFragment"));
-        fragmentMap.put("moodHistoryFragment", fm.findFragmentByTag("moodHistoryFragment"));
+        fragmentMap.put(LOGIN_FRAGMENT, fm.findFragmentByTag(LOGIN_FRAGMENT));
+        fragmentMap.put(SIGN_UP_FRAGMENT, fm.findFragmentByTag(SIGN_UP_FRAGMENT));
+        fragmentMap.put(MOODS_NEAR_ME_FRAGMENT, fm.findFragmentByTag(MOODS_NEAR_ME_FRAGMENT));
+        fragmentMap.put(MY_MOOD_FRAGMENT, fm.findFragmentByTag(MY_MOOD_FRAGMENT));
+        fragmentMap.put(MOOD_HISTORY_FRAGMENT, fm.findFragmentByTag(MOOD_HISTORY_FRAGMENT));
 
-        if (fragmentMap.get("loginFragment") == null) {
-            fragmentMap.put("loginFragment", new LoginFragment());
-            fm.beginTransaction().add(R.id.fragmentContainer, fragmentMap.get("loginFragment"), "loginFragment").commit();
+        if (fragmentMap.get(LOGIN_FRAGMENT) == null) {
+            fragmentMap.put(LOGIN_FRAGMENT, new LoginFragment());
+            fm.beginTransaction().add(R.id.fragmentContainer, fragmentMap.get(LOGIN_FRAGMENT), LOGIN_FRAGMENT).commit();
         }
-        if (fragmentMap.get("signUpFragment") == null) {
-            fragmentMap.put("signUpFragment", new SignUpFragment());
-            fm.beginTransaction().add(R.id.fragmentContainer, fragmentMap.get("signUpFragment"), "signUpFragment").commit();
+        if (fragmentMap.get(SIGN_UP_FRAGMENT) == null) {
+            fragmentMap.put(SIGN_UP_FRAGMENT, new SignUpFragment());
+            fm.beginTransaction().add(R.id.fragmentContainer, fragmentMap.get(SIGN_UP_FRAGMENT), SIGN_UP_FRAGMENT).commit();
         }
-        if (fragmentMap.get("moodsNearMeFragment") == null) {
-            fragmentMap.put("moodsNearMeFragment", new MoodsNearMeFragment());
-            fm.beginTransaction().add(R.id.fragmentContainer, fragmentMap.get("moodsNearMeFragment"), "moodsNearMeFragment").commit();
+        if (fragmentMap.get(MOODS_NEAR_ME_FRAGMENT) == null) {
+            fragmentMap.put(MOODS_NEAR_ME_FRAGMENT, new MoodsNearMeFragment());
+            fm.beginTransaction().add(R.id.fragmentContainer, fragmentMap.get(MOODS_NEAR_ME_FRAGMENT), MOODS_NEAR_ME_FRAGMENT).commit();
         }
-        if (fragmentMap.get("myMoodFragment") == null) {
-            fragmentMap.put("myMoodFragment", new MyMoodFragment());
-            fm.beginTransaction().add(R.id.fragmentContainer, fragmentMap.get("myMoodFragment"), "myMoodFragment").commit();
+        if (fragmentMap.get(MY_MOOD_FRAGMENT) == null) {
+            fragmentMap.put(MY_MOOD_FRAGMENT, new MyMoodFragment());
+            fm.beginTransaction().add(R.id.fragmentContainer, fragmentMap.get(MY_MOOD_FRAGMENT), MY_MOOD_FRAGMENT).commit();
         }
-        if (fragmentMap.get("moodHistoryFragment") == null) {
-            fragmentMap.put("moodHistoryFragment", new MoodHistoryFragment());
-            fm.beginTransaction().add(R.id.fragmentContainer, fragmentMap.get("moodHistoryFragment"), "moodHistoryFragment").commit();
+        if (fragmentMap.get(MOOD_HISTORY_FRAGMENT) == null) {
+            fragmentMap.put(MOOD_HISTORY_FRAGMENT, new MoodHistoryFragment());
+            fm.beginTransaction().add(R.id.fragmentContainer, fragmentMap.get(MOOD_HISTORY_FRAGMENT), MOOD_HISTORY_FRAGMENT).commit();
         }
         return fm;
     }
@@ -551,7 +558,7 @@ public class EntryPoint extends Activity implements LocationListener {
             if (savedInstanceState.containsKey("myMoods")) {
                 myMoods = gson.fromJson(savedInstanceState.getString("myMoods"), new TypeToken<ArrayList<Mood>>() {
                 }.getType());
-                ((MoodHistoryFragment) fragmentMap.get("moodHistoryFragment")).updateChart();
+                ((MoodHistoryFragment) fragmentMap.get(MOOD_HISTORY_FRAGMENT)).updateChart();
             }
             if (savedInstanceState.containsKey("isAuthorized")) {
                 isAuthorized = savedInstanceState.getBoolean("isAuthorized");
@@ -720,7 +727,7 @@ public class EntryPoint extends Activity implements LocationListener {
     private class NearMeTabListener extends AbstractTabListener {
 
         public NearMeTabListener() {
-            super("moodsNearMeFragment");
+            super(MOODS_NEAR_ME_FRAGMENT);
         }
         @Override
         protected void updateFragment(Fragment fragment) {
@@ -731,7 +738,7 @@ public class EntryPoint extends Activity implements LocationListener {
     private class MyMoodTabListener extends AbstractTabListener {
 
         public MyMoodTabListener() {
-            super("myMoodFragment");
+            super(MY_MOOD_FRAGMENT);
         }
         @Override
         protected void updateFragment(Fragment fragment) {
@@ -742,7 +749,7 @@ public class EntryPoint extends Activity implements LocationListener {
     private class MoodHistoryTabListener extends AbstractTabListener {
 
         public MoodHistoryTabListener() {
-            super("moodHistoryFragment");
+            super(MOOD_HISTORY_FRAGMENT);
         }
         @Override
         protected void updateFragment(Fragment fragment) {
