@@ -91,7 +91,7 @@ public class MoodsNearMeFragment extends Fragment {
                 for (int i = 0; i < place.size(); i++) {
                     addMarker(place.get(i));
                 }
-
+                ((EntryPoint) getActivity()).stopProgress();
             }
         };
 
@@ -102,6 +102,7 @@ public class MoodsNearMeFragment extends Fragment {
                 //display username
                 Log.d("User successfully loaded", user.getUsername());
                 clickedUser = user;
+                ((EntryPoint) getActivity()).stopProgress();
             }
         };
 
@@ -112,6 +113,7 @@ public class MoodsNearMeFragment extends Fragment {
             public void onJSONResponseError(JSONResponseException e) {
                 //user does not exist or something else went wrong
                 Log.d("Something went wrong", e.getErrorCode() + ": " + e.getErrorMessage());
+                ((EntryPoint) getActivity()).stopProgress();
             }
         };
 
@@ -146,6 +148,7 @@ public class MoodsNearMeFragment extends Fragment {
                         places.setListener(callHandlerGetPlaces);
                         //get the 10 closest bars within 10km around the clicked mood
                         places.getBars(marker.getPosition().latitude, marker.getPosition().longitude, 10000, 10);
+                        ((EntryPoint) getActivity()).startProgress("Loading bars");
                     }
 
                     ((TextView) thisView.findViewById(R.id.selectedUserTextView)).setText(moodMap.get(marker).getUsername());
@@ -158,6 +161,8 @@ public class MoodsNearMeFragment extends Fragment {
                     getUser.setErrorListener(errorHandlerUser);
 
                     getUser.getUserByKey(moodMap.get(marker).getUsername(), ((EntryPoint) getActivity()).getUserID());
+
+                    ((EntryPoint) getActivity()).startProgress("Loading user data");
 
                     return true;
                 } else {

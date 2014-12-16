@@ -64,7 +64,9 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
                 editor.putString("pref_password", pwd.getText().toString());
                 editor.commit();
                 // after sign-up, authorize user, which initiates the normal app-initialization
+                ((EntryPoint) getActivity()).stopProgress();
                 ((EntryPoint) getActivity()).authorizeUser();
+
             }
         };
 
@@ -75,6 +77,7 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
             public void onJSONResponseError(JSONResponseException e) {
                 //log the error message from the json response
                 Log.d("Whoops...something went wrong creating the user", e.getErrorCode() + ": " + e.getErrorMessage());
+                ((EntryPoint) getActivity()).stopProgress();
 
                 // show an error. This doesn't check at the moment what the error was, but this is generally due to the username already taken
                 Toast.makeText(
@@ -259,6 +262,8 @@ public class SignUpFragment extends Fragment implements View.OnClickListener {
                 createUser.setErrorListener(errorHandler);
                 //start the background task to create a new user
                 createUser.createUser(newUser);
+
+                ((EntryPoint) getActivity()).startProgress("Creating user");
 
             }
         }

@@ -71,6 +71,7 @@ public class MyMoodFragment extends Fragment {
                 SharedPreferences.Editor editor = prefs.edit();
                 editor.putString("lastPost", now);
                 editor.commit();
+                ((EntryPoint) getActivity()).stopProgress();
             }
         };
 
@@ -81,6 +82,7 @@ public class MyMoodFragment extends Fragment {
                         getActivity().getBaseContext(),
                         e.getErrorMessage(),
                         Toast.LENGTH_LONG).show();
+                ((EntryPoint) getActivity()).stopProgress();
             }
         };
 
@@ -180,6 +182,7 @@ public class MyMoodFragment extends Fragment {
             // getMoods.setErrorListener(errorHandler);
             //start async-task
             getMoods.postMood(myCurrentMood);
+            ((EntryPoint) getActivity()).startProgress("Posting mood");
         } else {
             Toast.makeText(
                     getActivity().getBaseContext(),

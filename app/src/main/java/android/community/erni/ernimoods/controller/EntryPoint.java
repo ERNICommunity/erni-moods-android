@@ -372,8 +372,7 @@ public class EntryPoint extends Activity implements LocationListener {
      * on application start or if a mood has been posted
      */
     public void updateMoodList() {
-        progress.setTitle(getString(R.string.loading_moods));
-        progress.show();
+        startProgress(getString(R.string.loading_moods));
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         String username = prefs.getString("pref_username", null);
@@ -459,8 +458,8 @@ public class EntryPoint extends Activity implements LocationListener {
         //or the mymood, depending on whether the user exists or not
         if (isOnline()) {
             getUser.getUserByPassword(username, pwd);
+            startProgress(getString(R.string.authorize_progress));
             progress.setTitle(getString(R.string.authorize_progress));
-            progress.show();
         } else {
             forwardToLogin();
             Toast.makeText(
@@ -604,7 +603,7 @@ public class EntryPoint extends Activity implements LocationListener {
                 if (!getActionBar().isShowing()) {
                     getActionBar().show();
                 }
-                progress.dismiss();
+                stopProgress();
                 hideFragment();
                 updateMoodList();
                 //store userID
@@ -626,7 +625,7 @@ public class EntryPoint extends Activity implements LocationListener {
                         Toast.LENGTH_LONG).show();
 
                 Log.d("Something went wrong", e.getErrorCode() + ": " + e.getErrorMessage());
-                progress.dismiss();
+                stopProgress();
                 forwardToLogin();
             }
         };
@@ -642,7 +641,7 @@ public class EntryPoint extends Activity implements LocationListener {
                 //Sort moods by username and keep only the most recent post
                 cleanMoodsList = sortAndCleanMoods(moods);
                 //redirect to the moods near me
-                progress.dismiss();
+                stopProgress();
 
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(new Date());
@@ -692,9 +691,19 @@ public class EntryPoint extends Activity implements LocationListener {
                         "Something went wrong getting the moods.",
                         Toast.LENGTH_LONG).show();
                 Log.d("Something went wrong", e.getErrorCode() + ": " + e.getErrorMessage());
+                stopProgress();
             }
         };
 
+    }
+
+    public void startProgress(String title){
+        progress.setTitle(title);
+        progress.show();
+    }
+
+    public void stopProgress() {
+        progress.dismiss();
     }
 
     /**
@@ -709,7 +718,7 @@ public class EntryPoint extends Activity implements LocationListener {
             this.fragmentName = fragmentName;
         }
 
-        protected abstract void updateFragment (Fragment fragment);
+        protected abstract void updateFragment(Fragment fragment);
 
         @Override
         public void onTabSelected(Tab tab, FragmentTransaction ft) {
@@ -738,9 +747,10 @@ public class EntryPoint extends Activity implements LocationListener {
         public NearMeTabListener() {
             super(MOODS_NEAR_ME_FRAGMENT);
         }
+
         @Override
         protected void updateFragment(Fragment fragment) {
-            ((MoodsNearMeFragment)fragment).updateMap();
+            ((MoodsNearMeFragment) fragment).updateMap();
         }
     }
 
@@ -749,6 +759,7 @@ public class EntryPoint extends Activity implements LocationListener {
         public MyMoodTabListener() {
             super(MY_MOOD_FRAGMENT);
         }
+
         @Override
         protected void updateFragment(Fragment fragment) {
             // empty (default implementation desired)
