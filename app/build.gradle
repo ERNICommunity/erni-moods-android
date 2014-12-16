@@ -32,4 +32,7 @@ dependencies {
     compile group: 'org.achartengine', name: 'achartengine', version: '1.2.0'
     compile 'com.android.support:support-v4:19.+'
     compile 'com.squareup.retrofit:retrofit:1.6.1'
+    compile 'com.squareup.okhttp:okhttp-urlconnection:2.0.0'
+    compile 'com.squareup.okhttp:okhttp:2.0.0'
+
 }

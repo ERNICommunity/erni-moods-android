@@ -11,12 +11,15 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.squareup.okhttp.OkHttpClient;
 
 import java.lang.reflect.Type;
+import java.util.concurrent.TimeUnit;
 
 import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
+import retrofit.client.OkClient;
 import retrofit.client.Response;
 import retrofit.converter.GsonConverter;
 import retrofit.http.GET;
@@ -69,8 +72,12 @@ public class PlacesBackend extends AbstractBackend {
                 .registerTypeAdapter(Location.class, new LocationDeserializer())
                 .create();
 
+        OkHttpClient okHttpClient = new OkHttpClient();
+        okHttpClient.setReadTimeout(10 * 1000, TimeUnit.MILLISECONDS);
+
         restAdapter = new RestAdapter.Builder()
                 .setEndpoint(PlacesService.SERVICE_ENDPOINT)
+                .setClient(new OkClient(okHttpClient))
                 .setConverter(new GsonConverter(gson))
                 .build();
 

@@ -9,12 +9,15 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.squareup.okhttp.OkHttpClient;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
+import retrofit.client.OkClient;
 import retrofit.client.Response;
 import retrofit.converter.GsonConverter;
 import retrofit.http.Body;
@@ -101,8 +104,12 @@ public class MoodsBackend extends AbstractBackend {
                 .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
                 .create();
 
+        OkHttpClient okHttpClient = new OkHttpClient();
+        okHttpClient.setReadTimeout(10 * 1000, TimeUnit.MILLISECONDS);
+
         restAdapter = new RestAdapter.Builder()
                 .setEndpoint(MoodsService.SERVICE_ENDPOINT)
+                .setClient(new OkClient(okHttpClient))
                 .setConverter(new GsonConverter(gson))
                 .build();
 
