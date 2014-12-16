@@ -8,10 +8,9 @@
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="86dp"
-        android:background="@android:color/background_light"
-        android:id="@+id/">
+        android:background="@android:color/background_light">
 
-        <TextView
+    <TextView
             android:id="@+id/selectedUserTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

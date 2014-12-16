@@ -4,14 +4,9 @@ import android.community.erni.ernimoods.model.JSONResponseException;
 import android.community.erni.ernimoods.model.User;
 import android.util.Log;
 
-import com.squareup.okhttp.OkHttpClient;
-
-import java.util.concurrent.TimeUnit;
-
 import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
-import retrofit.client.OkClient;
 import retrofit.client.Response;
 import retrofit.http.Body;
 import retrofit.http.DELETE;
@@ -65,11 +60,11 @@ public class UserBackend extends AbstractBackend {
      */
     public UserBackend() {
 
-        OkHttpClient okHttpClient = new OkHttpClient();
-        okHttpClient.setReadTimeout(10 * 1000, TimeUnit.MILLISECONDS);
+        //OkHttpClient okHttpClient = new OkHttpClient();
+        //okHttpClient.setReadTimeout(10 * 1000, TimeUnit.MILLISECONDS);
         restAdapter = new RestAdapter.Builder()
                 .setEndpoint(UserService.SERVICE_ENDPOINT)
-                .setClient(new OkClient(okHttpClient))
+                        //.setClient(new OkClient(okHttpClient))
                 .build();
 
         service = restAdapter.create(UserService.class);

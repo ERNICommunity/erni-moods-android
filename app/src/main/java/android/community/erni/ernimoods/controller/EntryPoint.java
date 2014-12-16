@@ -142,6 +142,15 @@ public class EntryPoint extends Activity implements LocationListener {
         attachUserCallbacks();
         attachMoodsCallbacks();
 
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor editor = prefs.edit();
+        if (prefs.getString("pref_username", null) == null || prefs.getString("pref_password", null) == null) {
+            editor.putString("pref_username", "");
+            editor.commit();
+            editor.putString("pref_password", "");
+            editor.commit();
+        }
+
         /**
          * Set up the progress dialog
          */
