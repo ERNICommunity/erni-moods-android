@@ -2,16 +2,13 @@
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- username preference  -->
-    <EditTextPreference
-        android:key="pref_username"
-        android:title="Username"></EditTextPreference>
+    <Preference
+        android:key="buttonLogout"
+        android:title="Logout" />
 
-    <!-- password preference  -->
-    <EditTextPreference
-        android:key="pref_password"
-        android:title="Password"
-        android:inputType="textPassword"></EditTextPreference>
+    <Preference
+        android:key="buttonBack"
+        android:title="Back" />
 
 
 </PreferenceScreen>
