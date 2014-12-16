@@ -4,7 +4,11 @@
 
     <Preference
         android:key="buttonLogout"
-        android:title="Logout" />
+        android:title="Logout"
+        android:textColor="#fff"
+        android:textStyle="bold"
+        android:background="#ff1412dd"
+        />
 
     <Preference
         android:key="buttonBack"
