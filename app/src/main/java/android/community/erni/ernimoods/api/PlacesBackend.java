@@ -85,16 +85,15 @@ public class PlacesBackend extends AbstractBackend {
     }
 
     /**
-     * Query all bars from the Google places API within a range around a pair of coordinates
+     * Query 20 (default) bars from the Google places API within a range around a pair of coordinates
      *
      * @param lat        latitude
      * @param lng        longitude
-     * @param radius     radius
-     * @param maxResults maximum amount of results (20 by default)
+
      */
-    public void getBars(Double lat, Double lng, Integer radius, Integer maxResults) {
+    public void getBars(Double lat, Double lng) {
         //call to the retrofit-service
-        service.getPlacesAPI(Double.toString(lat) + "," + Double.toString(lng), Integer.toString(radius), listCallback);
+        service.getPlacesAPI(Double.toString(lat) + "," + Double.toString(lng), listCallback);
     }
 
     /**
@@ -109,12 +108,11 @@ public class PlacesBackend extends AbstractBackend {
         /**
          * HTTP-call to the places API. Types=bar, and the API-key are hardcoded.
          * @param location location as a string, containing lng and lat
-         * @param radius radius to search around that location
          * @param listCallback
          */
-        @GET("/maps/api/place/nearbysearch/json?types=bar&rankgy=distance&key=AIzaSyC0DFg9ARJTr3I_52lXEk_q58jzO-fb_S0")
+        @GET("/maps/api/place/nearbysearch/json?types=bar&rankby=distance&key=AIzaSyC0DFg9ARJTr3I_52lXEk_q58jzO-fb_S0")
         //all query params
-        void getPlacesAPI(@Query("location") String location, @Query("radius") String radius, Callback<Places> listCallback);
+        void getPlacesAPI(@Query("location") String location, Callback<Places> listCallback);
     }
 
     /**

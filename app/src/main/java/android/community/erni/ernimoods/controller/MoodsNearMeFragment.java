@@ -147,7 +147,7 @@ public class MoodsNearMeFragment extends Fragment {
                         PlacesBackend places = new PlacesBackend();
                         places.setListener(callHandlerGetPlaces);
                         //get the 10 closest bars within 10km around the clicked mood
-                        places.getBars(marker.getPosition().latitude, marker.getPosition().longitude, 10000, 10);
+                        places.getBars(marker.getPosition().latitude, marker.getPosition().longitude);
                         ((EntryPoint) getActivity()).startProgress("Loading bars");
                     }
 
