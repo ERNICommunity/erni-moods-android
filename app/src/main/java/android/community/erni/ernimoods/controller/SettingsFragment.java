@@ -49,5 +49,25 @@ public class SettingsFragment extends PreferenceFragment {
 
             }
         });
+
+        Preference button2 = (Preference) getPreferenceManager().findPreference("buttonSendFeedback");
+        button2.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference arg0) {
+
+                // create an implicit intent to start the users default mail program
+
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("message/rfc822");
+                intent.putExtra(Intent.EXTRA_EMAIL, new String[] {"angus.long@erni.ch", "richard.bumann@erni.ch"});
+                intent.putExtra(Intent.EXTRA_SUBJECT, "Feedback on Erni Moods Beta 1.");
+                intent.putExtra(Intent.EXTRA_TEXT, "I would like to give the following feedback about the Erni Moods app.");
+
+                startActivity(Intent.createChooser(intent, "Send Email"));
+
+                return true;
+
+            }
+        });
     }
 }

@@ -2,6 +2,10 @@
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <PreferenceCategory
+        android:title="User Settings"
+        android:key="pref_key_user_settings">
+
     <Preference
         android:key="buttonLogout"
         android:title="Logout"
@@ -9,6 +13,16 @@
         android:textStyle="bold"
         android:background="#ff1412dd"
         />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="Support"
+        android:key="pref_key_user_settings" />
+
+    <Preference
+        android:key="buttonSendFeedback"
+        android:title="Send Feedback" />
 
     <Preference
         android:key="buttonBack"
