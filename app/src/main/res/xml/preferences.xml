@@ -3,28 +3,80 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory
-        android:title="User Settings"
-        android:key="pref_key_user_settings">
+        android:key="pref_key_places_settings"
+        android:title="Google Place Settings" />
 
-    <Preference
-        android:key="buttonLogout"
-        android:title="Logout"
-        android:textColor="#fff"
-        android:textStyle="bold"
-        android:background="#ff1412dd"
+    <ListPreference
+        android:defaultValue="0"
+        android:entries="@array/bar_search_option_entries"
+        android:entryValues="@array/bar_search_option_values"
+        android:key="pref_barProximity"
+        android:summary="@string/place_proximity_options_summary"
+        android:title="@string/place_proximity_options_title" />
+
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="pref_searchOpenNow"
+        android:summary="Only look for places that are open right now"
+        android:title="Open now"
         />
 
-    </PreferenceCategory>
+    <PreferenceScreen
+        android:persistent="false"
+        android:summary="What kind of places is the app looking for when a mood has been clicked"
+        android:title="Places types">
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="pref_searchBars"
+            android:title="Bars" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="pref_searchCafe"
+            android:title="Cafes" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="pref_searchLiquorStore"
+            android:title="Liquor stores" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="pref_searchRestaurants"
+            android:title="Restaurants" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="pref_searchTrainStation"
+            android:title="Train stations" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="pref_searchNightClub"
+            android:title="Nightclubs" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="pref_searchBeautySalon"
+            android:title="Beauty salons" />
+    </PreferenceScreen>
+
 
     <PreferenceCategory
-        android:title="Support"
-        android:key="pref_key_user_settings" />
+        android:key="pref_key_user_feedback"
+        android:title="Support">
 
     <Preference
         android:key="buttonSendFeedback"
         android:title="Send Feedback" />
+    </PreferenceCategory>
 
+    <PreferenceCategory
+        android:key="pref_key_user_settings"
+        android:title="Logout">
 
+        <Preference
+            android:background="#ff1412dd"
+            android:key="buttonLogout"
+            android:textColor="#fff"
+            android:textStyle="bold"
+            android:title="Logout" />
+
+    </PreferenceCategory>
 
 
 </PreferenceScreen>

@@ -24,9 +24,8 @@ public class SettingsActivity extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(android.R.id.home ==  item.getItemId() ){
-
-               finish();
+        if (android.R.id.home == item.getItemId()) {
+            finish();
         }
         return true;
     }

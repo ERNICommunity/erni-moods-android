@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="bar_search_option_entries">
+        <item>Closest to user</item>
+        <item>Closest to me</item>
+        <item>In the middle</item>
+    </string-array>
+    <integer-array name="bar_search_option_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </integer-array>
+</resources>

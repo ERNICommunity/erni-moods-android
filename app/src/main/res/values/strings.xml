@@ -80,6 +80,8 @@
     <string name="linkToSignUp">Sign Up here</string>
     <string name="not_registered">Not signed up yet?</string>
     <string name="authorize_progress">Authorizing user</string>
+    <string name="place_proximity_options_summary">Where is the app looking for google places if a mood has been clicked</string>
+    <string name="place_proximity_options_title">Places proximity</string>
 
 
 </resources>
