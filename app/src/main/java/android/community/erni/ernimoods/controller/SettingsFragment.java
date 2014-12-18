@@ -20,8 +20,8 @@ public class SettingsFragment extends PreferenceFragment {
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.preferences);
 
-        Preference button = (Preference) getPreferenceManager().findPreference("buttonLogout");
-        button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+        Preference prefLogout = (Preference) getPreferenceManager().findPreference("buttonLogout");
+        prefLogout.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference arg0) {
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
@@ -38,20 +38,9 @@ public class SettingsFragment extends PreferenceFragment {
             }
         });
 
-        Preference button1 = (Preference) getPreferenceManager().findPreference("buttonBack");
-        button1.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference arg0) {
 
-                Intent i = new Intent(getActivity(), EntryPoint.class);
-                startActivity(i);
-                return true;
-
-            }
-        });
-
-        Preference button2 = (Preference) getPreferenceManager().findPreference("buttonSendFeedback");
-        button2.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+        Preference prefSendFeedback = (Preference) getPreferenceManager().findPreference("buttonSendFeedback");
+        prefSendFeedback.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference arg0) {
 

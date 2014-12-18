@@ -24,9 +24,7 @@
         android:key="buttonSendFeedback"
         android:title="Send Feedback" />
 
-    <Preference
-        android:key="buttonBack"
-        android:title="Back" />
+
 
 
 </PreferenceScreen>

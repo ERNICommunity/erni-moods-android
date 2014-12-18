@@ -2,6 +2,7 @@ package android.community.erni.ernimoods.controller;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.MenuItem;
 
 /**
  * Settings Activity. Hosts SettingsFragment.
@@ -13,6 +14,7 @@ public class SettingsActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        getActionBar().setDisplayHomeAsUpEnabled(true);
 
         // Display the fragment as the main content.
         getFragmentManager().beginTransaction()
@@ -20,5 +22,12 @@ public class SettingsActivity extends Activity {
                 .commit();
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(android.R.id.home ==  item.getItemId() ){
 
+               finish();
+        }
+        return true;
+    }
 }
