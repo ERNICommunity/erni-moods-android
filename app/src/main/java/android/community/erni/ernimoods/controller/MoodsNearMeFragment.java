@@ -232,11 +232,20 @@ public class MoodsNearMeFragment extends Fragment {
         });
 
         //create a map between image and mood
+        /*
         iconMap.put(5, R.drawable.smiley_very_happy);
         iconMap.put(4, R.drawable.smiley_good);
         iconMap.put(3, R.drawable.smiley_sosolala);
         iconMap.put(2, R.drawable.smiley_not_amused);
         iconMap.put(1, R.drawable.smiley_very_moody);
+        */
+
+        //Christmas edition
+        iconMap.put(5, R.drawable.santa_very_happy);
+        iconMap.put(4, R.drawable.santa_happy);
+        iconMap.put(3, R.drawable.santa_solala);
+        iconMap.put(2, R.drawable.santa_moody);
+        iconMap.put(1, R.drawable.santa_very_moody);
 
         thisView = view;
 
@@ -306,6 +315,7 @@ public class MoodsNearMeFragment extends Fragment {
                     .position(new LatLng(place.getLocation().getLatitude(), place.getLocation().getLongitude()))
                     .title(place.getName())
                     .snippet(place.getAddress())
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.christmasree))
                     .draggable(true));
             //add the relationship between places-object and marker to the map
             barMap.put(marker, place);

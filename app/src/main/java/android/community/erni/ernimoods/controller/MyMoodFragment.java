@@ -87,6 +87,7 @@ public class MyMoodFragment extends Fragment {
         };
 
         Context context = getActivity().getApplicationContext();
+
         registerClickListener(view, R.id.button_VeryHappy, context.getResources().getInteger(R.integer.int_VeryHappy));
         registerClickListener(view, R.id.button_Good, context.getResources().getInteger(R.integer.int_Good));
         registerClickListener(view, R.id.button_SoSoLaLa, context.getResources().getInteger(R.integer.int_SosoLala));

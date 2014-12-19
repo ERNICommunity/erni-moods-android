@@ -41,7 +41,8 @@
         android:background="@android:color/transparent"
             android:contentDescription="@string/text_moodVeryHappy"
             android:focusableInTouchMode="false"
-            android:src="@drawable/smiley_very_happy" />
+            android:src="@drawable/santa_very_happy" />
+        <!--android:src="@drawable/smiley_very_happy" />-->
 
         <ImageButton
         android:id="@+id/button_Good"
@@ -54,7 +55,8 @@
             android:contentDescription="@string/text_moodGood"
             android:cropToPadding="true"
             android:focusableInTouchMode="false"
-            android:src="@drawable/smiley_good" />
+            android:src="@drawable/santa_happy" />
+        <!--android:src="@drawable/smiley_good" />-->
 
         <ImageButton
         android:id="@+id/button_SoSoLaLa"
@@ -66,7 +68,8 @@
         android:background="@android:color/transparent"
             android:contentDescription="@string/text_moodSoSoLaLa"
             android:focusableInTouchMode="false"
-            android:src="@drawable/smiley_sosolala" />
+            android:src="@drawable/santa_solala" />
+        <!--android:src="@drawable/smiley_sosolala" />-->
 
         <ImageButton
         android:id="@+id/button_NotAmused"
@@ -78,7 +81,8 @@
             android:background="@android:color/transparent"
         android:contentDescription="@string/text_moodNotAmused"
             android:focusableInTouchMode="false"
-            android:src="@drawable/smiley_not_amused" />
+            android:src="@drawable/santa_moody" />
+        <!--android:src="@drawable/smiley_not_amused" />-->
 
         <ImageButton
         android:id="@+id/button_VeryMoody"
@@ -90,7 +94,9 @@
             android:contentDescription="@string/text_moodVeryMoody"
             android:focusable="false"
             android:focusableInTouchMode="false"
-            android:src="@drawable/smiley_very_moody" />
+            android:src="@drawable/santa_very_moody" />
+        <!--android:src="@drawable/smiley_very_moody" />-->
+
 
     </LinearLayout>
 
