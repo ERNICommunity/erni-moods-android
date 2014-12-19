@@ -5,9 +5,9 @@
         <item>Closest to me</item>
         <item>In the middle</item>
     </string-array>
-    <integer-array name="bar_search_option_values">
-        <item>0</item>
+    <string-array name="bar_search_option_values">
+    <item>0</item>
         <item>1</item>
         <item>2</item>
-    </integer-array>
+    </string-array>
 </resources>

@@ -10,8 +10,10 @@ import android.community.erni.ernimoods.model.Mood;
 import android.community.erni.ernimoods.model.User;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -146,8 +148,11 @@ public class MoodsNearMeFragment extends Fragment {
                         //call the places backend to fetch nearby bars
                         PlacesBackend places = new PlacesBackend();
                         places.setListener(callHandlerGetPlaces);
+                        Boolean opennow = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext()).getBoolean("pref_searchOpenNow", true);
+                        String types = buildTypes();
+                        String loc = buildLocation(marker.getPosition().latitude, marker.getPosition().longitude);
                         //get the 10 closest bars within 10km around the clicked mood
-                        places.getBars(marker.getPosition().latitude, marker.getPosition().longitude);
+                        places.getBars(loc, types, opennow);
                         ((EntryPoint) getActivity()).startProgress("Loading bars");
                     }
 
@@ -366,5 +371,67 @@ public class MoodsNearMeFragment extends Fragment {
                 }
             }
         }
+    }
+
+    private String buildTypes() {
+        String types = "";
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+        if (prefs.getBoolean("pref_searchBars", true) == true) {
+            types += "|bar";
+        }
+        if (prefs.getBoolean("pref_searchCafe", true) == true) {
+            types += "|cafe";
+        }
+        if (prefs.getBoolean("pref_searchLiquorStore", true) == true) {
+            types += "|liquor_store";
+        }
+        if (prefs.getBoolean("pref_searchRestaurants", true) == true) {
+            types += "|restaurant";
+        }
+        if (prefs.getBoolean("pref_searchTrainStation", true) == true) {
+            types += "|train_station";
+        }
+        if (prefs.getBoolean("pref_searchNightClub", true) == true) {
+            types += "|night_club";
+        }
+        if (prefs.getBoolean("pref_searchBeautySalon", true) == true) {
+            types += "|beauty_salon";
+        }
+        if (types.length() == 0) {
+            return "bar";
+        } else if (types.substring(0, 1).equals("|")) {
+            return types.substring(1);
+        } else {
+            return types;
+        }
+    }
+
+    private String buildLocation(Double lat, Double lng) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+        int locType = Integer.valueOf(prefs.getString("pref_barProximity", null));
+        Location currentLoc = ((EntryPoint) getActivity()).getCurrentLocation();
+        String location = Double.toString(lat) + "," + Double.toString(lng);
+        switch (locType) {
+            case 0:
+                break;
+            case 1:
+                if (currentLoc != null) {
+                    location = Double.toString(currentLoc.getLatitude()) + "," + Double.toString(currentLoc.getLongitude());
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(currentLoc.getLatitude(), currentLoc.getLongitude()), 9.0f));
+                }
+                break;
+            //approximation true withing 250 miles
+            case 2:
+                if (currentLoc != null) {
+                    Double diffLat = (lat - currentLoc.getLatitude()) / 2;
+                    Double diffLng = (lng - currentLoc.getLongitude()) / 2;
+                    location = Double.toString(lat - diffLat) + "," + Double.toString(lng - diffLng);
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat - diffLat, lng - diffLng), 9.0f));
+                }
+                break;
+            default:
+                break;
+        }
+        return location;
     }
 }

@@ -87,13 +87,16 @@ public class PlacesBackend extends AbstractBackend {
     /**
      * Query 20 (default) bars from the Google places API within a range around a pair of coordinates
      *
-     * @param lat        latitude
-     * @param lng        longitude
+
 
      */
-    public void getBars(Double lat, Double lng) {
+    public void getBars(String location, String placeTypes, boolean openNow) {
         //call to the retrofit-service
-        service.getPlacesAPI(Double.toString(lat) + "," + Double.toString(lng), listCallback);
+        String opennow = null;
+        if (openNow) {
+            opennow = "true";
+        }
+        service.getPlacesAPI(location, placeTypes, opennow, listCallback);
     }
 
     /**
@@ -110,9 +113,9 @@ public class PlacesBackend extends AbstractBackend {
          * @param location location as a string, containing lng and lat
          * @param listCallback
          */
-        @GET("/maps/api/place/nearbysearch/json?types=bar&rankby=distance&key=AIzaSyC0DFg9ARJTr3I_52lXEk_q58jzO-fb_S0")
+        @GET("/maps/api/place/nearbysearch/json?rankby=distance&key=AIzaSyC0DFg9ARJTr3I_52lXEk_q58jzO-fb_S0")
         //all query params
-        void getPlacesAPI(@Query("location") String location, Callback<Places> listCallback);
+        void getPlacesAPI(@Query("location") String location, @Query("types") String types, @Query("opennow") String openNow, Callback<Places> listCallback);
     }
 
     /**

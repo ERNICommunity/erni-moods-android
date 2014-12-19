@@ -27,6 +27,7 @@
         android:title="Places types">
         <CheckBoxPreference
             android:defaultValue="true"
+            android:enabled="true"
             android:key="pref_searchBars"
             android:title="Bars" />
         <CheckBoxPreference
@@ -58,25 +59,22 @@
 
     <PreferenceCategory
         android:key="pref_key_user_feedback"
-        android:title="Support">
+        android:title="Support" />
 
     <Preference
         android:key="buttonSendFeedback"
         android:title="Send Feedback" />
-    </PreferenceCategory>
 
     <PreferenceCategory
         android:key="pref_key_user_settings"
-        android:title="Logout">
+        android:title="Logout" />
 
-        <Preference
+    <Preference
             android:background="#ff1412dd"
             android:key="buttonLogout"
             android:textColor="#fff"
             android:textStyle="bold"
             android:title="Logout" />
-
-    </PreferenceCategory>
 
 
 </PreferenceScreen>
