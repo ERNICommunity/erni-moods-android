@@ -7,7 +7,7 @@
     <string name="action_preferences">Preferences</string>
     <string name="service_switch">Web Service</string>
     <string name="service_switch_summary">Turn web service on/off</string>
-    <string name="title_activity_settings">SettingsActivity</string>
+    <string name="title_activity_settings">Settings</string>
     <string name="title_activity_signUp_message">Sign Up to Moods App</string>
     <string name="title_activity_myMood">Tell me your mood!</string>
     <!-- String resources for SignUp-Acitvity -->
