@@ -181,6 +181,7 @@ public class EntryPoint extends Activity implements LocationListener {
         int id = item.getItemId();
         if (id == R.id.action_preferences) {
             // launch the SettingsActivity (preferences screen)
+
             Intent i = new Intent(this, SettingsActivity.class);
             startActivity(i);
             return true;

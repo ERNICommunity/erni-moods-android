@@ -14,6 +14,7 @@ public class SettingsActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // set the back functionality on the action bar.
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
         // Display the fragment as the main content.
@@ -22,11 +23,7 @@ public class SettingsActivity extends Activity {
                 .commit();
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (android.R.id.home == item.getItemId()) {
-            finish();
-        }
-        return true;
-    }
+
+
+
 }
