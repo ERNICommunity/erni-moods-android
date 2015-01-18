@@ -1,12 +1,15 @@
 ERNI Moods
 ==========
 
-##Important note for developers.
+##Important note for new project members
 
 The best way to get up and running is to download the latest version of Android Studio. Currently version 1.0.x.
 
 Then checkout the ``newBuild`` branch. The build scripts have been changed on this branch to make it easier to work with the latest version of Android Studio.
 
+It is not possible to use Eclipe for this project.
+
+This video explains how Android Studio and Gradle work: [https://www.youtube.com/watch?v=0bhbQdZLpIE] (https://www.youtube.com/watch?v=0bhbQdZLpIE)
 
 
 Android app
