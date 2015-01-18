@@ -5,7 +5,7 @@ ERNI Moods
 
 The best way to get up and running is to download the latest version of Android Studio. Currently version 1.0.x.
 
-Then checkout the newBuild branch. The build scripts have been changed on this branch to make it easier to work with the latest version of Android Studio.
+Then checkout the ``newBuild branch``. The build scripts have been changed on this branch to make it easier to work with the latest version of Android Studio.
 
 
 
