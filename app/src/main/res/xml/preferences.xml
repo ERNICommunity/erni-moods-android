@@ -74,7 +74,7 @@
             android:key="buttonLogout"
             android:textColor="#fff"
             android:textStyle="bold"
-            android:title="Logout" />
+            android:title="Logout User" />
 
 
 </PreferenceScreen>
