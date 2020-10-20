@@ -1,7 +1,7 @@
 ERNI Moods
 ==========
 
-:warning: **REPOSITORY NOT ACTIVE SINCE 2014 Dependabot alerts disabled**
+:warning: **REPOSITORY NOT ACTIVE SINCE 2015 Dependabot alerts disabled**
 
 ##Important note for new project members
 
