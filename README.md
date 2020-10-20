@@ -1,6 +1,8 @@
 ERNI Moods
 ==========
 
+:warning: **REPOSITORY NOT ACTIVE SINCE 2014 Dependabot alerts disabled**
+
 ##Important note for new project members
 
 The best way to get up and running is to download the latest stable version of Android Studio. Currently version 1.0.x.
